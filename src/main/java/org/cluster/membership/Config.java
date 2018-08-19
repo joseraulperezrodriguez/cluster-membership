@@ -14,10 +14,8 @@ import org.springframework.boot.ApplicationArguments;
 
 public class Config {
 	
-	private static HashMap<String, String> map = new HashMap<String, String>();
-		
-	static { try { Parsing.setAppConfig(); } catch (Exception e) { e.printStackTrace(); } }
-	
+	private static HashMap<String, String> map = Parsing.readAppConfig();
+			
 	/**The time interval for making requests to other nodes in the cluster*/
 	public static final int ITERATION_INTERVAL_MS = Integer.parseInt(map.get("iteration-interval-ms"));
 		
@@ -37,16 +35,21 @@ public class Config {
 	/**The max number of bytes allowed to transfer between client and server*/
 	public static final int MAX_OBJECT_SIZE = Integer.parseInt(map.get("max-object-size"));
 	
-	private static Node thisPeer;
+	private static final Node thisPeer = Parsing.readThisPeer();
 	public static Node thisPeer() { return thisPeer; }
 	
 	private static List<Node> seeds;
 	public static List<Node> seeds() { return seeds; }
 	
+	public static boolean isValid() {
+		return (ITERATION_INTERVAL_MS > 500 && ITERATION_INTERVAL_MS < 1000*60) &&
+				(CONNECTION_TIME_OUT_MS > 100 && CONNECTION_TIME_OUT_MS < 1000*60) &&
+				(FAILING_NODE_EXPIRATION_TIME_MS > 1000*60*60 && FAILING_NODE_EXPIRATION_TIME_MS < 1000*60*60*24*3) &&
+				(MAX_RUMORS_LOG_SIZE < 10*1000*1000) && thisPeer != null;
+	}
 	
 	public static void read(ApplicationArguments args) throws Exception {
 		Parsing.setSeedNodes(args);
-		Parsing.setThisPeer();
 	}
 	
 	private static class Parsing {
@@ -67,22 +70,37 @@ public class Config {
 			return p;
 		}
 		
-		private static void setThisPeer() throws Exception {
-			Properties p = prop("peer.property");
-			
-			String cId = UUID.randomUUID().toString();
-			String cAddress = p.getProperty(address);
-			Integer cPort = Integer.parseInt(p.getProperty(port));
-			String cTimeZone = p.getProperty(timeZone);
-			
-			Config.thisPeer = new Node(cId, cAddress, cPort, TimeZone.getTimeZone(cTimeZone));
+		private static Node readThisPeer() {
+			try {
+				Properties p = prop("config" + File.separator  + "peer.property");
+				
+				String cId = UUID.randomUUID().toString();
+				String cAddress = p.getProperty(address).trim();
+				Integer cPort = Integer.parseInt(p.getProperty(port).trim());
+				String cTimeZone = p.getProperty(timeZone).trim();
+				
+				return new Node(cId, cAddress, cPort, TimeZone.getTimeZone(cTimeZone));
+
+			} catch(Exception e) {
+				e.printStackTrace();
+				return null;
+			}			
 
 		}
 		
-		private static void setAppConfig() throws Exception {
-			Properties p = prop("app.property");
-			
-			for(Object key : p.keySet()) Config.map.put(key.toString(), p.getProperty(key.toString()));
+		private static HashMap<String, String> readAppConfig() {
+			try {
+				Properties p = prop("config" + File.separator  + "app.property");
+				
+				HashMap<String, String> map = new HashMap<String, String>();
+				
+				for(Object key : p.keySet()) map.put(key.toString().trim(), p.getProperty(key.toString()).trim());
+				
+				return map;
+			} catch(Exception e) {
+				e.printStackTrace();
+				return null;
+			}
 			
 		}
 		

@@ -20,9 +20,9 @@ public class ClusterNodeEntry implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 	
-    	Config.read(args);    	
+    	Config.read(args);
     	
-    	
+    	assert(Config.isValid());
 		
     }
     
