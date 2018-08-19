@@ -2,14 +2,13 @@ package org.cluster.membership;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.UUID;
 
 import org.cluster.membership.model.Node;
+import org.cluster.membership.structures.DList;
 import org.springframework.boot.ApplicationArguments;
 
 public class Config {
@@ -17,7 +16,7 @@ public class Config {
 	private static HashMap<String, String> map = Parsing.readAppConfig();
 			
 	/**The time interval for making requests to other nodes in the cluster*/
-	public static final int ITERATION_INTERVAL_MS = Integer.parseInt(map.get("iteration-interval-ms"));
+	public static final long ITERATION_INTERVAL_MS = Long.parseLong(map.get("iteration-interval-ms"));
 		
 	/**The time out for connection to other nodes*/
 	public static final long CONNECTION_TIME_OUT_MS = Long.parseLong(map.get("connection-timeout-ms"));
@@ -35,20 +34,18 @@ public class Config {
 	/**The max number of bytes allowed to transfer between client and server*/
 	public static final int MAX_OBJECT_SIZE = Integer.parseInt(map.get("max-object-size"));
 	
-	private static final Node thisPeer = Parsing.readThisPeer();
-	public static Node thisPeer() { return thisPeer; }
+	public static final Node THIS_PEER = Parsing.readThisPeer();
 	
-	private static List<Node> seeds;
-	public static List<Node> seeds() { return seeds; }
+	public static final DList SEEDS = new DList();
 	
 	public static boolean isValid() {
 		return (ITERATION_INTERVAL_MS > 500 && ITERATION_INTERVAL_MS < 1000*60) &&
 				(CONNECTION_TIME_OUT_MS > 100 && CONNECTION_TIME_OUT_MS < 1000*60) &&
 				(FAILING_NODE_EXPIRATION_TIME_MS > 1000*60*60 && FAILING_NODE_EXPIRATION_TIME_MS < 1000*60*60*24*3) &&
-				(MAX_RUMORS_LOG_SIZE < 10*1000*1000) && thisPeer != null;
+				(MAX_RUMORS_LOG_SIZE < 10*1000*1000) && THIS_PEER != null;
 	}
 	
-	public static void read(ApplicationArguments args) throws Exception {
+	public static void read(ApplicationArguments args) throws Exception {		
 		Parsing.setSeedNodes(args);
 	}
 	
@@ -72,7 +69,7 @@ public class Config {
 		
 		private static Node readThisPeer() {
 			try {
-				Properties p = prop("config" + File.separator  + "peer.property");
+				Properties p = prop("config" + File.separator  + "peer.properties");
 				
 				String cId = UUID.randomUUID().toString();
 				String cAddress = p.getProperty(address).trim();
@@ -90,7 +87,7 @@ public class Config {
 		
 		private static HashMap<String, String> readAppConfig() {
 			try {
-				Properties p = prop("config" + File.separator  + "app.property");
+				Properties p = prop("config" + File.separator  + "app.properties");
 				
 				HashMap<String, String> map = new HashMap<String, String>();
 				
@@ -115,8 +112,6 @@ public class Config {
 		}
 		
 		private static void setSeedNodes(ApplicationArguments args) throws Exception {
-			List<Node> ans = new ArrayList<Node>();
-					
 			int count = 1;
 			do {
 				int contains = containsOptions(args, id + "." + count, 
@@ -137,15 +132,14 @@ public class Config {
 					String cTimeZone = args.getOptionValues(timeZone + "." + count).get(0);
 					
 					Node n = new Node(cId, cAddress, cPort, TimeZone.getTimeZone(cTimeZone));
-					ans.add(n);
+					Config.SEEDS.add(n);
 
 				} catch(Exception e) {
 					throw new Exception("The node " + count + " is not configured properly.");
 				}
-				
+				count++;
 			} while(true);
 			
-			Config.seeds = ans;
 			
 			
 		}

@@ -14,9 +14,13 @@ import org.cluster.membership.model.ResponseDescription;
 import org.cluster.membership.net.core.MembershipClientHandler;
 import org.cluster.membership.structures.ValuePriorityEntry;
 import org.cluster.membership.util.MathOp;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ResponseHandler {
 
+	@Autowired
 	private ClusterView clusterView;
 
 	public void addToFailed(Node node) {

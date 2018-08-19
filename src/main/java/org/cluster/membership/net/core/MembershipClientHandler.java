@@ -45,7 +45,7 @@ public abstract class MembershipClientHandler extends ChannelInboundHandlerAdapt
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
-		ctx.writeAndFlush(new RequestDescription(Config.thisPeer(), messages));
+		ctx.writeAndFlush(new RequestDescription(Config.THIS_PEER, messages));
 		startTime = System.currentTimeMillis();
 	}
 

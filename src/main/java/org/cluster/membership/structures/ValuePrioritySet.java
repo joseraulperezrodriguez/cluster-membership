@@ -74,6 +74,13 @@ public class ValuePrioritySet<T> implements Serializable {
 		return el;
 	}
 	
+	public T pollLast() {
+		T el = ordered.pollLast();		
+		if(el == null) return null;		
+		hashed.remove(el);		
+		return el;
+	}
+	
 	public T last() {
 		if(hashed.isEmpty()) return null;		
 		return ordered.last();

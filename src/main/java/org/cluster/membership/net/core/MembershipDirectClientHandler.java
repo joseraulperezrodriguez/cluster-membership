@@ -16,8 +16,8 @@ public class MembershipDirectClientHandler extends MembershipClientHandler {
 	private TreeSet<Message> indirectMessages;
 	private boolean directReceived;
 	
-	public MembershipDirectClientHandler(ResponseHandler responseReceiver, Node to, List<Message> messages) {
-		super(responseReceiver, to, messages);
+	public MembershipDirectClientHandler(ResponseHandler responseHandler, Node to, List<Message> messages) {
+		super(responseHandler, to, messages);
 		
 		indirectMessages = new TreeSet<Message>();
 		
