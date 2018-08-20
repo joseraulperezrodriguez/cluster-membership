@@ -25,38 +25,46 @@ public class ValuePrioritySet<T> implements Serializable {
 	
 	
 	public boolean add(T el, boolean updatePriority) {
-		T present = hashed.get(el);
-		
-		if(present != null && !updatePriority) return false;
-		
-		if(present == null) {	
-			hashed.put(el, el);
-			ordered.add(el);
-		} else if(priorityComparator.compare(el, present) < 0) {
-			ordered.remove(present);
-			hashed.put(el, el);
-			ordered.add(el);
-		} else return false;
-		
-		return true;		
+		synchronized(this) {
+			T present = hashed.get(el);
+			
+			if(present != null && !updatePriority) return false;
+			
+			if(present == null) {	
+				hashed.put(el, el);
+				ordered.add(el);
+			} else if(priorityComparator.compare(el, present) < 0) {
+				ordered.remove(present);
+				hashed.put(el, el);
+				ordered.add(el);
+			} else return false;
+			
+			return true;		
+
+		}
 		
 	}
 	
 	public void remove(T el) {
-		T present = hashed.get(el);
-		if(present == null) return;
-		
-		hashed.remove(present);
-		ordered.remove(present);
+		synchronized(this) {
+			T present = hashed.get(el);
+			if(present == null) return;
+			
+			hashed.remove(present);
+			ordered.remove(present);
+		}		
 		
 	}
 	
 	public boolean contains(T el, boolean updatePriority) {
-		boolean is = contains(el);
-		if(!is) return false;
+		synchronized(this) {
+			boolean is = contains(el);
+			if(!is) return false;
+			
+			if(updatePriority) add(el, true);		
+			return true;
+		}
 		
-		if(updatePriority) add(el, true);		
-		return true;
 	}
 	
 	public TreeSet<T> tailSet(T ele) {
@@ -68,17 +76,21 @@ public class ValuePrioritySet<T> implements Serializable {
 	}
 	
 	public T pollFirst() {
-		T el = ordered.pollFirst();		
-		if(el == null) return null;		
-		hashed.remove(el);		
-		return el;
+		synchronized(this) {
+			T el = ordered.pollFirst();		
+			if(el == null) return null;		
+			hashed.remove(el);		
+			return el;
+		}
 	}
 	
 	public T pollLast() {
-		T el = ordered.pollLast();		
-		if(el == null) return null;		
-		hashed.remove(el);		
-		return el;
+		synchronized(this) {
+			T el = ordered.pollLast();		
+			if(el == null) return null;		
+			hashed.remove(el);		
+			return el;
+		}
 	}
 	
 	public T last() {
