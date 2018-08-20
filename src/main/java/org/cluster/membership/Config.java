@@ -38,6 +38,8 @@ public class Config {
 	
 	public static final DList SEEDS = new DList();
 	
+	public static final String[] MODE = new String[] {"RELEASE"};
+	
 	public static boolean isValid() {
 		return (ITERATION_INTERVAL_MS > 500 && ITERATION_INTERVAL_MS < 1000*60) &&
 				(CONNECTION_TIME_OUT_MS > 100 && CONNECTION_TIME_OUT_MS < 1000*60) &&
@@ -84,7 +86,7 @@ public class Config {
 			}			
 
 		}
-		
+				
 		private static HashMap<String, String> readAppConfig() {
 			try {
 				Properties p = prop("config" + File.separator  + "app.properties");
@@ -140,7 +142,12 @@ public class Config {
 				count++;
 			} while(true);
 			
-			
+			if(args.containsOption("mode")) {
+				String mode = args.getOptionValues("mode").get(0);
+				if(!mode.equals("DEBUG") || !mode.equals("RELEASE")) throw new Exception("Invalid mode argument");
+				
+				Config.MODE[0] = mode;
+			}
 			
 		}
 		

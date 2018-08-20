@@ -27,18 +27,32 @@ public class MembershipServer extends Thread {
 	
 	private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
+    
+    private RequestReceiver requestReceiver;
 
 	
 	private static ObjectEncoder objectEncoder = new ObjectEncoder();
 
 	@Autowired
 	public MembershipServer(RequestReceiver requestReceiver) {
-		this.membershipServerHandler = new MembershipServerHandler(requestReceiver);
+		this.requestReceiver = requestReceiver;
 	}
 	
+	public void pause(long millis) {
+		if(this.membershipServerHandler == null || 
+				!(membershipServerHandler instanceof MembershipServerHandlerDebug)) return;
+		
+		MembershipServerHandlerDebug debugHandler = (MembershipServerHandlerDebug)membershipServerHandler;
+		debugHandler.pause(millis);
+	}
 	
 	public void run() {
         try {
+    		this.membershipServerHandler = (
+    				Config.MODE[0].equals("DEBUG") ? new MembershipServerHandlerDebug(requestReceiver) : 
+    					new MembershipServerHandler(requestReceiver));
+
+        	
         	bossGroup = new NioEventLoopGroup(1);
             workerGroup = new NioEventLoopGroup();
 

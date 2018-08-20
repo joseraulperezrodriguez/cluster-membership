@@ -2,6 +2,7 @@ package org.cluster.membership.structures;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.cluster.membership.model.Node;
 import org.cluster.membership.util.Tuple2;
@@ -20,6 +21,10 @@ public class DList implements Serializable {
 	
 	public DList() {
 		this.nodes = new ArrayList<Node>();
+	}
+	
+	public List<Node> list(){
+		return nodes;
 	}
 	
 	/**Assumes arguments is a sorted list*/

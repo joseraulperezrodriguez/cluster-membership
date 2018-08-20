@@ -63,7 +63,14 @@ public class ClusterView implements Serializable {
 				Message.getGeneratedTimePriorityAscComparator());
 	}
 
-
+	public List<Node> nodes() {
+		return nodes.list();
+	}
+	
+	public void unsubscribe() {
+		Message uns = new Message(MessageType.UNSUBSCRIPTION, Config.THIS_PEER, 1);
+		rumorsToSend.add(uns, true);
+	}
 
 	public Long lastRumorTime() {
 		Message last = receivedRumors.last();
