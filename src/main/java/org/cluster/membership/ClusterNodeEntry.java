@@ -28,7 +28,6 @@ public class ClusterNodeEntry implements ApplicationRunner {
 	
 	
     public static void main( String[] args ) {
-    	//SpringApplication.run(ClusterNodeEntry.class, args).getEnvironment().getP;
     	new SpringApplicationBuilder(ClusterNodeEntry.class)
                 .properties("spring.config.name:app")
                 .build()
