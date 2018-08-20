@@ -1,5 +1,6 @@
 package org.cluster.membership.net;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -50,7 +51,7 @@ public class ResponseHandler {
 		Node from = membershipClientHandler.getTo();
 		clusterView.removeFailing(from);
 		
-		for(MessageResponse<?> mr : response.getReponses()) {
+		for(MessageResponse<? extends Serializable> mr : response.getReponses()) {
 
 			Message message = mr.getMessage();
 			
@@ -68,7 +69,7 @@ public class ResponseHandler {
 		
 	}
 	
-	private void handleUpdateResponse(MessageResponse<?> response) {
+	private void handleUpdateResponse(MessageResponse<? extends Serializable> response) {
 		Object ans = response.getResponse();
 		
 		if(ans == null) return;
