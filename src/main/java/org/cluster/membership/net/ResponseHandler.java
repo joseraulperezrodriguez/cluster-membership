@@ -1,5 +1,6 @@
 package org.cluster.membership.net;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -14,9 +15,13 @@ import org.cluster.membership.model.ResponseDescription;
 import org.cluster.membership.net.core.MembershipClientHandler;
 import org.cluster.membership.structures.ValuePriorityEntry;
 import org.cluster.membership.util.MathOp;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ResponseHandler {
 
+	@Autowired
 	private ClusterView clusterView;
 
 	public void addToFailed(Node node) {
@@ -46,7 +51,7 @@ public class ResponseHandler {
 		Node from = membershipClientHandler.getTo();
 		clusterView.removeFailing(from);
 		
-		for(MessageResponse<?> mr : response.getReponses()) {
+		for(MessageResponse<? extends Serializable> mr : response.getReponses()) {
 
 			Message message = mr.getMessage();
 			
@@ -64,7 +69,7 @@ public class ResponseHandler {
 		
 	}
 	
-	private void handleUpdateResponse(MessageResponse<?> response) {
+	private void handleUpdateResponse(MessageResponse<? extends Serializable> response) {
 		Object ans = response.getResponse();
 		
 		if(ans == null) return;

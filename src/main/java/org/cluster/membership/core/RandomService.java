@@ -4,7 +4,9 @@ import java.util.Random;
 
 import org.cluster.membership.Config;
 import org.cluster.membership.model.Node;
+import org.springframework.stereotype.Component;
 
+@Component
 public class RandomService {
 	
 	private Random random;

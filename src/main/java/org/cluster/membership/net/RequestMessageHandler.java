@@ -13,13 +13,18 @@ import org.cluster.membership.net.core.MembershipClient;
 import org.cluster.membership.net.core.MembershipIndirectClientHandler;
 import org.cluster.membership.util.DateTime;
 import org.cluster.membership.util.MathOp;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import io.netty.channel.ChannelHandlerContext;
 
+@Component
 public class RequestMessageHandler {
 	
+	@Autowired
 	private ClusterView clusterView;
 	
+	@Autowired
 	private ResponseHandler responseHandler;
 	
 	public MessageResponse<ClusterView> handlerSubscription(Message m) {
@@ -36,7 +41,7 @@ public class RequestMessageHandler {
 	}
 	
 	public MessageResponse<Boolean> handlerProbe(Message m, ChannelHandlerContext ctx) {
-		if(m.getNode().equals(Config.thisPeer())) {
+		if(m.getNode().equals(Config.THIS_PEER)) {
 			MessageResponse<Boolean> response = new MessageResponse<Boolean>(true, m);
 			return response;
 		} else {
@@ -50,7 +55,7 @@ public class RequestMessageHandler {
 	public void handlerSuspectDead(Message m) {			
 		TimeZone remoteTimeZone = m.getGeneratedTimeZone();
 		long remoteTime = (Long)m.getData();
-		TimeZone localTimeZone = Config.thisPeer().getTimeZone();		
+		TimeZone localTimeZone = Config.THIS_PEER.getTimeZone();		
 		long localTime = DateTime.localTime(remoteTime, remoteTimeZone, localTimeZone);
 		clusterView.suspect(localTime, m);
 	}

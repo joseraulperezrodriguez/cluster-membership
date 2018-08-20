@@ -9,16 +9,25 @@ import org.cluster.membership.model.Message;
 import org.cluster.membership.model.MessageResponse;
 import org.cluster.membership.model.Node;
 import org.cluster.membership.util.MathOp;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import io.netty.channel.ChannelHandlerContext;
 
+@Component
 public class RequestReceiver {
 	
 	private long lastMessage;
 	
+	@Autowired
 	private RequestMessageHandler messageHandler;
 	
+	@Autowired
 	private ClusterView clusterView;
+	
+	public RequestReceiver() {
+		this.lastMessage = System.currentTimeMillis();
+	}
 	
 	public long getLastMessage() {
 		return lastMessage;

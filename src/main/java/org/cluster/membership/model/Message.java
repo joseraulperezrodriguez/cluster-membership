@@ -33,7 +33,7 @@ public class Message implements Comparable<Message>, Serializable {
 		this.node = node;
 		this.iterations = iterations;
 		this.generatedTime = System.currentTimeMillis();
-		this.generatedTimeZone = Config.thisPeer().getTimeZone();
+		this.generatedTimeZone = Config.THIS_PEER.getTimeZone();
 	}
 	
 	public Message(MessageType type, Node node, int iterations, Object data) {
