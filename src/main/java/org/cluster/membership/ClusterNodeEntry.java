@@ -1,8 +1,5 @@
 package org.cluster.membership;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.cluster.membership.core.ClusterView;
 import org.cluster.membership.core.MessageType;
 import org.cluster.membership.model.Message;
@@ -60,10 +57,8 @@ public class ClusterNodeEntry implements ApplicationRunner {
     	membershipServer.listen();
     	
     	if(Config.SEEDS.size() > 0) {
-    		Message subscriptionMessage = new Message(MessageType.SUBSCRIPTION, Config.SEEDS.get(0), 1);
-    		List<Message> one = new ArrayList<Message>();
-    		one.add(subscriptionMessage);
-    		MembershipClientHandler handler = new MembershipDirectClientHandler(responseHandler, subscriptionMessage.getNode(), one);
+    		Message subscriptionMessage = new Message(MessageType.SUBSCRIPTION, Config.SEEDS.get(0), 1);    		
+    		MembershipClientHandler handler = new MembershipDirectClientHandler(responseHandler, subscriptionMessage.getNode(), subscriptionMessage);
     		MembershipClient.connect(subscriptionMessage.getNode(), handler);
     	}
 		

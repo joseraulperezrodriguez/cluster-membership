@@ -1,5 +1,6 @@
 package org.cluster.membership.net.core;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -29,6 +30,10 @@ public class MembershipDirectClientHandler extends MembershipClientHandler {
 		this.directReceived = (indirectMessages.size() == messages.size());
 		this.setTotalExpectedMessages(indirectMessages.size() + (directReceived ? 0 : 1));
 		
+	}
+	
+	public MembershipDirectClientHandler(ResponseHandler responseHandler, Node to, Message... messages) {
+		this(responseHandler, to, Arrays.asList(messages));		
 	}
 	
 	public boolean isIndirectMessage(Message m) {
