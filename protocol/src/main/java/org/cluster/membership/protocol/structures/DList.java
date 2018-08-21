@@ -2,7 +2,9 @@ package org.cluster.membership.protocol.structures;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.cluster.membership.protocol.model.Node;
 import org.cluster.membership.protocol.util.Tuple2;
@@ -18,19 +20,26 @@ public class DList implements Serializable {
 	 */
 	
 	private ArrayList<Node> nodes;
+	private Set<Node> hashed;
 	
 	public DList() {
 		this.nodes = new ArrayList<Node>();
+		this.hashed = new HashSet<Node>();
 	}
 	
-	public List<Node> list(){
+	public List<Node> list() {
 		return nodes;
 	}
 	
 	/**Assumes arguments is a sorted list*/
 	public void addSortedNodes(DList dlist) {
-		for(Node n : dlist.nodes)
+		nodes.clear();
+		hashed.clear();
+		for(Node n : dlist.nodes) {
 			nodes.add(n);
+			hashed.add(n);
+		}
+			
 	}
 	
 	public Node get(int index) {
@@ -42,9 +51,10 @@ public class DList implements Serializable {
 	}
 	
 	public boolean contains(Node nd) {
-		Tuple2<Integer, Integer> bs = bs(nd);		
+		return hashed.contains(nd);
+		/*Tuple2<Integer, Integer> bs = bs(nd);		
 		return (bs.getA() == bs.getB() && bs.getA() < nodes.size() && 
-				this.get(bs.getA()).getId().equals(nd.getId()));
+				this.get(bs.getA()).getId().equals(nd.getId()));*/
 	}
 	
 	public void remove(Node node) {
@@ -54,13 +64,19 @@ public class DList implements Serializable {
 		
 		synchronized(this) { 
 			nodes.remove((int)bs.getA());
+			hashed.remove(node);
 		}
 		
 	}
 		
 	public boolean add(Node arg0) {
 		
-		if(nodes.size() == 0) synchronized(this) { return nodes.add(arg0); }
+		if(hashed.contains(arg0)) return true;
+		
+		if(nodes.size() == 0) synchronized(this) {
+			hashed.add(arg0);
+			return nodes.add(arg0); 
+		}
 		
 		Tuple2<Integer, Integer> bs = bs(arg0);
 		
@@ -109,8 +125,5 @@ public class DList implements Serializable {
 		if(node.compareTo(nodes.get(last)) >= 0) return new Tuple2<>(last, last);
 		return new Tuple2<>(first, last);
 	}
-
-	
-	
 
 }

@@ -24,7 +24,7 @@ public class Config {
 	/**The time out for connection to other nodes*/
 	public static final long CONNECTION_TIME_OUT_MS = Long.parseLong(map.get("connection-timeout-ms"));
 		
-	/**The expiration time for keeping a node alive after spread the message that is dead*/
+	/**The time to wait for a node sends a keep alive signal, to avoid removing from cluster*/
 	public static final long FAILING_NODE_EXPIRATION_TIME_MS = Long.parseLong(map.get("failing-node-expiration-time-ms"));//one day
 				
 	/**The max  number of iterations to select a random node*/

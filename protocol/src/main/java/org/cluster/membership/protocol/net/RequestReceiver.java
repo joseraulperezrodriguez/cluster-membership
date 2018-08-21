@@ -48,7 +48,10 @@ public class RequestReceiver {
 		for(Message m : messages) {
 			MessageType mt = m.getType();
 		
-			if(clusterView.isRumor(m)) continue;
+			/**If message is SUSPECT_DEAD we insert again to allow the minimal time will
+			 * be prioritized, in this way we ensure all the nodes have the same 
+			 * expiration time for a node*/
+			if(clusterView.isRumor(m) && !mt.equals(MessageType.SUSPECT_DEAD)) continue;
 			
 			switch (mt) {
 				case SUBSCRIPTION: {

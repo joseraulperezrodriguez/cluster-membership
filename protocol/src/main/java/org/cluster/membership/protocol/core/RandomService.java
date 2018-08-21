@@ -31,7 +31,8 @@ public class RandomService {
 			index = random.nextInt(size);
 			Node nd = clusterView.getNodeAt(index);
 			if(clusterView.isFailing(nd) || 
-			   clusterView.isSuspectedDead(nd)) continue;
+			   clusterView.isSuspectedDead(nd) ||
+			   nd.equals(Config.THIS_PEER)) continue;
 						
 			return nd;			
 		}

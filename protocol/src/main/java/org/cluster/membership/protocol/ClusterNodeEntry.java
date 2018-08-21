@@ -56,6 +56,8 @@ public class ClusterNodeEntry implements ApplicationRunner {
     	
     	membershipServer.listen();
     	
+    	clusterView().addSeeds();
+    	
     	if(Config.SEEDS.size() > 0) {
     		Message subscriptionMessage = new Message(MessageType.SUBSCRIPTION, Config.SEEDS.get(0), 1);    		
     		MembershipClientHandler handler = new MembershipDirectClientHandler(responseHandler, subscriptionMessage.getNode(), subscriptionMessage);

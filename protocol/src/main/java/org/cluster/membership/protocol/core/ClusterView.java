@@ -63,9 +63,10 @@ public class ClusterView implements Serializable {
 				Message.getGeneratedTimePriorityAscComparator());
 	}
 
-	public List<Node> nodes() {
-		return nodes.list();
-	}
+	public List<Node> nodes() { return nodes.list(); }
+	
+	
+	public void addSeeds() { nodes.addSortedNodes(Config.SEEDS); }
 	
 	public void unsubscribe() {
 		Message uns = new Message(MessageType.UNSUBSCRIPTION, Config.THIS_PEER, 1);
@@ -214,7 +215,7 @@ public class ClusterView implements Serializable {
 
 	public boolean isRumor(Message m) { return rumorsToSend.contains(m, true); }
 
-	public int getClusterSize() { return nodes.size() + 1; }
+	public int getClusterSize() { return nodes.size(); }
 
 	public int getSuspectedSize() { return suspectingNodesTimeout.size(); }
 
@@ -228,7 +229,7 @@ public class ClusterView implements Serializable {
 		ClusterView clusterView = new ClusterView();
 		DList otherNodes = new DList();
 		otherNodes.addSortedNodes(nodes);
-		otherNodes.add(Config.THIS_PEER);
+		otherNodes.add(otherPeer);
 
 		clusterView.nodes = otherNodes;
 		clusterView.rumorsToSend = this.rumorsToSend;
