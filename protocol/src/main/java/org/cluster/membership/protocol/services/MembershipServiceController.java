@@ -3,6 +3,7 @@ package org.cluster.membership.protocol.services;
 import java.util.List;
 
 import org.cluster.membership.protocol.core.ClusterView;
+import org.cluster.membership.protocol.debug.NodesDebug;
 import org.cluster.membership.protocol.model.Node;
 import org.cluster.membership.protocol.net.core.MembershipServer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,17 @@ public class MembershipServiceController {
 	}
 	
 	@GetMapping("/nodes")
-	public List<Node> nodes() {
+	public List<Node> nodes() {		
 		return clusterView.nodes();
 	}
-
+	
+	@GetMapping("/nodes-debug")
+	public NodesDebug nodesDebug() {
+		List<String> nodes = clusterView.nodesDebug();
+		List<String> dead = clusterView.deadNodes();
+		List<String> failed = clusterView.failingNodes();
+				
+		return new NodesDebug(nodes, dead, failed);
+	}
+	
 }

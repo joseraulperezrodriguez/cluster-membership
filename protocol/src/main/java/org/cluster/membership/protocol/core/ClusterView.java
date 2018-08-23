@@ -65,6 +65,26 @@ public class ClusterView implements Serializable {
 
 	public List<Node> nodes() { return nodes.list(); }
 	
+	public List<String> nodesDebug() {
+		List<String> ans = new ArrayList<String>();
+		for(Node n : nodes.list()) ans.add(n.getId());		
+		return ans;
+	}
+	
+	public List<String> deadNodes() {
+		Iterator<ValuePriorityEntry<Node, Long>> iterator = suspectingNodesTimeout.iterator();		
+		List<String> ans = new ArrayList<String>();		
+		while(iterator.hasNext()) ans.add(iterator.next().getKey().getId());				
+		return ans;
+	}
+	
+	public List<String> failingNodes() {
+		Iterator<ValuePriorityEntry<Node, Long>> iterator = failed.iterator();		
+		List<String> ans = new ArrayList<String>();		
+		while(iterator.hasNext()) ans.add(iterator.next().getKey().getId());				
+		return ans;		
+	}
+	
 	
 	public void addSeeds() { nodes.addSortedNodes(Config.SEEDS); }
 	

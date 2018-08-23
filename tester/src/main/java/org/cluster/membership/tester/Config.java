@@ -45,7 +45,7 @@ public class Config {
 		FileCopyUtils.copy(sourceProgram, templateProgram);
 		FileSystemUtils.copyRecursively(sourceConfigFolder, templateConfig);
 		
-		Config.programPath = programPath;
+		Config.programPath = templateProgram.getAbsolutePath();
 		Config.appPropertiesPath = protocolContainer + File.separator + configFolder + File.separator + "app.properties";
 		Config.peerPropertiesPath = protocolContainer + File.separator + configFolder + File.separator + "peer.properties";
 		

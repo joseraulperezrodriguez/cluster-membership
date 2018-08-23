@@ -49,7 +49,7 @@ public class MembershipServer extends Thread {
 	public void run() {
         try {
     		this.membershipServerHandler = (
-    				Config.MODE[0].equals("DEBUG") ? new MembershipServerHandlerDebug(requestReceiver) : 
+    				Config.MODE[0].equals("TEST") ? new MembershipServerHandlerDebug(requestReceiver) : 
     					new MembershipServerHandler(requestReceiver));
 
         	

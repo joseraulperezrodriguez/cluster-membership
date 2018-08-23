@@ -8,6 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Random;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.cluster.membership.tester.Config;
 
@@ -17,9 +20,35 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Evaluator {
 	
-	private static ObjectMapper objectMapper = new ObjectMapper();
+	private ObjectMapper objectMapper;
 	
-	public static boolean evaluate(File file) throws Exception {
+	private Set<Node> createdNodes;
+	
+	private Random random;
+	
+	
+	public Evaluator() {
+		createdNodes = new TreeSet<Node>();
+		objectMapper = new ObjectMapper();
+		random = new Random();
+		 
+	}
+	
+	private Node getRandomNode() {
+		if(createdNodes.size() == 0) return null;
+		int index = random.nextInt(createdNodes.size());
+		
+		Iterator<Node> iterator = createdNodes.iterator();
+		int i = 0;
+		while(iterator.hasNext()) {
+			if(i == index) return iterator.next();
+			iterator.next();
+			i++;
+		}
+		return null;
+	}
+	
+	public boolean evaluate(File file) throws Exception {
 		
 		JsonNode node = objectMapper.readTree(file);
 		
@@ -38,14 +67,14 @@ public class Evaluator {
 		return false; 
 	}
 	
-	private static void updateConfigFile(String configFile, String property, String value) throws Exception {
+	private void updateConfigFile(String configFile, String property, String value) throws Exception {
 		Properties p = new Properties();
 		p.load(new FileInputStream(configFile));		
 		p.setProperty(property, value);		
 		p.store(new FileOutputStream(configFile), "");		
 	}
 	
-	private static void readConfig(JsonNode config) throws Exception {
+	private void readConfig(JsonNode config) throws Exception {
 		
 		Iterator<Entry<String, JsonNode>> iterator = config.fields();
 		while(iterator.hasNext()) {
@@ -59,7 +88,7 @@ public class Evaluator {
 	}
 	
 	
-	private static void action(JsonNode node, JsonNode config) throws Exception {
+	private void action(JsonNode node, JsonNode config) throws Exception {
 		
 		JsonNode data = node.get("data");
 		String type = node.get("type").asText(); 
@@ -68,13 +97,13 @@ public class Evaluator {
 			case "node":  createAndLaunchNode(data, config); break;			
 			case "wait":  wait(data); break;
 			case "pause":  pause(data); break;
+			case "unsubscribe":  unsubscribe(data); break;
 			case "check":  check(data); break;
 		}
 		
 	}
 	
-	private static void createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {
-		
+	private void createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {		
 		String id = data.get("id").asText();
 		String address = data.get("address").asText();
 		int nodePort = data.get("node-port").asInt();
@@ -88,18 +117,28 @@ public class Evaluator {
 		updateConfigFile(Config.peerPropertiesPath, "port", String.valueOf(nodePort));
 		updateConfigFile(Config.peerPropertiesPath, "time-zone", timeZone);
 		
-		//TODO launch the command line 
-		
+		Node commandLineParam = getRandomNode();		
+		String args = commandLineParam.commandLineParamString(1) + " --mode=DEBUG";		
+		String command = Config.programPath + args.trim() + " >> " + id + ".log";				
+		Runtime.getRuntime().exec(command);		
 	}
 	
-	private static void wait(JsonNode data) throws Exception {
+	private void wait(JsonNode data) throws Exception {
 		long time = data.asLong();		
 		Thread.sleep(time);
 	}
 	
 	private static void pause(JsonNode data)  {
-		String node = data.get("node").asText(); 
+		String nodeId = data.get("node-id").asText(); 
 		long time = data.get("time").asLong();
+		
+		//TODO set sleep message
+	}
+		
+	private static void unsubscribe(JsonNode data)  {
+		String nodeId = data.asText();
+		
+		
 		
 		//TODO set sleep message
 	}
@@ -110,7 +149,7 @@ public class Evaluator {
 		List<String> deads = iteratorToList(data.get("dead-nodes").iterator());
 		List<String> failing = iteratorToList(data.get("failing-nodes").iterator());
 		
-		//TODO
+		//TODO get and compare
 		
 	}
 	

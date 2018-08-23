@@ -10,7 +10,7 @@ public class Runner {
 		File cases = new File(Config.casesPath);
 		for(File f: cases.listFiles()) {
 			try {
-				Evaluator.evaluate(f);
+				new Evaluator().evaluate(f);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
