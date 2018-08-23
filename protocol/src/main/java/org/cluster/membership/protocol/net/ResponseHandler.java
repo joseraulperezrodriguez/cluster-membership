@@ -56,14 +56,14 @@ public class ResponseHandler {
 			Message message = mr.getMessage();
 			
 			switch (message.getType()) {
-				case ADD_TO_CLUSTER: /*Nothing to do*/ 
-				case KEEP_ALIVE: /*Nothing to do*/
-				case PROBE:  clusterView.removeFailing(message.getNode());				
-				case REMOVE_FROM_CLUSTER:  /*Nothing to do*/ 
-				case SUBSCRIPTION: clusterView.updateMyView((ClusterView)mr.getResponse());				
-				case SUSPECT_DEAD: /*Nothing to do*/  
-				case UNSUBSCRIPTION:  /*Nothing to do*/
-				case UPDATE: handleUpdateResponse(mr);				
+				case ADD_TO_CLUSTER: break; 
+				case KEEP_ALIVE: break;
+				case PROBE:  clusterView.removeFailing(message.getNode()); break;				
+				case REMOVE_FROM_CLUSTER:  break;
+				case SUBSCRIPTION: clusterView.updateMyView((ClusterView)mr.getResponse()); break;				
+				case SUSPECT_DEAD: break;  
+				case UNSUBSCRIPTION:   break;
+				case UPDATE: handleUpdateResponse(mr); break;				
 			}
 		}
 		

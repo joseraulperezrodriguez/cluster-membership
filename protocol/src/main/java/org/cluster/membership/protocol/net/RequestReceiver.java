@@ -56,28 +56,36 @@ public class RequestReceiver {
 			switch (mt) {
 				case SUBSCRIPTION: {
 					ans.add(messageHandler.handlerSubscription(m));
+					break;
 				}
 				case UNSUBSCRIPTION: {
 					messageHandler.handlerUnsubscription(m);
+					break;
 				}
 				case PROBE: {
 					MessageResponse<Boolean> mr = messageHandler.handlerProbe(m, ctx);
 					if(mr != null) ans.add(mr);
+					break;
 				} 
 				case SUSPECT_DEAD: {
 					messageHandler.handlerSuspectDead(m);
+					break;
 				}
 				case KEEP_ALIVE: {
 					messageHandler.handlerKeepAlive(m);
+					break;
 				}
 				case ADD_TO_CLUSTER: {
 					messageHandler.handlerAddToCluster(m);
+					break;
 				}
 				case REMOVE_FROM_CLUSTER: {
 					messageHandler.handlerRemoveFromCluster(m);
+					break;
 				} 
 				case UPDATE: {
 					messageHandler.handlerUpdateNode(m);
+					break;
 				}
 				
 			}

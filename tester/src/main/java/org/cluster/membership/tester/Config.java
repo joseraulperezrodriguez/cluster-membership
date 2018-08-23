@@ -2,34 +2,52 @@ package org.cluster.membership.tester;
 
 import java.io.File;
 
+import org.springframework.boot.system.ApplicationHome;
+import org.springframework.util.FileCopyUtils;
+import org.springframework.util.FileSystemUtils;
+
 public class Config {
+		
+	public static final String homePath = getHomePath();
+	public static final String casesPath = homePath + File.separator + "cases";
 	
-	public static String programFolder;
+	private static final String protocolFolder = "protocol";	
+	private static final String configFolder = "config";
 	
 	public static String programPath;
+	public static String appPropertiesPath;
+	public static String peerPropertiesPath;
 	
-	public static String configFolder;
+	private static String getHomePath() {
+		ApplicationHome home = new ApplicationHome(TesterEntry.class); 
+		String path = home.getDir().getAbsolutePath();
+		String configFolderPath = path + File.separator + configFolder;
+		File configFolder = new File(configFolderPath);
+		if(!configFolder.exists()) return path + File.separator + "target";
+		return path;
+	}
 	
-	public static String appConfigPath;
 	
-	public static String peerConfigPath;
-	
-	
-	public static void read(String programPath) throws Exception {
+	public static void prepareEnvironment(String programPath) throws Exception {
+		String protocolContainer = homePath + File.separator + protocolFolder;
+		
+		File template = new File(protocolContainer);
+		if(!template.exists())template.mkdir();
+		
+		File sourceProgram = new File(programPath);
+		File sourceConfigFolder = new File(sourceProgram.getParent() + File.separator + configFolder);
+						
+		File templateProgram = new File(protocolContainer + File.separator + sourceProgram.getName());
+		File templateConfig = new File(protocolContainer + File.separator + configFolder);
+		
+		if(!templateProgram.exists())templateProgram.createNewFile();
+		
+		FileCopyUtils.copy(sourceProgram, templateProgram);
+		FileSystemUtils.copyRecursively(sourceConfigFolder, templateConfig);
 		
 		Config.programPath = programPath;
-		
-		File file = new File(programPath);
-		
-		programFolder = file.getParent();
-		
-		configFolder = programFolder + File.separator + "config";
-		
-		appConfigPath = configFolder + File.separator + "app.properties";
-		
-		peerConfigPath = configFolder + File.separator + "peer.properties";
-		
-		
+		Config.appPropertiesPath = protocolContainer + File.separator + configFolder + File.separator + "app.properties";
+		Config.peerPropertiesPath = protocolContainer + File.separator + configFolder + File.separator + "peer.properties";
 		
 	}
 
