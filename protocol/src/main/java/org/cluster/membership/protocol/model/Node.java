@@ -12,19 +12,23 @@ public class Node implements Comparable<Node>, Serializable {
 	private static final long serialVersionUID = 1L;
 	private String id;
 	private String address;
-	private int port;
+	private int protocolPort;
+	private int servicePort;
 	
 	private TimeZone timeZone;
 	
-	public Node(String id, String address, int port, TimeZone timeZone) {
+	public Node(String id, String address, int protocolPort, int servicePort, TimeZone timeZone) {
 		super();
 		this.id = id;
 		this.address = address;
-		this.port = port;
-		this.timeZone = timeZone;		
-		
+		this.protocolPort = protocolPort;
+		this.servicePort = servicePort;
+		this.timeZone = timeZone;				
 	}
-
+	
+	public Node() {}
+	
+	
 	public TimeZone getTimeZone() {
 		return timeZone;
 	}
@@ -43,13 +47,23 @@ public class Node implements Comparable<Node>, Serializable {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	public int getPort() {
-		return port;
+
+	public int getProtocolPort() {
+		return protocolPort;
 	}
-	public void setPort(int port) {
-		this.port = port;
+
+	public void setProtocolPort(int protocolPort) {
+		this.protocolPort = protocolPort;
 	}
-	
+
+	public int getServicePort() {
+		return servicePort;
+	}
+
+	public void setServicePort(int servicePort) {
+		this.servicePort = servicePort;
+	}
+
 	@Override
 	public int hashCode() {
 		return this.getId().hashCode();
@@ -68,15 +82,15 @@ public class Node implements Comparable<Node>, Serializable {
 	
 	@Override
 	public String toString() {
-		return id + " " + address + " " + port;
+		return id + " " + address + " " + protocolPort + " " + servicePort + " " + timeZone.getID();
 	}
 	
 	public static Node getLowerNode() {
-		return new Node(" "," ",0,TimeZone.getDefault());
+		return new Node(" "," ",0,0,TimeZone.getDefault());
 	}
 	
 	public static Node getGreaterNode() {
-		return new Node("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz","z",0,TimeZone.getDefault());
+		return new Node("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz","z",0,0,TimeZone.getDefault());
 	}
 
 }

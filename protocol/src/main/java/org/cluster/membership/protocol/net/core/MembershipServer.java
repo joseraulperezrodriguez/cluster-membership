@@ -12,8 +12,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.compression.JdkZlibDecoder;
-import io.netty.handler.codec.compression.JdkZlibEncoder;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
@@ -49,7 +47,7 @@ public class MembershipServer extends Thread {
 	public void run() {
         try {
     		this.membershipServerHandler = (
-    				Config.MODE[0].equals("TEST") ? new MembershipServerHandlerDebug(requestReceiver) : 
+    				Config.MODE[0].equals("DEBUG") ? new MembershipServerHandlerDebug(requestReceiver) : 
     					new MembershipServerHandler(requestReceiver));
 
         	
@@ -64,9 +62,10 @@ public class MembershipServer extends Thread {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
                     ChannelPipeline p = ch.pipeline();                 
-                    p.addLast(new JdkZlibEncoder(),
-                  		  	  new JdkZlibDecoder());
+                    /*p.addLast(new JdkZlibEncoder(),
+                  		  	  new JdkZlibDecoder());*/
                     p.addLast(
+                    		//new ReadTimeoutHandler(Config.CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS),
                             objectEncoder,
                             new ObjectDecoder(Config.MAX_OBJECT_SIZE, ClassResolvers.cacheDisabled(null)),
                             membershipServerHandler);
@@ -74,7 +73,7 @@ public class MembershipServer extends Thread {
              });
 
             // Bind and start to accept incoming connections.
-            b.bind(Config.THIS_PEER.getPort()).sync().channel().closeFuture().sync();
+            b.bind(Config.THIS_PEER.getProtocolPort()).sync().channel().closeFuture().sync();
         }
         catch (InterruptedException e) {    
         	e.printStackTrace();
@@ -90,6 +89,11 @@ public class MembershipServer extends Thread {
 	
 	public void listen() {
 		this.start();
+	}
+	
+	public void shutdown() {
+		if(bossGroup != null) bossGroup.shutdownGracefully();
+		if(workerGroup != null) workerGroup.shutdownGracefully();
 	}
 
 }

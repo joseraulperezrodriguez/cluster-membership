@@ -9,6 +9,9 @@ import java.util.Set;
 import org.cluster.membership.protocol.model.Node;
 import org.cluster.membership.protocol.util.Tuple2;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class DList implements Serializable {
 
 	/**

@@ -25,15 +25,15 @@ public class RandomServiceTest
 	private ValuePrioritySet<Message> rumorsToSend;	
 	private ValuePrioritySet<Message> receivedRumors;
 	
-	private Node a = new Node("A", "A 1", 7001, TimeZone.getDefault());
-	private Node b = new Node("B", "B 1", 7002, TimeZone.getDefault());
-	private Node c = new Node("C", "C 1", 7003, TimeZone.getDefault());
-	private Node d = new Node("D", "D 1", 7004, TimeZone.getDefault());
-	private Node e = new Node("E", "E 1", 7005, TimeZone.getDefault());
-	private Node f = new Node("F", "F 1", 7006, TimeZone.getDefault());
-	private Node g = new Node("G", "G 1", 7007, TimeZone.getDefault());
-	private Node h = new Node("H", "H 1", 7008, TimeZone.getDefault());
-	private Node i = new Node("I", "I 1", 7009, TimeZone.getDefault());
+	private Node a = new Node("A", "A 1", 7001, 6001,TimeZone.getDefault());
+	private Node b = new Node("B", "B 1", 7002, 6002,TimeZone.getDefault());
+	private Node c = new Node("C", "C 1", 7003, 6003,TimeZone.getDefault());
+	private Node d = new Node("D", "D 1", 7004, 6004,TimeZone.getDefault());
+	private Node e = new Node("E", "E 1", 7005, 6005,TimeZone.getDefault());
+	private Node f = new Node("F", "F 1", 7006, 6006,TimeZone.getDefault());
+	private Node g = new Node("G", "G 1", 7007, 6007,TimeZone.getDefault());
+	private Node h = new Node("H", "H 1", 7008, 6008,TimeZone.getDefault());
+	private Node i = new Node("I", "I 1", 7009, 6009,TimeZone.getDefault());
 	
 	private ClusterView clusterView;
 	

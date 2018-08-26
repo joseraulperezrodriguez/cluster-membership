@@ -1,6 +1,9 @@
 package org.cluster.membership.tester;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Properties;
 
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.util.FileCopyUtils;
@@ -9,14 +12,17 @@ import org.springframework.util.FileSystemUtils;
 public class Config {
 		
 	public static final String homePath = getHomePath();
-	public static final String casesPath = homePath + File.separator + "cases";
+	public static final String casesPath = homePath + File.separator + "cases";	
 	
-	private static final String protocolFolder = "protocol";	
-	private static final String configFolder = "config";
+	public static final String protocolFolder = "protocol";
+	public static final String templateFolder = "template";
+	public static final String configFolder = "config";
+	public static final String appProperties = "app.properties";
+	public static final String peerProperties = "peer.properties";
 	
-	public static String programPath;
-	public static String appPropertiesPath;
-	public static String peerPropertiesPath;
+	private static String protocolContainer;
+	private static String templateContainer;
+	private static String programName;
 	
 	private static String getHomePath() {
 		ApplicationHome home = new ApplicationHome(TesterEntry.class); 
@@ -27,28 +33,66 @@ public class Config {
 		return path;
 	}
 	
+	public static File createFolder(String path) throws Exception {
+		File folder = new File(path);
+		if(!folder.exists())folder.mkdir();
+		return folder;
+	}
 	
 	public static void prepareEnvironment(String programPath) throws Exception {
-		String protocolContainer = homePath + File.separator + protocolFolder;
+		Config.protocolContainer = homePath + File.separator + protocolFolder;
+		Config.templateContainer = protocolContainer + File.separator + templateFolder;
 		
-		File template = new File(protocolContainer);
-		if(!template.exists())template.mkdir();
+		createFolder(protocolContainer);		
+		createFolder(templateContainer);
 		
 		File sourceProgram = new File(programPath);
 		File sourceConfigFolder = new File(sourceProgram.getParent() + File.separator + configFolder);
 						
-		File templateProgram = new File(protocolContainer + File.separator + sourceProgram.getName());
-		File templateConfig = new File(protocolContainer + File.separator + configFolder);
+		File templateProgram = new File(templateContainer + File.separator + sourceProgram.getName());
+		templateProgram.setExecutable(true);
+		File templateConfig = new File(templateContainer + File.separator + configFolder);
 		
 		if(!templateProgram.exists())templateProgram.createNewFile();
 		
 		FileCopyUtils.copy(sourceProgram, templateProgram);
 		FileSystemUtils.copyRecursively(sourceConfigFolder, templateConfig);
 		
-		Config.programPath = templateProgram.getAbsolutePath();
-		Config.appPropertiesPath = protocolContainer + File.separator + configFolder + File.separator + "app.properties";
-		Config.peerPropertiesPath = protocolContainer + File.separator + configFolder + File.separator + "peer.properties";
-		
+		Config.programName = templateProgram.getName();
+				
 	}
+	
+	public static void newInstance(String id) throws Exception {
+		File folder = new File(Config.protocolContainer + File.separator + id);
+		File source = new File(Config.templateContainer);
+		
+		FileSystemUtils.copyRecursively(source, folder);
+	}
+	
+	public static void updateConfig(String id, String file, String key, String value) throws Exception {
+		String path = protocolContainer + File.separator + id + File.separator + configFolder +
+				File.separator + file;
+		
+		Properties p = new Properties();
+		p.load(new FileInputStream(path));
+		
+		p.setProperty(key, value);
+		
+		p.store(new FileOutputStream(path), "");		
+	}
+	
+	public static String programPath(String id) {
+		return protocolContainer + File.separator + id + File.separator + programName;
+	}
+	
+	public static File logPath(String id) {
+		return new File(protocolContainer + File.separator + id + File.separator + id + ".log");
+	}
+	
+	public static File cd(String id) {
+		return new File(protocolContainer + File.separator + id);
+	}
+	
+	
 
 }

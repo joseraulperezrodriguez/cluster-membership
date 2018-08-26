@@ -15,7 +15,7 @@
 		},
 		{
 			"type": "wait",
-			"data": 1000			
+			"data": 5000			
 		},
 		{
 			"type": "check",
@@ -37,34 +37,12 @@
 		},
 		{
 			"type": "wait",
-			"data": 1000			
+			"data": 5000			
 		},
 		{
 			"type": "check",
 			"data": {
 				"nodes": ["A","B"],
-				"dead-nodes": [],
-				"failing-nodes":[]
-			}
-		},
-		{	
-			"type": "node",	
-			"data": {
-				"id": "C",
-				"address": "localhost",
-				"node-port": 7003,
-				"service-port": 6003,
-				"time-zone": "Europe/Madrid"
-			}
-		},
-		{
-			"type": "wait",
-			"data": 1000
-		},
-		{
-			"type": "check",
-			"data": {
-				"nodes": ["A","B","C"],
 				"dead-nodes": [],
 				"failing-nodes":[]
 			}

@@ -2,8 +2,10 @@ package org.cluster.membership.protocol.net;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.cluster.membership.protocol.core.ClusterView;
+import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.MessageResponse;
@@ -16,6 +18,8 @@ import io.netty.channel.ChannelHandlerContext;
 
 @Component
 public class RequestReceiver {
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 	
 	private long lastMessage;
 	
@@ -32,11 +36,17 @@ public class RequestReceiver {
 	public long getLastMessage() {
 		return lastMessage;
 	}
+	
+	public void setLastMessage(long time) {
+		if(Global.isSynchronizing()) this.lastMessage = time;
+	}
 
 	public List<MessageResponse<?>> receive(Node from, List<Message> messages, ChannelHandlerContext ctx) {
-		lastMessage = System.currentTimeMillis();
-		
 		List<MessageResponse<?>> ans = new ArrayList<MessageResponse<?>>();
+		
+		if(Global.isSynchronizing()) return ans;
+		
+		lastMessage = System.currentTimeMillis();
 		
 		if(clusterView.isFailing(from)) clusterView.removeFailing(from);
 		
@@ -44,6 +54,8 @@ public class RequestReceiver {
 			Message keepAlive = new Message(MessageType.KEEP_ALIVE, from, MathOp.log2n(clusterView.getClusterSize()));
 			clusterView.keepAlive(keepAlive);
 		}
+		
+		logger.info("Messages received from " + from);
 		
 		for(Message m : messages) {
 			MessageType mt = m.getType();
@@ -53,11 +65,9 @@ public class RequestReceiver {
 			 * expiration time for a node*/
 			if(clusterView.isRumor(m) && !mt.equals(MessageType.SUSPECT_DEAD)) continue;
 			
+			logger.info("Handling " + m + " message");
+			
 			switch (mt) {
-				case SUBSCRIPTION: {
-					ans.add(messageHandler.handlerSubscription(m));
-					break;
-				}
 				case UNSUBSCRIPTION: {
 					messageHandler.handlerUnsubscription(m);
 					break;
@@ -83,11 +93,6 @@ public class RequestReceiver {
 					messageHandler.handlerRemoveFromCluster(m);
 					break;
 				} 
-				case UPDATE: {
-					messageHandler.handlerUpdateNode(m);
-					break;
-				}
-				
 			}
 			
 		}

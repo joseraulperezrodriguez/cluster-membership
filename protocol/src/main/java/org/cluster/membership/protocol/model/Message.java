@@ -41,6 +41,8 @@ public class Message implements Comparable<Message>, Serializable {
 		this.data = data;		
 	}
 	
+	public Message() {}
+	
 	public long getGeneratedTime() {
 		return generatedTime;
 	}

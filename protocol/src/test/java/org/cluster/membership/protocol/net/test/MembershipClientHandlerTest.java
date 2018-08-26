@@ -13,7 +13,7 @@ public class MembershipClientHandlerTest extends ChannelInboundHandlerAdapter {
 	public MembershipClientHandlerTest(Object toSend, Class<?> expected) {
 		this.toSend = toSend;
 		this.expected = expected;
-		this.asserted = false;
+		this.asserted = true;
 	}	
 	
 	public boolean getAsserted() {

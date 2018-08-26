@@ -3,7 +3,9 @@ package org.cluster.membership.protocol.net.core;
 import org.cluster.membership.protocol.net.RequestReceiver;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelHandler.Sharable;
 
+@Sharable
 public class MembershipServerHandlerDebug extends MembershipServerHandler {
 	
 	private boolean paused;

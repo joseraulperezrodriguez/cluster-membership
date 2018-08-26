@@ -14,6 +14,8 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class MembershipDirectClientHandler extends MembershipClientHandler {
 	
+	//private Logger logger = Logger.getLogger(MembershipDirectClientHandler.class.getName());
+	
 	private TreeSet<Message> indirectMessages;
 	private boolean directReceived;
 	

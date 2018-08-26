@@ -8,7 +8,7 @@ public class MathOp {
 		
 		while((base*=2) <= n*2) iterations++;
 		
-		return iterations;
+		return iterations + 1;
 		
 	}
 	

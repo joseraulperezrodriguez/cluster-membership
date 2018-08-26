@@ -42,15 +42,15 @@ public class MathOpTest
 		int log2_8 = MathOp.log2n(8);
 		
 		
-		assert(log2_0 == 0);
-		assert(log2_1 == 0);
-		assert(log2_2 == 1);
-		assert(log2_3 == 1);
-		assert(log2_4 == 2);
-		assert(log2_5 == 2);
-		assert(log2_6 == 2);
-		assert(log2_7 == 2);
-		assert(log2_8 == 3);		
+		assert(log2_0 == 1);
+		assert(log2_1 == 1);
+		assert(log2_2 == 2);
+		assert(log2_3 == 2);
+		assert(log2_4 == 3);
+		assert(log2_5 == 3);
+		assert(log2_6 == 3);
+		assert(log2_7 == 3);
+		assert(log2_8 == 4);		
 		
     }
     

@@ -80,10 +80,10 @@ public class Node implements Comparable<Node> {
 	}
 	
 	public String commandLineParamString(int idx) {
-		return "--id." + idx + "=" + id +
-				"--address." + idx + "=" + address +
-				"--port." + idx + "=" + protocolPort +
-				"--time-zone." + idx + "=" + timeZone;
+		return " --id." + idx + "=" + id +
+				" --address." + idx + "=" + address +
+				" --port." + idx + "=" + protocolPort +
+				" --time-zone." + idx + "=" + timeZone;
 	}
 
 }

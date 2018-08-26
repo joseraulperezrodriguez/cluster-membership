@@ -1,5 +1,7 @@
 package org.cluster.membership.protocol.net.test;
 
+import java.util.concurrent.TimeUnit;
+
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.model.Node;
 
@@ -29,20 +31,22 @@ public class MembershipClientTest {
              .channel(NioSocketChannel.class)
              .handler(new ChannelInitializer<SocketChannel>() {
                 @Override
-                public void initChannel(SocketChannel ch) throws Exception {
+                public void initChannel(SocketChannel ch) throws Exception {                	
                     ChannelPipeline p = ch.pipeline();
+                    p.addLast(new ReadTimeoutHandler(Config.CONNECTION_TIME_OUT_MS * 2, TimeUnit.MILLISECONDS));
+                    
                     p.addLast(new JdkZlibEncoder(),
-                  		  new JdkZlibDecoder());
-                    p.addLast(
-                    		new ReadTimeoutHandler((int)(Config.CONNECTION_TIME_OUT_MS / 1000)),
+                  		  	  new JdkZlibDecoder());
+                    p.addLast(                    		
                             new ObjectEncoder(),
                             new ObjectDecoder(Config.MAX_OBJECT_SIZE,ClassResolvers.cacheDisabled(null)),
                             handler);
+                    
                 }
              });
 
             // Start the connection attempt.
-            b.connect(to.getAddress(), to.getPort()).sync().channel().closeFuture().sync();
+            b.connect(to.getAddress(), to.getProtocolPort()).sync().channel().closeFuture().sync();
         }
         catch(InterruptedException e) {
             group.shutdownGracefully();

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class RandomService {
 	
+	//private Logger logger = Logger.getLogger(RandomService.class.getName());
+	
 	private Random random;
 	
 	public RandomService() {
@@ -16,10 +18,10 @@ public class RandomService {
 	}
 	
 	public Node getRandom(ClusterView clusterView) {
-		int size = clusterView.getClusterSize() - 1;
+		int size = clusterView.getClusterSize();
 		int doubleSize = size * 2;
 
-		if(size == 
+		if(size - 1 == 
 				clusterView.getFailedSize() + 
 				clusterView.getSuspectedSize()) return null;
 		
