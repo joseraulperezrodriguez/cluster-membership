@@ -7,11 +7,6 @@ import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
-/**
- * Hello world!
- *
- */
-
 @SpringBootApplication
 public class TesterEntry implements ApplicationRunner {
     
@@ -26,12 +21,9 @@ public class TesterEntry implements ApplicationRunner {
     }
 	
 	@Override
-    public void run(ApplicationArguments args) throws Exception {
-	
+    public void run(ApplicationArguments args) throws Exception {	
     	String pathToProgram = args.getOptionValues("program-path").get(0);    			
-		//String pathToProgram = "";
-    	Config.prepareEnvironment(pathToProgram);
-    	
+    	Config.prepareEnvironment(pathToProgram);    	
 		Runner.runTemplates();
     }
 	

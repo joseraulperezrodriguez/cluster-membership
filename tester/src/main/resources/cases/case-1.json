@@ -1,6 +1,6 @@
 {	
 	"config": {
-		"iteration-interval-ms": 1000	
+		"iteration.interval.ms": 3000	
 	},
 	"procedure": [
 		{
@@ -15,7 +15,7 @@
 		},
 		{
 			"type": "wait",
-			"data": 5000			
+			"data": 7000			
 		},
 		{
 			"type": "check",
@@ -37,7 +37,7 @@
 		},
 		{
 			"type": "wait",
-			"data": 5000			
+			"data": 7000			
 		},
 		{
 			"type": "check",

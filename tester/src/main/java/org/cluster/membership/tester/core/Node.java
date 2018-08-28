@@ -82,8 +82,9 @@ public class Node implements Comparable<Node> {
 	public String commandLineParamString(int idx) {
 		return " --id." + idx + "=" + id +
 				" --address." + idx + "=" + address +
-				" --port." + idx + "=" + protocolPort +
-				" --time-zone." + idx + "=" + timeZone;
+				" --protocol.port." + idx + "=" + protocolPort +
+				" --server.port." + idx + "=" + servicePort +
+				" --time.zone." + idx + "=" + timeZone;
 	}
 
 }

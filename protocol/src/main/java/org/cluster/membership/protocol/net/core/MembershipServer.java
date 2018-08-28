@@ -12,6 +12,8 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.compression.JdkZlibDecoder;
+import io.netty.handler.codec.compression.JdkZlibEncoder;
 import io.netty.handler.codec.serialization.ClassResolvers;
 import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
@@ -62,10 +64,9 @@ public class MembershipServer extends Thread {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
                     ChannelPipeline p = ch.pipeline();                 
-                    /*p.addLast(new JdkZlibEncoder(),
-                  		  	  new JdkZlibDecoder());*/
+                    p.addLast(new JdkZlibEncoder(),
+                  		  	  new JdkZlibDecoder());
                     p.addLast(
-                    		//new ReadTimeoutHandler(Config.CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS),
                             objectEncoder,
                             new ObjectDecoder(Config.MAX_OBJECT_SIZE, ClassResolvers.cacheDisabled(null)),
                             membershipServerHandler);

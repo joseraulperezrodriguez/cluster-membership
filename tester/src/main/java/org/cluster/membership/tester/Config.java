@@ -14,13 +14,12 @@ public class Config {
 	public static final String homePath = getHomePath();
 	public static final String casesPath = homePath + File.separator + "cases";	
 	
-	public static final String protocolFolder = "protocol";
+	public static final String instancesFolder = "instances";
 	public static final String templateFolder = "template";
 	public static final String configFolder = "config";
 	public static final String appProperties = "app.properties";
-	public static final String peerProperties = "peer.properties";
 	
-	private static String protocolContainer;
+	private static String instancesContainer;
 	private static String templateContainer;
 	private static String programName;
 	
@@ -40,10 +39,10 @@ public class Config {
 	}
 	
 	public static void prepareEnvironment(String programPath) throws Exception {
-		Config.protocolContainer = homePath + File.separator + protocolFolder;
-		Config.templateContainer = protocolContainer + File.separator + templateFolder;
+		Config.instancesContainer = homePath + File.separator + instancesFolder;
+		Config.templateContainer = instancesContainer + File.separator + templateFolder;
 		
-		createFolder(protocolContainer);		
+		createFolder(instancesContainer);		
 		createFolder(templateContainer);
 		
 		File sourceProgram = new File(programPath);
@@ -63,15 +62,15 @@ public class Config {
 	}
 	
 	public static void newInstance(String id) throws Exception {
-		File folder = new File(Config.protocolContainer + File.separator + id);
+		File folder = new File(Config.instancesContainer + File.separator + id);
 		File source = new File(Config.templateContainer);
 		
 		FileSystemUtils.copyRecursively(source, folder);
 	}
 	
-	public static void updateConfig(String id, String file, String key, String value) throws Exception {
-		String path = protocolContainer + File.separator + id + File.separator + configFolder +
-				File.separator + file;
+	public static void updateConfig(String id, String key, String value) throws Exception {
+		String path = instancesContainer + File.separator + id + File.separator + configFolder +
+				File.separator + appProperties;
 		
 		Properties p = new Properties();
 		p.load(new FileInputStream(path));
@@ -82,15 +81,15 @@ public class Config {
 	}
 	
 	public static String programPath(String id) {
-		return protocolContainer + File.separator + id + File.separator + programName;
+		return instancesContainer + File.separator + id + File.separator + programName;
 	}
 	
 	public static File logPath(String id) {
-		return new File(protocolContainer + File.separator + id + File.separator + id + ".log");
+		return new File(instancesContainer + File.separator + id + File.separator + id + ".log");
 	}
 	
 	public static File cd(String id) {
-		return new File(protocolContainer + File.separator + id);
+		return new File(instancesContainer + File.separator + id);
 	}
 	
 	

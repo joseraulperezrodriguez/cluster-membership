@@ -4,6 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.cluster.membership.protocol.core.ClusterView;
+import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.Node;
 import org.cluster.membership.protocol.net.RestClient;
@@ -68,7 +69,9 @@ public class ClusterNodeEntry implements ApplicationRunner {
     			return;
     		}
     		logger.log(Level.SEVERE, "all seeds failed");
+    		Global.shutdown(10);
         	throw new Exception("Not able to complete subscription in any seed node");
+        	
     	}
 		
     }

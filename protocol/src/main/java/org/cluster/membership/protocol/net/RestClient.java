@@ -12,7 +12,6 @@ import org.springframework.web.client.RestTemplate;
 public class RestClient {
 	
 	private RestTemplate template;
-	//private WebCli
 	
 	public RestClient() {
 		this.template = new RestTemplate();
@@ -21,24 +20,6 @@ public class RestClient {
 	private String getEndPoint(Node to, String path) {
 		return "http://" + to.getAddress() + ":" + to.getServicePort() + "/" + path;
 	}
-	
-	/*public boolean sendCluserData(Node node, ClusterData clusterData) {
-		try {
-			URI uri = new URI(getEndPoint(node, "membership/update/full-view"));
-			return template.postForObject(uri, clusterData, Boolean.class);
-		} catch (Exception e) {
-			return false;
-		}
-	}
-	
-	public boolean sendCommitLog(Node node, List<Message> clusterData) {
-		try {
-			URI uri = new URI(getEndPoint(node, "membership/update/commit-log"));
-			return template.postForObject(uri, clusterData, Boolean.class);
-		} catch (Exception e) {
-			return false;
-		}
-	}*/
 	
 	public ClusterData subscribe(Node to, Node subscriptor) {
 		try {

@@ -55,9 +55,6 @@ public class DList implements Serializable {
 
 	public boolean contains(Node nd) {
 		return hashed.contains(nd);
-		/*Tuple2<Integer, Integer> bs = bs(nd);		
-		return (bs.getA() == bs.getB() && bs.getA() < nodes.size() && 
-				this.get(bs.getA()).getId().equals(nd.getId()));*/
 	}
 
 	public void remove(Node node) {

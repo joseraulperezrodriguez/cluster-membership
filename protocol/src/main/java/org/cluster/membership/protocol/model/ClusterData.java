@@ -16,11 +16,7 @@ public class ClusterData implements Serializable {
 	private Set<Message> rumorsToSend;
 	
 	private Set<ValuePriorityEntry<Node, Long>> suspectingNodesTimeout;
-	
-	//private ValuePrioritySet<ValuePriorityEntry<Node, Long>> suspectingNodesTimeout;
-
-	//private ValuePrioritySet<Message> rumorsToSend;
-	
+		
 	public ClusterData() {
 		nodes = new DList();
 		rumorsToSend = new TreeSet<Message>();

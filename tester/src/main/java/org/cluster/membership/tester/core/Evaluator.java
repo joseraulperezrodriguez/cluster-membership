@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.cluster.membership.tester.Config;
 
@@ -24,6 +26,7 @@ public class Evaluator {
 
 	private Random random;
 
+	private Logger logger = Logger.getLogger(Evaluator.class.getName());
 
 	public Evaluator() {
 		createdNodes = new HashMap<String, Node>();
@@ -56,28 +59,40 @@ public class Evaluator {
 		JsonNode procedure = node.get("procedure");
 
 		Iterator<JsonNode> iterator = procedure.iterator();
-
+		List<Process> processes  = new ArrayList<Process>();
+		boolean testPassed = true;
 		while(iterator.hasNext()) {
 			JsonNode value = iterator.next();
-			action(value, config);			
+			boolean success = action(value, config, processes);
+			if(!success) {
+				testPassed = false;
+				logger.log(Level.SEVERE, "the step: '" + value.toString() + "', has failed to exeute successfuly");
+				break;
+			}
 		}
+		for(Process p : processes) p.destroy();		
 
-		return false; 
+		return testPassed; 
 	}
 	
-	private void action(JsonNode node, JsonNode config) throws Exception {
+	private boolean action(JsonNode node, JsonNode config, List<Process> processes) throws Exception {
 
 		JsonNode data = node.get("data");
 		String type = node.get("type").asText(); 
 		//System.out.println(type);
 		switch(type) {
-		case "node":  createAndLaunchNode(data, config); break;			
-		case "wait":  wait(data); break;
-		/*case "pause":  pause(data); break;
-		case "unsubscribe":  unsubscribe(data); break;
-		case "check":  check(data); break;*/
+			case "node":  processes.add(createAndLaunchNode(data, config)); break;			
+			case "wait":  wait(data); break;
+			case "pause":  pause(data); break;
+			case "unsubscribe":  unsubscribe(data); break;
+			case "check": { 
+				boolean success = check(data);
+				if(!success) return false;
+				break;
+			
+			}
 		}
-		System.out.println(type + " executed");
+		return true;
 
 	}
 
@@ -90,13 +105,13 @@ public class Evaluator {
 			String key = entry.getKey();
 			String value = entry.getValue().toString();
 
-			Config.updateConfig(Config.templateFolder,Config.appProperties, key, value);
+			Config.updateConfig(Config.templateFolder, key, value);
 		}
 
 	}
 	
 
-	private void createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {		
+	private Process createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {		
 		String id = data.get("id").asText();
 		String address = data.get("address").asText();
 		int nodePort = data.get("node-port").asInt();
@@ -107,24 +122,23 @@ public class Evaluator {
 		
 		Config.newInstance(id);
 
-		Config.updateConfig(id, Config.appProperties, "server.port", String.valueOf(servicePort));
-
-		Config.updateConfig(id, Config.peerProperties, "id", id);
-		Config.updateConfig(id, Config.peerProperties, "address", address);
-		Config.updateConfig(id, Config.peerProperties, "port", String.valueOf(nodePort));
-		Config.updateConfig(id, Config.peerProperties, "time-zone", timeZone);
+		Config.updateConfig(id, "id", id);
+		Config.updateConfig(id, "address", address);
+		Config.updateConfig(id, "protocol.port", String.valueOf(nodePort));
+		Config.updateConfig(id, "server.port", String.valueOf(servicePort));
+		Config.updateConfig(id, "time.zone", timeZone);
 
 		Node commandLineParam = createdNodes.size() > 0 ? getRandomNode() : null;		
 		String args = commandLineParam != null ? commandLineParam.commandLineParamString(1) : "";		
-		String command = "java -jar " + Config.programPath(id) + " " + args.trim() + " --mode=DEBUG";	
-		System.out.println(command);
+		String command = "java -jar " + Config.programPath(id) + " " + args.trim() + " --mode=DEBUG";
 		
 		ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
 		processBuilder.directory(Config.cd(id));
 		processBuilder.redirectErrorStream(true);
-		processBuilder.redirectOutput(Config.logPath(id));
-		processBuilder.start();
+		processBuilder.redirectOutput(Config.logPath(id));		
 		createdNodes.put(id, node);
+		
+		return processBuilder.start();
 
 	}
 
@@ -146,39 +160,64 @@ public class Evaluator {
 		assert(HttpClient.unsubscribe(node));
 	}
 
-	private void check(JsonNode data) {
+	private boolean check(JsonNode data) {
 
 		List<String> nodes = iteratorToList(data.get("nodes").iterator());
 		List<String> deads = iteratorToList(data.get("dead-nodes").iterator());
 		List<String> failing = iteratorToList(data.get("failing-nodes").iterator());
 
+		boolean success = true;
 		for(Node node : createdNodes.values()) {
 			NodesDebug deb = HttpClient.nodes(node);
-			assert(equalLists(nodes, deb.getNodes()));
-			assert(equalLists(deads, deb.getDead()));
-			assert(equalLists(failing, deb.getFailing()));						
+			
+			if(differentLists(nodes, deb.getNodes())) {
+				logger.log(Level.SEVERE, "error comparing \"cluster nodes\" " + node.getId() + " against current state");
+				logger.info("expected: " + listToString(nodes));
+				logger.info("result: " + listToString(deb.getNodes()));
+				success = false;
+			}
+			if(differentLists(deads, deb.getDead())) {
+				logger.log(Level.SEVERE, "error comparing \"dead nodes\" " + node.getId() + " against current state");
+				logger.info("expected: " + listToString(deads));
+				logger.info("result: " + listToString(deb.getDead()));
+				success = false;
+			}
+			if(differentLists(failing, deb.getFailing())) {
+				logger.log(Level.SEVERE, "error comparing \"failing nodes\" " + node.getId() + " against current state");
+				logger.info("expected: " + listToString(failing));
+				logger.info("result: " + listToString(deb.getFailing()));
+				success = false;
+			}
 		}
+		return success;
 
 	}
 	
-	private boolean equalLists(List<String> a, List<String> b) {
-		if(a.size() != b.size()) return false;
+	private String listToString(List<String> list) {
+		StringBuilder strList = new StringBuilder();
+		Collections.sort(list);		
+		for(String s: list) strList.append(s + " ");		
+		return strList.toString();
+	}
+	
+	private boolean differentLists(List<String> a, List<String> b) {
+		if(a.size() != b.size()) return true;
 		
 		Collections.sort(a);
 		Collections.sort(b);
 		
 		for(int i = 0; i < a.size(); i++)
-			if(a.get(i) != b.get(i)) 
-				return false;
+			if(!a.get(i).equals(b.get(i))) 
+				return true;
 			
-		return true;	
+		return false;	
 	}
 
 	private List<String> iteratorToList(Iterator<JsonNode> iterator) {
 		List<String> list = new ArrayList<String>();		
 		while(iterator.hasNext()) {
 			JsonNode current = iterator.next();
-			list.add(current.toString());			
+			list.add(current.asText());			
 		}		
 		return list;
 	}
