@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.Node;
 import org.cluster.membership.protocol.model.ResponseDescription;
 import org.cluster.membership.protocol.net.ResponseHandler;
 

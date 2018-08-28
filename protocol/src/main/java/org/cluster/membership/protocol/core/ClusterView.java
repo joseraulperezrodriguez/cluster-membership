@@ -8,16 +8,16 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import org.cluster.membership.common.model.Node;
+import org.cluster.membership.common.model.util.DateTime;
+import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.Node;
 import org.cluster.membership.protocol.model.SynchronTypeWrapper;
 import org.cluster.membership.protocol.structures.DList;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
 import org.cluster.membership.protocol.structures.ValuePrioritySet;
-import org.cluster.membership.protocol.util.DateTime;
-import org.cluster.membership.protocol.util.MathOp;
 import org.springframework.stereotype.Component;
 
 

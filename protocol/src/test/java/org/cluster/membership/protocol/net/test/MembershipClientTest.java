@@ -2,8 +2,8 @@ package org.cluster.membership.protocol.net.test;
 
 import java.util.concurrent.TimeUnit;
 
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.Config;
-import org.cluster.membership.protocol.model.Node;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInboundHandlerAdapter;

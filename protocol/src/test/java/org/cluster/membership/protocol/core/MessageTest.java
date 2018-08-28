@@ -2,8 +2,8 @@ package org.cluster.membership.protocol.core;
 
 import java.util.TimeZone;
 
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.Node;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

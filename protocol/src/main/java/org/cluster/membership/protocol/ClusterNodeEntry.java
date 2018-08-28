@@ -3,10 +3,10 @@ package org.cluster.membership.protocol;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.ClusterData;
-import org.cluster.membership.protocol.model.Node;
 import org.cluster.membership.protocol.net.RestClient;
 import org.cluster.membership.protocol.net.core.MembershipServer;
 import org.springframework.beans.factory.annotation.Autowired;

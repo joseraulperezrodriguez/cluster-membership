@@ -2,7 +2,7 @@ package org.cluster.membership.protocol.structures;
 
 import java.util.TimeZone;
 
-import org.cluster.membership.protocol.model.Node;
+import org.cluster.membership.common.model.Node;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -45,55 +45,55 @@ public class DListTest
     	nodes.add(new Node("H", "H 1", 7008, 6008, TimeZone.getDefault()));
     	nodes.add(new Node("I", "I 1", 7009, 6009, TimeZone.getDefault()));
     	
-    	nodes.remove(new Node("A",null,0,0,null));
-    	assert(!nodes.contains(new Node("A",null,0,0,null)) && nodes.size() == 8);
-    	nodes.remove(new Node("A",null,0,0,null));
-    	assert(!nodes.contains(new Node("A",null,0,0,null)) && nodes.size() == 8);
+    	nodes.remove(new Node("A",null,0,0,""));
+    	assert(!nodes.contains(new Node("A",null,0,0,"")) && nodes.size() == 8);
+    	nodes.remove(new Node("A",null,0,0,""));
+    	assert(!nodes.contains(new Node("A",null,0,0,"")) && nodes.size() == 8);
     	
-    	nodes.remove(new Node("B",null,0,0,null));
-    	assert(!nodes.contains(new Node("B",null,0,0,null)) && nodes.size() == 7);
-    	nodes.remove(new Node("B",null,0,0,null));
-    	assert(!nodes.contains(new Node("B",null,0,0,null)) && nodes.size() == 7);
+    	nodes.remove(new Node("B",null,0,0,""));
+    	assert(!nodes.contains(new Node("B","",0,0,"")) && nodes.size() == 7);
+    	nodes.remove(new Node("B",null,0,0,""));
+    	assert(!nodes.contains(new Node("B",null,0,0,"")) && nodes.size() == 7);
     	
-    	nodes.remove(new Node("C",null,0,0,null));
-    	assert(!nodes.contains(new Node("C",null,0,0,null)) && nodes.size() == 6);
-    	nodes.remove(new Node("C",null,0,0,null));
-    	assert(!nodes.contains(new Node("C",null,0,0,null)) && nodes.size() == 6);
+    	nodes.remove(new Node("C",null,0,0,""));
+    	assert(!nodes.contains(new Node("C",null,0,0,"")) && nodes.size() == 6);
+    	nodes.remove(new Node("C",null,0,0,""));
+    	assert(!nodes.contains(new Node("C",null,0,0,"")) && nodes.size() == 6);
     	
-    	nodes.remove(new Node("D",null,0,0,null));
-    	assert(!nodes.contains(new Node("D",null,0,0,null)) && nodes.size() == 5);
-    	nodes.remove(new Node("D",null,0,0,null));
-    	assert(!nodes.contains(new Node("D",null,0,0,null)) && nodes.size() == 5);
+    	nodes.remove(new Node("D",null,0,0,""));
+    	assert(!nodes.contains(new Node("D",null,0,0,"")) && nodes.size() == 5);
+    	nodes.remove(new Node("D",null,0,0,""));
+    	assert(!nodes.contains(new Node("D",null,0,0,"")) && nodes.size() == 5);
     	
-    	nodes.remove(new Node("E",null,0,0,null));
-    	assert(!nodes.contains(new Node("E",null,0,0,null)) && nodes.size() == 4);
-    	nodes.remove(new Node("E",null,0,0,null));
-    	assert(!nodes.contains(new Node("E",null,0,0,null)) && nodes.size() == 4);
+    	nodes.remove(new Node("E",null,0,0,""));
+    	assert(!nodes.contains(new Node("E",null,0,0,"")) && nodes.size() == 4);
+    	nodes.remove(new Node("E",null,0,0,""));
+    	assert(!nodes.contains(new Node("E",null,0,0,"")) && nodes.size() == 4);
     	
-    	nodes.remove(new Node("F",null,0,0,null));
-    	assert(!nodes.contains(new Node("F",null,0,0,null)) && nodes.size() == 3);
-    	nodes.remove(new Node("F",null,0,0,null));
-    	assert(!nodes.contains(new Node("F",null,0,0,null)) && nodes.size() == 3);
+    	nodes.remove(new Node("F",null,0,0,""));
+    	assert(!nodes.contains(new Node("F",null,0,0,"")) && nodes.size() == 3);
+    	nodes.remove(new Node("F",null,0,0,""));
+    	assert(!nodes.contains(new Node("F",null,0,0,"")) && nodes.size() == 3);
     	
-    	nodes.remove(new Node("G",null,0,0,null));
-    	assert(!nodes.contains(new Node("G",null,0,0,null)) && nodes.size() == 2);
-    	nodes.remove(new Node("G",null,0,0,null));
-    	assert(!nodes.contains(new Node("G",null,0,0,null)) && nodes.size() == 2);
+    	nodes.remove(new Node("G",null,0,0,""));
+    	assert(!nodes.contains(new Node("G",null,0,0,"")) && nodes.size() == 2);
+    	nodes.remove(new Node("G",null,0,0,""));
+    	assert(!nodes.contains(new Node("G",null,0,0,"")) && nodes.size() == 2);
     	
-    	nodes.remove(new Node("H",null,0,0,null));
-    	assert(!nodes.contains(new Node("H",null,0,0,null)) && nodes.size() == 1);
-    	nodes.remove(new Node("H",null,0,0,null));
-    	assert(!nodes.contains(new Node("H",null,0,0,null)) && nodes.size() == 1);
+    	nodes.remove(new Node("H",null,0,0,""));
+    	assert(!nodes.contains(new Node("H",null,0,0,"")) && nodes.size() == 1);
+    	nodes.remove(new Node("H",null,0,0,""));
+    	assert(!nodes.contains(new Node("H",null,0,0,"")) && nodes.size() == 1);
     	
-    	nodes.remove(new Node("I",null,0,0,null));
-    	assert(!nodes.contains(new Node("I",null,0,0,null)) && nodes.size() == 0);
-    	nodes.remove(new Node("I",null,0,0,null));
-    	assert(!nodes.contains(new Node("I",null,0,0,null)) && nodes.size() == 0);
+    	nodes.remove(new Node("I",null,0,0,""));
+    	assert(!nodes.contains(new Node("I",null,0,0,"")) && nodes.size() == 0);
+    	nodes.remove(new Node("I",null,0,0,""));
+    	assert(!nodes.contains(new Node("I",null,0,0,"")) && nodes.size() == 0);
     	
-    	nodes.remove(new Node("I",null,0,0,null));
-    	assert(!nodes.contains(new Node("I",null,0,0,null)) && nodes.size() == 0);
-    	nodes.remove(new Node("I",null,0,0,null));
-    	assert(!nodes.contains(new Node("I",null,0,0,null)) && nodes.size() == 0);
+    	nodes.remove(new Node("I",null,0,0,""));
+    	assert(!nodes.contains(new Node("I",null,0,0,"")) && nodes.size() == 0);
+    	nodes.remove(new Node("I",null,0,0,""));
+    	assert(!nodes.contains(new Node("I",null,0,0,"")) && nodes.size() == 0);
     	
     }
     
@@ -109,18 +109,18 @@ public class DListTest
     	nodes.add(new Node("H", "H 1", 7008, 6008,  TimeZone.getDefault()));
     	nodes.add(new Node("I", "I 1", 7009, 6009,  TimeZone.getDefault()));
     	
-    	assert(nodes.contains(new Node("A", null, 0, 0, null)));
-    	assert(nodes.contains(new Node("B", null, 0, 0, null)));
-    	assert(nodes.contains(new Node("C", null, 0, 0, null)));
-    	assert(nodes.contains(new Node("D", null, 0, 0, null)));
-    	assert(nodes.contains(new Node("E", null, 0, 0, null)));
-    	assert(nodes.contains(new Node("F", null, 0, 0, null)));
-    	assert(nodes.contains(new Node("G", null, 0, 0, null)));
-    	assert(nodes.contains(new Node("H", null, 0, 0, null)));
-    	assert(nodes.contains(new Node("I", null, 0, 0, null)));
+    	assert(nodes.contains(new Node("A", null, 0, 0, "")));
+    	assert(nodes.contains(new Node("B", null, 0, 0, "")));
+    	assert(nodes.contains(new Node("C", null, 0, 0, "")));
+    	assert(nodes.contains(new Node("D", null, 0, 0, "")));
+    	assert(nodes.contains(new Node("E", null, 0, 0, "")));
+    	assert(nodes.contains(new Node("F", null, 0, 0, "")));
+    	assert(nodes.contains(new Node("G", null, 0, 0, "")));
+    	assert(nodes.contains(new Node("H", null, 0, 0, "")));
+    	assert(nodes.contains(new Node("I", null, 0, 0, "")));
     	
-    	assert(!nodes.contains(new Node("AA", null, 0, 0, null)));
-    	assert(!nodes.contains(new Node("II", null, 0, 0, null)));
+    	assert(!nodes.contains(new Node("AA", null, 0, 0, "")));
+    	assert(!nodes.contains(new Node("II", null, 0, 0, "")));
     	
     }
     
@@ -128,14 +128,14 @@ public class DListTest
     	DList nodes = new DList();    	
     	nodes.add(new Node("A", "A 1", 7001, 6001,  TimeZone.getDefault()));    	
     	
-    	assert(nodes.contains(new Node("A", null, 0, 0, null)));    	    	
-    	assert(!nodes.contains(new Node("AA", null, 0, 0, null)));    	    	
+    	assert(nodes.contains(new Node("A", null, 0, 0, "")));    	    	
+    	assert(!nodes.contains(new Node("AA", null, 0, 0, "")));    	    	
     }
     
     public void testContains3() {
     	DList nodes = new DList();    	        
     	
-    	assert(!nodes.contains(new Node("A", null, 0, 0, null)));    	    	    	    	    
+    	assert(!nodes.contains(new Node("A", null, 0, 0, "")));    	    	    	    	    
     }
     
     public void testInsertion1() {

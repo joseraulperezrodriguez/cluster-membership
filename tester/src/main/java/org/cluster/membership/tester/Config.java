@@ -42,11 +42,11 @@ public class Config {
 		Config.instancesContainer = homePath + File.separator + instancesFolder;
 		Config.templateContainer = instancesContainer + File.separator + templateFolder;
 		
-		createFolder(instancesContainer);		
+		createFolder(instancesContainer);
 		createFolder(templateContainer);
 		
 		File sourceProgram = new File(programPath);
-		File sourceConfigFolder = new File(sourceProgram.getParent() + File.separator + configFolder);
+		File sourceConfigFolder = new File(homePath + File.separator + configFolder);
 						
 		File templateProgram = new File(templateContainer + File.separator + sourceProgram.getName());
 		templateProgram.setExecutable(true);

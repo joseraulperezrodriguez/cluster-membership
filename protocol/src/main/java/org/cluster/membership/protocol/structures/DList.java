@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.cluster.membership.protocol.model.Node;
-import org.cluster.membership.protocol.util.Tuple2;
+import org.cluster.membership.common.model.Node;
+import org.cluster.membership.common.model.util.Tuple2;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 

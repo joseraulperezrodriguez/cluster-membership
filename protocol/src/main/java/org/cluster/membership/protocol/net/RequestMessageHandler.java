@@ -2,6 +2,8 @@ package org.cluster.membership.protocol.net;
 
 import java.util.TimeZone;
 
+import org.cluster.membership.common.model.util.DateTime;
+import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.MessageType;
@@ -9,8 +11,6 @@ import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.MessageResponse;
 import org.cluster.membership.protocol.net.core.MembershipClient;
 import org.cluster.membership.protocol.net.core.MembershipIndirectClientHandler;
-import org.cluster.membership.protocol.util.DateTime;
-import org.cluster.membership.protocol.util.MathOp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

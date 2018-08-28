@@ -12,6 +12,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.cluster.membership.common.debug.StateInfo;
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.tester.Config;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -110,6 +112,13 @@ public class Evaluator {
 
 	}
 	
+	private String generateNodeCommandLineArguments(Node node, int idx) {
+		return " --id." + idx + "=" + node.getId() +
+				" --address." + idx + "=" + node.getAddress() +
+				" --protocol.port." + idx + "=" + node.getProtocolPort() +
+				" --server.port." + idx + "=" + node.getServicePort() +
+				" --time.zone." + idx + "=" + node.getTimeZone().getID();
+	}
 
 	private Process createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {		
 		String id = data.get("id").asText();
@@ -129,7 +138,7 @@ public class Evaluator {
 		Config.updateConfig(id, "time.zone", timeZone);
 
 		Node commandLineParam = createdNodes.size() > 0 ? getRandomNode() : null;		
-		String args = commandLineParam != null ? commandLineParam.commandLineParamString(1) : "";		
+		String args = commandLineParam != null ? generateNodeCommandLineArguments(commandLineParam,1) : "";		
 		String command = "java -jar " + Config.programPath(id) + " " + args.trim() + " --mode=DEBUG";
 		
 		ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
@@ -168,7 +177,7 @@ public class Evaluator {
 
 		boolean success = true;
 		for(Node node : createdNodes.values()) {
-			NodesDebug deb = HttpClient.nodes(node);
+			StateInfo deb = HttpClient.nodes(node);
 			
 			if(differentLists(nodes, deb.getNodes())) {
 				logger.log(Level.SEVERE, "error comparing \"cluster nodes\" " + node.getId() + " against current state");

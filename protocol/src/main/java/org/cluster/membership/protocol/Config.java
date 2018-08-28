@@ -11,7 +11,7 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import org.cluster.membership.protocol.model.Node;
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.structures.DList;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.system.ApplicationHome;

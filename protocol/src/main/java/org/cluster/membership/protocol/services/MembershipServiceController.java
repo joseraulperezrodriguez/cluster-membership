@@ -3,11 +3,11 @@ package org.cluster.membership.protocol.services;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.cluster.membership.common.debug.StateInfo;
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.core.ClusterView;
-import org.cluster.membership.protocol.debug.NodesDebug;
 import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.Node;
 import org.cluster.membership.protocol.model.SynchronTypeWrapper;
 import org.cluster.membership.protocol.net.core.MembershipServer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,12 +55,12 @@ public class MembershipServiceController {
 	}
 	
 	@GetMapping("/nodes-debug")
-	public NodesDebug nodesDebug() {
+	public StateInfo nodesDebug() {
 		List<String> nodes = clusterView.nodesDebug();
 		List<String> dead = clusterView.deadNodes();
 		List<String> failed = clusterView.failingNodes();
 				
-		return new NodesDebug(nodes, dead, failed);
+		return new StateInfo(nodes, dead, failed);
 	}
 		
 	@PostMapping("/update/full-view")

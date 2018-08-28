@@ -1,21 +1,24 @@
-package org.cluster.membership.tester.core;
+package org.cluster.membership.common.debug;
 
 import java.util.List;
 
-public class NodesDebug {
+public class StateInfo {
 	
 	private List<String> nodes;
 	private List<String> dead;
 	private List<String> failing;
 	
-	public NodesDebug() {}
-	
-	public NodesDebug(List<String> nodes, List<String> dead, List<String> failing) {
+	public StateInfo(List<String> nodes, List<String> dead, List<String> failing) {
 		super();
 		this.nodes = nodes;
 		this.dead = dead;
 		this.failing = failing;
 	}
+	
+	public StateInfo() {
+		super();
+	}
+	
 	public List<String> getNodes() {
 		return nodes;
 	}

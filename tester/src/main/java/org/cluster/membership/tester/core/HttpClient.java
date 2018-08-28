@@ -1,5 +1,7 @@
 package org.cluster.membership.tester.core;
 
+import org.cluster.membership.common.debug.StateInfo;
+import org.cluster.membership.common.model.Node;
 import org.springframework.web.client.RestTemplate;
 
 public class HttpClient {
@@ -28,9 +30,9 @@ public class HttpClient {
 				Boolean.class);
 	}
 	
-	public static NodesDebug nodes(Node node) {
+	public static StateInfo nodes(Node node) {
 		return restTemplate.getForObject(getAddress(node, "/membership/nodes-debug"), 
-				NodesDebug.class);
+				StateInfo.class);
 	}
 
 }

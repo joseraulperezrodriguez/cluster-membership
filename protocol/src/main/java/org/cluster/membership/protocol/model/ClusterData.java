@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.structures.DList;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
 

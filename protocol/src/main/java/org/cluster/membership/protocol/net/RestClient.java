@@ -2,8 +2,8 @@ package org.cluster.membership.protocol.net;
 
 import java.net.URI;
 
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.model.ClusterData;
-import org.cluster.membership.protocol.model.Node;
 import org.cluster.membership.protocol.model.SynchronTypeWrapper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;

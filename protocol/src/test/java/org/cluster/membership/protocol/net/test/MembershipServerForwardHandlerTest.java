@@ -1,8 +1,9 @@
 package org.cluster.membership.protocol.net.test;
 
-import org.cluster.membership.protocol.model.Node;
-
 import io.netty.channel.ChannelHandler.Sharable;
+
+import org.cluster.membership.common.model.Node;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
