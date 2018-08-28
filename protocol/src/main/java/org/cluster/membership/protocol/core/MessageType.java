@@ -4,11 +4,6 @@ import java.io.Serializable;
 
 public enum MessageType implements Serializable {
 	
-	/**request from a new node hopping to be included in the cluster, generates a gossip message
-	 * */
-	SUBSCRIPTION(7, MessageCategory.CLUSTER),   	
-	
-	
 	/**request from external system to remove some node from the cluster, generates a gossip message
 	 * */
 	UNSUBSCRIPTION(3, MessageCategory.CLUSTER), 
@@ -35,11 +30,7 @@ public enum MessageType implements Serializable {
 	
 	/**a gossip message for including a node in the cluster
 	 * */
-	REMOVE_FROM_CLUSTER(1, MessageCategory.RUMOR),
-	
-	
-	/**A request to other node for updated data, due to a time without receiving any request from other nodes in the cluster*/
-	UPDATE(4, MessageCategory.CLUSTER);
+	REMOVE_FROM_CLUSTER(1, MessageCategory.RUMOR);
 	
 	
 	/**A priority to sort message, a way to know the importance of message type, has no effective implications until now 

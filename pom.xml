@@ -6,7 +6,7 @@
 
 	<groupId>org.cluster</groupId>
 	<artifactId>cluster-membership</artifactId>
-	<version>0.0.1</version>
+	<version>${protocol.version}</version>
 	<packaging>pom</packaging>
 
 	<name>cluster-membership</name>
@@ -17,6 +17,7 @@
 		<jdk.version>1.8</jdk.version>
 		<netty.version>4.1.16.Final</netty.version>
 		<spring.boot.version>2.0.1.RELEASE</spring.boot.version>
+		<protocol.version>0.0.1</protocol.version>
 		<maven.compiler.source>${jdk.version}</maven.compiler.source>
 		<maven.compiler.target>${jdk.version}</maven.compiler.target>
 	</properties>

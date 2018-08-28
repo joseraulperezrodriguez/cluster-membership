@@ -8,11 +8,15 @@
 	<parent>
 		<groupId>org.cluster</groupId>
 		<artifactId>cluster-membership</artifactId>
-		<version>0.0.1</version>
+		<version>${protocol.version}</version>
 	</parent>
 
-	<groupId>org.cluster.membership</groupId>
-	<artifactId>protocol</artifactId>
+	<groupId>org.cluster.membership</groupId>	
+	<artifactId>${artifact.id}</artifactId>
+
+	<properties>
+		<artifact.id>membership-protocol</artifact.id>
+	</properties>
 
 	<name>protocol</name>
 	<url>http://maven.apache.org</url>
@@ -32,18 +36,43 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+
+				<configuration>
+					<outputDirectory>${basedir}/target/${artifact.id}-${protocol.version}</outputDirectory>
+				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
-						<id>copy-resources</id>
+						<id>copy-resources-to-test</id>
 						<phase>compile</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/target/</outputDirectory>
+							<resources>
+								<resource>
+									<directory>src/main/resources/</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources-to-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/${artifact.id}-${protocol.version}</outputDirectory>
 							<resources>
 								<resource>
 									<directory>src/main/resources/</directory>

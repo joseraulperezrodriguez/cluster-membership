@@ -74,7 +74,7 @@ public class MembershipServer extends Thread {
              });
 
             // Bind and start to accept incoming connections.
-            b.bind(Config.THIS_PEER.getPort()).sync().channel().closeFuture().sync();
+            b.bind(Config.THIS_PEER.getProtocolPort()).sync().channel().closeFuture().sync();
         }
         catch (InterruptedException e) {    
         	e.printStackTrace();
@@ -90,6 +90,11 @@ public class MembershipServer extends Thread {
 	
 	public void listen() {
 		this.start();
+	}
+	
+	public void shutdown() {
+		if(bossGroup != null) bossGroup.shutdownGracefully();
+		if(workerGroup != null) workerGroup.shutdownGracefully();
 	}
 
 }

@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>org.cluster</groupId>
 		<artifactId>cluster-membership</artifactId>
-		<version>0.0.1</version>
+		<version>${protocol.version}</version>
 	</parent>
 
 	<groupId>org.cluster.membership</groupId>
@@ -20,4 +20,35 @@
 	<dependencies>
 
 	</dependencies>
+	
+<!-- 	<build> -->
+<!-- 		<plugins> -->
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.springframework.boot</groupId> -->
+<!-- 				<artifactId>spring-boot-maven-plugin</artifactId> -->
+<!-- 			</plugin> -->
+<!-- 			<plugin> -->
+<!-- 				<artifactId>maven-resources-plugin</artifactId> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>copy-resources</id> -->
+<!-- 						<phase>compile</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>copy-resources</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<outputDirectory>${basedir}/target/tester</outputDirectory> -->
+<!-- 							<resources> -->
+<!-- 								<resource> -->
+<!-- 									<directory>src/main/resources/</directory> -->
+<!-- 									<filtering>false</filtering> -->
+<!-- 								</resource> -->
+<!-- 							</resources> -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
+<!-- 		</plugins> -->
+<!-- 	</build> -->
+	
 </project>

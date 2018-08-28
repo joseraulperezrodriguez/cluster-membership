@@ -1,8 +1,51 @@
-{
-	config: {
-	
+{	
+	"config": {
+		"iteration.interval.ms": 3000	
 	},
-	expect: {
-		
-	}
-}
+	"procedure": [
+		{
+			"type": "node",
+			"data": {
+				"id": "A",
+				"address": "localhost",
+				"node-port": 7001,
+				"service-port": 6001,
+				"time-zone": "Europe/Madrid"
+			}			
+		},
+		{
+			"type": "wait",
+			"data": 7000			
+		},
+		{
+			"type": "check",
+			"data": {		
+				"nodes": ["A"],
+				"dead-nodes": [],
+				"failing-nodes":[]
+			}
+		},
+		{
+			"type": "node",
+			"data": {
+				"id": "B",
+				"address": "localhost",
+				"node-port": 7002,
+				"service-port": 6002,
+				"time-zone": "Europe/Madrid"
+			}
+		},
+		{
+			"type": "wait",
+			"data": 7000			
+		},
+		{
+			"type": "check",
+			"data": {
+				"nodes": ["A","B"],
+				"dead-nodes": [],
+				"failing-nodes":[]
+			}
+		}		
+	]
+}				

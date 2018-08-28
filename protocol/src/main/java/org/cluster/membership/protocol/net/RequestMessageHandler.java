@@ -1,6 +1,5 @@
 package org.cluster.membership.protocol.net;
 
-import java.io.Serializable;
 import java.util.TimeZone;
 
 import org.cluster.membership.protocol.Config;
@@ -8,7 +7,6 @@ import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.MessageResponse;
-import org.cluster.membership.protocol.model.Node;
 import org.cluster.membership.protocol.net.core.MembershipClient;
 import org.cluster.membership.protocol.net.core.MembershipIndirectClientHandler;
 import org.cluster.membership.protocol.util.DateTime;
@@ -26,15 +24,7 @@ public class RequestMessageHandler {
 	
 	@Autowired
 	private ResponseHandler responseHandler;
-	
-	public MessageResponse<ClusterView> handlerSubscription(Message m) {
-		Message add = new Message(MessageType.ADD_TO_CLUSTER, m.getNode(), MathOp.log2n(clusterView.getClusterSize()));
-		clusterView.addToCluster(add);		
-		ClusterView yourView = clusterView.yourView(m.getNode());		
-		MessageResponse<ClusterView> response = new MessageResponse<>(yourView, m);		
-		return response;		
-	}
-	
+		
 	public void handlerUnsubscription(Message m) {
 		Message rem = new Message(MessageType.REMOVE_FROM_CLUSTER, m.getNode(), MathOp.log2n(clusterView.getClusterSize()));
 		clusterView.removeFromCluster(rem);
@@ -72,21 +62,4 @@ public class RequestMessageHandler {
 		clusterView.removeFromCluster(m);
 	}
 	
-	public MessageResponse<Serializable> handlerUpdateNode(Message m) {
-		
-		Node nd = m.getNode();
-		if(clusterView.isSuspectedDead(nd)) {
-			Message keepAliveMessage = new Message(MessageType.KEEP_ALIVE, nd, MathOp.log2n(clusterView.getClusterSize()));
-			clusterView.keepAlive(keepAliveMessage);
-		}
-		
-		if(clusterView.isFailing(nd)) clusterView.removeFailing(nd);
-		
-		long lastRumor = (long)m.getData();
-		Serializable result = (Serializable)clusterView.getUpdatedView(lastRumor, m.getNode());
-		
-		return new MessageResponse<>(result, m);
-		
-	}
-
 }

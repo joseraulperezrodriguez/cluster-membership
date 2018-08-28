@@ -3,9 +3,11 @@ package org.cluster.membership.protocol.net;
 import java.io.Serializable;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.ClusterView;
+import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.core.MessageCategory;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.Message;
@@ -20,30 +22,39 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ResponseHandler {
+	
+	private Logger logger = Logger.getLogger(this.getClass().getName());
 
 	@Autowired
 	private ClusterView clusterView;
-
+		
 	public void addToFailed(Node node) {
 		clusterView.addFailed(new ValuePriorityEntry<Node, Long>(node, System.currentTimeMillis()));
 	}
-	
+		
 	public void restoreMessages(List<Message> messages) {
+		String messageRestored = "";		
 		for(Message m: messages) {
-			if(!m.getCategory().equals(MessageCategory.CLUSTER)) continue;			
+			if(!m.getCategory().equals(MessageCategory.CLUSTER)) continue;
+			messageRestored += m + "\n";
 			m.setIterations(m.getIterations()+1);
 			clusterView.addRumor(m);
 		}
+		logger.info("Restoring messages: \n" + messageRestored);
+		
 	}
 
 	public void suspectAll(TreeSet<Message> indirectMessages) {
 		long now = System.currentTimeMillis();
 		int iterations = MathOp.log2n(clusterView.getClusterSize());
-		for(Message m : indirectMessages) { 								 
+		String messageSusp = "";
+		for(Message m : indirectMessages) {
+			long expirTime = now + Config.FAILING_NODE_EXPIRATION_TIME_MS;
 			Message sm  = new Message(MessageType.SUSPECT_DEAD, m.getNode(), 
-					iterations, now + Config.FAILING_NODE_EXPIRATION_TIME_MS);
-			clusterView.suspect(now, sm);
-		}					
+					iterations, expirTime);
+			clusterView.suspect(expirTime, sm);
+		}
+		logger.info("Supecting messages: \n" + messageSusp);
 	}
 
 	public void receive(ResponseDescription response, MembershipClientHandler membershipClientHandler) {
@@ -51,37 +62,26 @@ public class ResponseHandler {
 		Node from = membershipClientHandler.getTo();
 		clusterView.removeFailing(from);
 		
+		logger.info("Response received from: " + from);
+		
 		for(MessageResponse<? extends Serializable> mr : response.getReponses()) {
 
 			Message message = mr.getMessage();
 			
 			switch (message.getType()) {
-				case ADD_TO_CLUSTER: /*Nothing to do*/ 
-				case KEEP_ALIVE: /*Nothing to do*/
-				case PROBE:  clusterView.removeFailing(message.getNode());				
-				case REMOVE_FROM_CLUSTER:  /*Nothing to do*/ 
-				case SUBSCRIPTION: clusterView.updateMyView((ClusterView)mr.getResponse());				
-				case SUSPECT_DEAD: /*Nothing to do*/  
-				case UNSUBSCRIPTION:  /*Nothing to do*/
-				case UPDATE: handleUpdateResponse(mr);				
+				case ADD_TO_CLUSTER: break; 
+				case KEEP_ALIVE: break;
+				case PROBE:  clusterView.removeFailing(message.getNode()); break;				
+				case REMOVE_FROM_CLUSTER:  break;
+				case SUSPECT_DEAD: break;  
+				case UNSUBSCRIPTION: handleUnsubscription(); break;
 			}
 		}
 		
 	}
-	
-	private void handleUpdateResponse(MessageResponse<? extends Serializable> response) {
-		Object ans = response.getResponse();
 		
-		if(ans == null) return;
-		
-		if(ans instanceof ClusterView) clusterView.updateMyView((ClusterView)ans);
-		else if(ans instanceof List){
-			@SuppressWarnings({ "unchecked" })
-			List<Message> missingMessages = (List<Message>)ans;			
-			clusterView.updateMyView(missingMessages);			
-		}
+	private void handleUnsubscription() {
+		Global.shutdown(10);
 	}
-	
-	
 	
 }

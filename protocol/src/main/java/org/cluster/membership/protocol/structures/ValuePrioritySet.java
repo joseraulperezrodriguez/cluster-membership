@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class ValuePrioritySet<T> implements Serializable {
@@ -20,6 +21,19 @@ public class ValuePrioritySet<T> implements Serializable {
 	public ValuePrioritySet(Comparator<T> sortComparator, SerializableComparator<T> priorityComparator) {
 		hashed = new HashMap<T,T>();
 		ordered = new TreeSet<T>(sortComparator);
+		this.priorityComparator = priorityComparator;
+	}
+	
+	public ValuePrioritySet(Comparator<T> sortComparator, SerializableComparator<T> priorityComparator,
+			Set<T> data) {
+		
+		ordered = new TreeSet<T>(sortComparator);
+		hashed = new HashMap<T,T>();
+		for(T t : data) {
+			ordered.add(t);
+			hashed.put(t, t);
+		}		
+
 		this.priorityComparator = priorityComparator;
 	}
 	
@@ -71,9 +85,15 @@ public class ValuePrioritySet<T> implements Serializable {
 		return (TreeSet<T>)ordered.tailSet(ele);
 	}
 	
+	public TreeSet<T> getSet() {
+		return ordered;
+	}
+	
 	public Iterator<T> iterator() {
 		return ordered.iterator();
 	}
+	
+	
 	
 	public T pollFirst() {
 		synchronized(this) {
@@ -102,5 +122,11 @@ public class ValuePrioritySet<T> implements Serializable {
 	
 	public int size() { return hashed.size(); }
 	
+	public void clear() {
+		synchronized(this) {
+			hashed.clear();
+			ordered.clear();
+		}
+	}
 
 }

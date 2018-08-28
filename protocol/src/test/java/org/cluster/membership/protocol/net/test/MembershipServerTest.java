@@ -17,7 +17,6 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.timeout.ReadTimeoutHandler;
 
 public class MembershipServerTest {
 	
@@ -45,13 +44,15 @@ public class MembershipServerTest {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
                     ChannelPipeline p = ch.pipeline();
+                    //p.addLast(new ReadTimeoutHandler(Config.CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS));
+                    
                     p.addLast(new JdkZlibEncoder(),
                     		  new JdkZlibDecoder());
-                    p.addLast(
-                    		new ReadTimeoutHandler(10),                    		
+                    p.addLast(                    		
                             new ObjectEncoder(),
                             new ObjectDecoder(Config.MAX_OBJECT_SIZE, ClassResolvers.cacheDisabled(null)),
                             serverHandler);
+                    
                 }
              });
 

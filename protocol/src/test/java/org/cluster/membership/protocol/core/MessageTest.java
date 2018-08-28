@@ -16,8 +16,8 @@ public class MessageTest
     extends TestCase
 {
 	
-	private Node a = new Node("A", "A 1", 7001, TimeZone.getDefault());
-	private Node b = new Node("B", "B 1", 7001, TimeZone.getDefault());
+	private Node a = new Node("A", "A 1", 7001, 6001, TimeZone.getDefault());
+	private Node b = new Node("B", "B 1", 7001, 6001, TimeZone.getDefault());
 	
     /**
      * Create the test case
