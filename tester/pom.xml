@@ -25,7 +25,7 @@
 		<dependency>
 			<groupId>org.cluster.membership</groupId>
 			<artifactId>membership-protocol-common</artifactId>
-			<version>0.0.1</version>
+			<version>${protocol.version}</version>
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
@@ -79,6 +79,24 @@
 									<filtering>false</filtering>
 								</resource>
 							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-remote-resources-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<configuration>
+							<resourceBundles>
+								<resourceBundle>
+									org.cluster.membership:membership-protocol-common:${protocol.version}
+								</resourceBundle>
+							</resourceBundles>
 						</configuration>
 					</execution>
 				</executions>
