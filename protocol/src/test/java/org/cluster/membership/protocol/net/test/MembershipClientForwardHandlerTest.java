@@ -21,7 +21,6 @@ public class MembershipClientForwardHandlerTest extends ChannelInboundHandlerAda
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		System.out.println("received object: " + msg.getClass());
 	 	this.ctx.writeAndFlush(msg);
 	 	ctx.close();
 	}

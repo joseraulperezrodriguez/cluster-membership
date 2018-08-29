@@ -88,15 +88,7 @@ public class Node implements Comparable<Node>, Serializable {
 	public int compareTo(Node o) {
 		return this.id.compareTo(o.id);
 	}
-	
-	/*public String commandLineParamString(int idx) {
-		return " --id." + idx + "=" + id +
-				" --address." + idx + "=" + address +
-				" --protocol.port." + idx + "=" + protocolPort +
-				" --server.port." + idx + "=" + servicePort +
-				" --time.zone." + idx + "=" + timeZone;
-	}*/
-	
+		
 	@Override
 	public String toString() {
 		return id + " " + address + " " + protocolPort + " " + servicePort + " " + timeZone.getID();
@@ -106,8 +98,4 @@ public class Node implements Comparable<Node>, Serializable {
 		return new Node(" "," ",0,0,TimeZone.getDefault());
 	}
 	
-	public static Node getGreaterNode() {
-		return new Node("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz","z",0,0,TimeZone.getDefault());
-	}
-
 }
