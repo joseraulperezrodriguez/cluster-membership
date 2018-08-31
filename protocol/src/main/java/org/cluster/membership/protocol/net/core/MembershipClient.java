@@ -3,8 +3,8 @@ package org.cluster.membership.protocol.net.core;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.Config;
-import org.cluster.membership.protocol.model.Node;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelInitializer;

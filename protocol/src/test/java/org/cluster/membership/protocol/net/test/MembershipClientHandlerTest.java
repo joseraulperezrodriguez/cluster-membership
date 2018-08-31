@@ -13,7 +13,7 @@ public class MembershipClientHandlerTest extends ChannelInboundHandlerAdapter {
 	public MembershipClientHandlerTest(Object toSend, Class<?> expected) {
 		this.toSend = toSend;
 		this.expected = expected;
-		this.asserted = true;
+		this.asserted = false;
 	}	
 	
 	public boolean getAsserted() {
@@ -27,7 +27,6 @@ public class MembershipClientHandlerTest extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
-		System.out.println("received object: " + msg.getClass());
 	 	assert(msg.getClass().equals(expected));	 	
 	 	asserted = true;
 	 	ctx.close();

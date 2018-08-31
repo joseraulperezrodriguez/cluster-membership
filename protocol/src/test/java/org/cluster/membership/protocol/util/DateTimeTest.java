@@ -2,6 +2,8 @@ package org.cluster.membership.protocol.util;
 
 import java.util.TimeZone;
 
+import org.cluster.membership.common.model.util.DateTime;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

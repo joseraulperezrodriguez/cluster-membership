@@ -2,10 +2,10 @@ package org.cluster.membership.protocol.net.test;
 
 import java.util.TimeZone;
 
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.Node;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -46,7 +46,7 @@ public class SocketCommunicationTest extends TestCase {
     	
     	Thread.sleep(Config.CONNECTION_TIME_OUT_MS);
     	assert(handler.getAsserted());
-    	server.shutdown();
+    	server.shutdownSync();
     	    	
     }
         
@@ -66,7 +66,7 @@ public class SocketCommunicationTest extends TestCase {
     	
     	Thread.sleep(Config.CONNECTION_TIME_OUT_MS);
     	assert(handler.getAsserted());
-    	server.shutdown();    	
+    	server.shutdownSync();    	
     }
     
     public void testForwardConnectionServer3() throws Exception {    	
@@ -91,8 +91,8 @@ public class SocketCommunicationTest extends TestCase {
     	
     	Thread.sleep(Config.CONNECTION_TIME_OUT_MS);
     	assert(handler.getAsserted());
-    	serverFwd.shutdown();
-    	server.shutdown();
+    	serverFwd.shutdownSync();
+    	server.shutdownSync();
     }
     
 }

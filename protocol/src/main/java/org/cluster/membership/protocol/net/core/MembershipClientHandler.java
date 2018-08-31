@@ -3,9 +3,9 @@ package org.cluster.membership.protocol.net.core;
 import java.util.Arrays;
 import java.util.List;
 
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.Node;
 import org.cluster.membership.protocol.model.RequestDescription;
 import org.cluster.membership.protocol.model.ResponseDescription;
 import org.cluster.membership.protocol.net.ResponseHandler;

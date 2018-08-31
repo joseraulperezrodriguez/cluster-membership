@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
+import org.cluster.membership.common.model.Node;
+
 public class RequestDescription implements Serializable {
 	
 	/**

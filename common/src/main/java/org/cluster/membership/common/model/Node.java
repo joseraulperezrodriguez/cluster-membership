@@ -1,4 +1,4 @@
-package org.cluster.membership.protocol.model;
+package org.cluster.membership.common.model;
 
 import java.io.Serializable;
 import java.util.TimeZone;
@@ -24,6 +24,15 @@ public class Node implements Comparable<Node>, Serializable {
 		this.protocolPort = protocolPort;
 		this.servicePort = servicePort;
 		this.timeZone = timeZone;				
+	}
+	
+	public Node(String id, String address, int protocolPort, int servicePort, String timeZone) {
+		super();
+		this.id = id;
+		this.address = address;
+		this.protocolPort = protocolPort;
+		this.servicePort = servicePort;
+		this.timeZone = TimeZone.getTimeZone(timeZone);				
 	}
 	
 	public Node() {}
@@ -79,7 +88,7 @@ public class Node implements Comparable<Node>, Serializable {
 	public int compareTo(Node o) {
 		return this.id.compareTo(o.id);
 	}
-	
+		
 	@Override
 	public String toString() {
 		return id + " " + address + " " + protocolPort + " " + servicePort + " " + timeZone.getID();
@@ -89,8 +98,4 @@ public class Node implements Comparable<Node>, Serializable {
 		return new Node(" "," ",0,0,TimeZone.getDefault());
 	}
 	
-	public static Node getGreaterNode() {
-		return new Node("zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz","z",0,0,TimeZone.getDefault());
-	}
-
 }

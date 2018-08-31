@@ -1,8 +1,10 @@
 package org.cluster.membership.tester.core;
 
+import org.cluster.membership.common.debug.StateInfo;
+import org.cluster.membership.common.model.Node;
 import org.springframework.web.client.RestTemplate;
 
-public class HttpClient {
+public class RestClient {
 	
 	
 	private static RestTemplate restTemplate = new RestTemplate();
@@ -23,14 +25,19 @@ public class HttpClient {
 				Boolean.class);
 	}
 	
+	public static boolean shutdown(Node node) {
+		return restTemplate.postForObject(getAddress(node, "/membership/shutdown"), null, 
+				Boolean.class);
+	}
+	
 	public static boolean pause(Node node, long time) {
 		return restTemplate.postForObject(getAddress(node, "/membership/pause"), time, 
 				Boolean.class);
 	}
 	
-	public static NodesDebug nodes(Node node) {
-		return restTemplate.getForObject(getAddress(node, "/membership/nodes-debug"), 
-				NodesDebug.class);
+	public static StateInfo nodes(Node node) {
+		return restTemplate.getForObject(getAddress(node, "/membership/state-info"), 
+				StateInfo.class);
 	}
 
 }

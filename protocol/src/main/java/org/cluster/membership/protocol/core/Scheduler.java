@@ -3,11 +3,12 @@ package org.cluster.membership.protocol.core;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.cluster.membership.common.model.Node;
+import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.Node;
-import org.cluster.membership.protocol.model.SynchronTypeWrapper;
+import org.cluster.membership.protocol.model.SynchronizationObjectWrapper;
 import org.cluster.membership.protocol.net.RequestReceiver;
 import org.cluster.membership.protocol.net.ResponseHandler;
 import org.cluster.membership.protocol.net.RestClient;
@@ -15,7 +16,6 @@ import org.cluster.membership.protocol.net.core.MembershipClient;
 import org.cluster.membership.protocol.net.core.MembershipClientHandler;
 import org.cluster.membership.protocol.net.core.MembershipDirectClientHandler;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
-import org.cluster.membership.protocol.util.MathOp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -74,9 +74,10 @@ public class Scheduler {
 					ClusterData subscription = restClient.subscribe(node, Config.THIS_PEER);
 					if(subscription != null) {
 						clusterView.updateMyView(subscription);
+						Global.setReady(true);
 					}					
 				} else {
-					SynchronTypeWrapper syncData = restClient.synchronize(node, Config.THIS_PEER, clusterView.lastRumorTime());
+					SynchronizationObjectWrapper syncData = restClient.synchronize(node, Config.THIS_PEER, clusterView.lastRumorTime());
 					if(syncData != null) {
 						if(syncData.getClusterData() != null) 
 							clusterView.updateMyView(syncData.getClusterData());						
@@ -84,6 +85,7 @@ public class Scheduler {
 							List<Message> messages = syncData.getMessages();
 							clusterView.updateMyView(messages);						
 						}
+						Global.setReady(true);
 					}
 				}
 				Global.setSynchronizing(false);

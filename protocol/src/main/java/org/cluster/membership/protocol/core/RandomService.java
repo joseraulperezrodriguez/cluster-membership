@@ -2,8 +2,8 @@ package org.cluster.membership.protocol.core;
 
 import java.util.Random;
 
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.Config;
-import org.cluster.membership.protocol.model.Node;
 import org.springframework.stereotype.Component;
 
 @Component

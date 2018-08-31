@@ -3,6 +3,7 @@ package org.cluster.membership.protocol.model;
 import java.io.Serializable;
 import java.util.TimeZone;
 
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.MessageCategory;
 import org.cluster.membership.protocol.core.MessageType;

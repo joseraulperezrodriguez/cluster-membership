@@ -17,6 +17,7 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.Future;
 
 public class MembershipServerTest {
 	
@@ -71,9 +72,16 @@ public class MembershipServerTest {
         }
 	}
 	
-	public void shutdown() {
+	public void shutdownAsync() {
 		bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
+	}
+	
+	public void shutdownSync() {
+		Future<?> endBossGroup = bossGroup.shutdownGracefully();
+		Future<?> endWorkerGroup = workerGroup.shutdownGracefully();
+		
+		while(!endBossGroup.isDone() || !endWorkerGroup.isDone());
 	}
 
 }

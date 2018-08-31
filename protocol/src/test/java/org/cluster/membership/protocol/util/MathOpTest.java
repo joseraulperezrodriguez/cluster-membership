@@ -1,5 +1,7 @@
 package org.cluster.membership.protocol.util;
 
+import org.cluster.membership.common.model.util.MathOp;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.cluster.membership.common.model.Node;
+import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.MessageResponse;
-import org.cluster.membership.protocol.model.Node;
-import org.cluster.membership.protocol.util.MathOp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,7 +44,7 @@ public class RequestReceiver {
 	public List<MessageResponse<?>> receive(Node from, List<Message> messages, ChannelHandlerContext ctx) {
 		List<MessageResponse<?>> ans = new ArrayList<MessageResponse<?>>();
 		
-		if(Global.isSynchronizing()) return ans;
+		if(!Global.isReady()) return ans;
 		
 		lastMessage = System.currentTimeMillis();
 		

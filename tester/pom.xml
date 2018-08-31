@@ -6,49 +6,110 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.cluster</groupId>
+		<groupId>org.cluster.membership</groupId>
 		<artifactId>cluster-membership</artifactId>
-		<version>${protocol.version}</version>
+		<version>0.0.1</version>
 	</parent>
 
-	<groupId>org.cluster.membership</groupId>
-	<artifactId>tester</artifactId>
+	<artifactId>membership-protocol-tester</artifactId>
+	<name>membership-protocol-tester</name>
+	
+	<properties>
+		<artifact.id>membership-protocol-tester</artifact.id>
+	</properties>
+	
 
-	<name>tester</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
-
+		<dependency>
+			<groupId>org.cluster.membership</groupId>
+			<artifactId>membership-protocol-common</artifactId>
+			<version>${protocol.version}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
-	
-<!-- 	<build> -->
-<!-- 		<plugins> -->
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.springframework.boot</groupId> -->
-<!-- 				<artifactId>spring-boot-maven-plugin</artifactId> -->
-<!-- 			</plugin> -->
-<!-- 			<plugin> -->
-<!-- 				<artifactId>maven-resources-plugin</artifactId> -->
-<!-- 				<executions> -->
-<!-- 					<execution> -->
-<!-- 						<id>copy-resources</id> -->
-<!-- 						<phase>compile</phase> -->
-<!-- 						<goals> -->
-<!-- 							<goal>copy-resources</goal> -->
-<!-- 						</goals> -->
-<!-- 						<configuration> -->
-<!-- 							<outputDirectory>${basedir}/target/tester</outputDirectory> -->
-<!-- 							<resources> -->
-<!-- 								<resource> -->
-<!-- 									<directory>src/main/resources/</directory> -->
-<!-- 									<filtering>false</filtering> -->
-<!-- 								</resource> -->
-<!-- 							</resources> -->
-<!-- 						</configuration> -->
-<!-- 					</execution> -->
-<!-- 				</executions> -->
-<!-- 			</plugin> -->
-<!-- 		</plugins> -->
-<!-- 	</build> -->
-	
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+
+				<configuration>
+					<outputDirectory>${basedir}/target/${artifact.id}-${protocol.version}</outputDirectory>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources-to-test</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/</outputDirectory>
+							<resources>
+								<resource>
+										<directory>${basedir}/target/maven-shared-archive-resources</directory>
+									<filtering>false</filtering>
+								</resource>
+								<resource>
+ 									<directory>src/main/resources/</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources-to-package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/${artifact.id}-${protocol.version}</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/target/maven-shared-archive-resources</directory>
+									<filtering>false</filtering>
+								</resource>
+								<resource>
+ 									<directory>src/main/resources/</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-remote-resources-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<configuration>
+							<resourceBundles>
+								<resourceBundle>
+									org.cluster.membership:membership-protocol-common:${protocol.version}
+								</resourceBundle>
+							</resourceBundles>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>

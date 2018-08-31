@@ -6,19 +6,18 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>org.cluster</groupId>
+		<groupId>org.cluster.membership</groupId>
 		<artifactId>cluster-membership</artifactId>
-		<version>${protocol.version}</version>
+		<version>0.0.1</version>
 	</parent>
 
-	<groupId>org.cluster.membership</groupId>	
 	<artifactId>${artifact.id}</artifactId>
+	<name>membership-protocol</name>
 
 	<properties>
 		<artifact.id>membership-protocol</artifact.id>
 	</properties>
 
-	<name>protocol</name>
 	<url>http://maven.apache.org</url>
 
 	<dependencies>
@@ -29,6 +28,13 @@
 			<version>${netty.version}</version><!--$NO-MVN-MAN-VER$ -->
 		</dependency>
 
+		<dependency>
+			<groupId>org.cluster.membership</groupId>
+			<artifactId>membership-protocol-common</artifactId>
+			<version>${protocol.version}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -54,7 +60,7 @@
 							<outputDirectory>${basedir}/target/</outputDirectory>
 							<resources>
 								<resource>
-									<directory>src/main/resources/</directory>
+										<directory>${basedir}/target/maven-shared-archive-resources</directory>
 									<filtering>false</filtering>
 								</resource>
 							</resources>
@@ -75,10 +81,28 @@
 							<outputDirectory>${basedir}/target/${artifact.id}-${protocol.version}</outputDirectory>
 							<resources>
 								<resource>
-									<directory>src/main/resources/</directory>
+										<directory>${basedir}/target/maven-shared-archive-resources</directory>
 									<filtering>false</filtering>
 								</resource>
 							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-remote-resources-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>process</goal>
+						</goals>
+						<configuration>
+							<resourceBundles>
+								<resourceBundle>
+									org.cluster.membership:membership-protocol-common:${protocol.version}
+								</resourceBundle>
+							</resourceBundles>
 						</configuration>
 					</execution>
 				</executions>

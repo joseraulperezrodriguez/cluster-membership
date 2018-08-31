@@ -1,4 +1,4 @@
-package org.cluster.membership.protocol.util;
+package org.cluster.membership.common.model.util;
 
 import java.util.TimeZone;
 

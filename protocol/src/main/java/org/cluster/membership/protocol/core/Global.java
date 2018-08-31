@@ -7,12 +7,23 @@ public class Global {
 
 	private static boolean synchronizing;
 	
+	private static boolean ready;
+	
 	protected static synchronized void setSynchronizing(boolean value) {
 		synchronizing = value;
+		if(value) setReady(false);
 	}
 	
 	public static boolean isSynchronizing() {
 		return synchronizing;
+	}
+	
+	public static synchronized void setReady(boolean value) {
+		ready = value;
+	}
+	
+	public static boolean isReady() {
+		return ready;
 	}
 	
 	public static void shutdown(long seconds) {

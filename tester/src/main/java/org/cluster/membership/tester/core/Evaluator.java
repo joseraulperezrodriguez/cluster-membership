@@ -12,6 +12,8 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.cluster.membership.common.debug.StateInfo;
+import org.cluster.membership.common.model.Node;
 import org.cluster.membership.tester.Config;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -110,6 +112,13 @@ public class Evaluator {
 
 	}
 	
+	private String generateNodeCommandLineArguments(Node node, int idx) {
+		return " --id." + idx + "=" + node.getId() +
+				" --address." + idx + "=" + node.getAddress() +
+				" --protocol.port." + idx + "=" + node.getProtocolPort() +
+				" --server.port." + idx + "=" + node.getServicePort() +
+				" --time.zone." + idx + "=" + node.getTimeZone().getID();
+	}
 
 	private Process createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {		
 		String id = data.get("id").asText();
@@ -129,7 +138,7 @@ public class Evaluator {
 		Config.updateConfig(id, "time.zone", timeZone);
 
 		Node commandLineParam = createdNodes.size() > 0 ? getRandomNode() : null;		
-		String args = commandLineParam != null ? commandLineParam.commandLineParamString(1) : "";		
+		String args = commandLineParam != null ? generateNodeCommandLineArguments(commandLineParam,1) : "";		
 		String command = "java -jar " + Config.programPath(id) + " " + args.trim() + " --mode=DEBUG";
 		
 		ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
@@ -151,24 +160,24 @@ public class Evaluator {
 		String nodeId = data.get("node-id").asText(); 
 		long time = data.get("time").asLong();		
 		Node node = createdNodes.get(nodeId);
-		assert(HttpClient.pause(node, time));
+		assert(RestClient.pause(node, time));
 	}
 
 	private void unsubscribe(JsonNode data)  {
 		String nodeId = data.asText();
 		Node node = createdNodes.get(nodeId);
-		assert(HttpClient.unsubscribe(node));
+		assert(RestClient.unsubscribe(node));
 	}
 
 	private boolean check(JsonNode data) {
 
 		List<String> nodes = iteratorToList(data.get("nodes").iterator());
-		List<String> deads = iteratorToList(data.get("dead-nodes").iterator());
-		List<String> failing = iteratorToList(data.get("failing-nodes").iterator());
+		List<String> suspecting = iteratorToList(data.get("suspecting").iterator());
+		List<String> failing = iteratorToList(data.get("failing").iterator());
 
 		boolean success = true;
 		for(Node node : createdNodes.values()) {
-			NodesDebug deb = HttpClient.nodes(node);
+			StateInfo deb = RestClient.nodes(node);
 			
 			if(differentLists(nodes, deb.getNodes())) {
 				logger.log(Level.SEVERE, "error comparing \"cluster nodes\" " + node.getId() + " against current state");
@@ -176,9 +185,9 @@ public class Evaluator {
 				logger.info("result: " + listToString(deb.getNodes()));
 				success = false;
 			}
-			if(differentLists(deads, deb.getDead())) {
-				logger.log(Level.SEVERE, "error comparing \"dead nodes\" " + node.getId() + " against current state");
-				logger.info("expected: " + listToString(deads));
+			if(differentLists(suspecting, deb.getDead())) {
+				logger.log(Level.SEVERE, "error comparing \"suspecting nodes\" " + node.getId() + " against current state");
+				logger.info("expected: " + listToString(suspecting));
 				logger.info("result: " + listToString(deb.getDead()));
 				success = false;
 			}

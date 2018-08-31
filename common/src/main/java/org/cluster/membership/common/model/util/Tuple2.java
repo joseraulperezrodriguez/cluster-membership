@@ -1,4 +1,4 @@
-package org.cluster.membership.protocol.util;
+package org.cluster.membership.common.model.util;
 
 public class Tuple2<A,B> {
 	

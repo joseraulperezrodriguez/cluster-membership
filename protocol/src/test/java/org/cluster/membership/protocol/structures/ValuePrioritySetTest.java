@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.TreeSet;
 
-import org.cluster.membership.protocol.model.Node;
+import org.cluster.membership.common.model.Node;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

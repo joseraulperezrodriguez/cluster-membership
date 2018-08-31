@@ -2,16 +2,16 @@ package org.cluster.membership.protocol.model;
 
 import java.util.List;
 
-public class SynchronTypeWrapper {
+public class SynchronizationObjectWrapper {
 	
 	private ClusterData clusterData;
 	
 	private List<Message> messages;
 
 
-	public SynchronTypeWrapper() {}
+	public SynchronizationObjectWrapper() {}
 	
-	public SynchronTypeWrapper(ClusterData clusterData, List<Message> messages) {
+	public SynchronizationObjectWrapper(ClusterData clusterData, List<Message> messages) {
 		super();
 		this.clusterData = clusterData;
 		this.messages = messages;
