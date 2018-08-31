@@ -58,6 +58,11 @@ public class ResponseHandler {
 	}
 
 	public void receive(ResponseDescription response, MembershipClientHandler membershipClientHandler) {
+		
+		if(response.getReponses().size() == 0) {
+			restoreMessages(membershipClientHandler.getMessages());
+			return;
+		}
 
 		Node from = membershipClientHandler.getTo();
 		clusterView.removeFailing(from);
@@ -76,12 +81,11 @@ public class ResponseHandler {
 				case SUSPECT_DEAD: break;  
 				case UNSUBSCRIPTION: handleUnsubscription(); break;
 			}
-		}
-		
+		}		
 	}
 		
 	private void handleUnsubscription() {
-		Global.shutdown(10);
+		Global.shutdown(5);
 	}
 	
 }

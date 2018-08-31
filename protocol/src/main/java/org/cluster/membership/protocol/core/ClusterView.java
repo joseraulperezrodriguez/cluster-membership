@@ -8,13 +8,14 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
 
+import org.cluster.membership.common.debug.StateInfo;
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.common.model.util.DateTime;
 import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.SynchronTypeWrapper;
+import org.cluster.membership.protocol.model.SynchronizationObjectWrapper;
 import org.cluster.membership.protocol.structures.DList;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
 import org.cluster.membership.protocol.structures.ValuePrioritySet;
@@ -73,29 +74,25 @@ public class ClusterView implements Serializable {
 
 	public List<Node> nodes() { return nodes.list(); }
 	
-	public List<String> nodesDebug() {
-		List<String> ans = new ArrayList<String>();
-		for(Node n : nodes.list()) ans.add(n.getId());		
-		return ans;
-	}
-	
-	public List<String> deadNodes() {
-		Iterator<ValuePriorityEntry<Node, Long>> iterator = suspectingNodesTimeout.iterator();		
-		List<String> ans = new ArrayList<String>();		
-		while(iterator.hasNext()) ans.add(iterator.next().getKey().getId());				
-		return ans;
-	}
-	
-	public List<String> failingNodes() {
-		Iterator<ValuePriorityEntry<Node, Long>> iterator = failed.iterator();		
-		List<String> ans = new ArrayList<String>();		
-		while(iterator.hasNext()) ans.add(iterator.next().getKey().getId());				
-		return ans;		
-	}
-	
+	public StateInfo getStateInfo() {
+		List<String> nodesId = new ArrayList<String>();
+		for(Node n : nodes.list()) nodesId.add(n.getId());		
+		
+		Iterator<ValuePriorityEntry<Node, Long>> iteratorSuspecting = suspectingNodesTimeout.iterator();		
+		List<String> suspectingNodes = new ArrayList<String>();		
+		while(iteratorSuspecting.hasNext()) suspectingNodes.add(iteratorSuspecting.next().getKey().getId());
+		
+		Iterator<ValuePriorityEntry<Node, Long>> iteratorFailing = failed.iterator();		
+		List<String> failingNodes = new ArrayList<String>();		
+		while(iteratorFailing.hasNext()) failingNodes.add(iteratorFailing.next().getKey().getId());
+		
+		StateInfo si = new StateInfo(nodesId, suspectingNodes, failingNodes);
+		return si;		
+	}	
 	
 	public void init() { 		//nodes.addSortedNodes(Config.SEEDS);
 		nodes.add(Config.THIS_PEER);
+		Global.setReady(true);
 		logger.info("initialized node, added this peer to node list");
 	}
 	
@@ -103,7 +100,7 @@ public class ClusterView implements Serializable {
 		if(getClusterSize() > 1) {
 			Message uns = new Message(MessageType.UNSUBSCRIPTION, Config.THIS_PEER, 1);
 			rumorsToSend.add(uns, true);
-		} else Global.shutdown(10);		
+		} else Global.shutdown(5);		
 	}
 	
 	public void subscribe(Node node) {
@@ -112,7 +109,7 @@ public class ClusterView implements Serializable {
 		addToCluster(add);
 	}
 	
-	public SynchronTypeWrapper handlerUpdateNodeRequest(Node node, long lastRumor) {
+	public SynchronizationObjectWrapper handlerUpdateNodeRequest(Node node, long lastRumor) {
 		
 		if(isSuspectedDead(node)) {
 			Message keepAliveMessage = new Message(MessageType.KEEP_ALIVE, node, MathOp.log2n(getClusterSize()));
@@ -121,7 +118,7 @@ public class ClusterView implements Serializable {
 		
 		if(isFailing(node)) removeFailing(node);
 		
-		SynchronTypeWrapper result = getUpdatedView(lastRumor, node);
+		SynchronizationObjectWrapper result = getUpdatedView(lastRumor, node);
 		return result;
 		
 	}
@@ -131,18 +128,18 @@ public class ClusterView implements Serializable {
 		return ((last == null) ? System.currentTimeMillis() : last.getGeneratedTime()); 
 	}
 
-	private SynchronTypeWrapper getUpdatedView(long firstTime, Node node) {
+	private SynchronizationObjectWrapper getUpdatedView(long firstTime, Node node) {
 		Message first = receivedRumors.last();
 
 		if(first == null || first.getGeneratedTime() > firstTime) {
-			return new SynchronTypeWrapper(myView(node), null);
+			return new SynchronizationObjectWrapper(myView(node), null);
 		} else {
 			ArrayList<Message> missingMessages = new ArrayList<>();
 			Iterator<Message> iterator = receivedRumors.tailSet(Message.getMinTimeTemplate(firstTime)).iterator();
 
 			while(iterator.hasNext()) missingMessages.add(iterator.next());
 
-			return new SynchronTypeWrapper(null, missingMessages);
+			return new SynchronizationObjectWrapper(null, missingMessages);
 		}
 
 	}

@@ -160,24 +160,24 @@ public class Evaluator {
 		String nodeId = data.get("node-id").asText(); 
 		long time = data.get("time").asLong();		
 		Node node = createdNodes.get(nodeId);
-		assert(HttpClient.pause(node, time));
+		assert(RestClient.pause(node, time));
 	}
 
 	private void unsubscribe(JsonNode data)  {
 		String nodeId = data.asText();
 		Node node = createdNodes.get(nodeId);
-		assert(HttpClient.unsubscribe(node));
+		assert(RestClient.unsubscribe(node));
 	}
 
 	private boolean check(JsonNode data) {
 
 		List<String> nodes = iteratorToList(data.get("nodes").iterator());
-		List<String> deads = iteratorToList(data.get("dead-nodes").iterator());
-		List<String> failing = iteratorToList(data.get("failing-nodes").iterator());
+		List<String> suspecting = iteratorToList(data.get("suspecting").iterator());
+		List<String> failing = iteratorToList(data.get("failing").iterator());
 
 		boolean success = true;
 		for(Node node : createdNodes.values()) {
-			StateInfo deb = HttpClient.nodes(node);
+			StateInfo deb = RestClient.nodes(node);
 			
 			if(differentLists(nodes, deb.getNodes())) {
 				logger.log(Level.SEVERE, "error comparing \"cluster nodes\" " + node.getId() + " against current state");
@@ -185,9 +185,9 @@ public class Evaluator {
 				logger.info("result: " + listToString(deb.getNodes()));
 				success = false;
 			}
-			if(differentLists(deads, deb.getDead())) {
-				logger.log(Level.SEVERE, "error comparing \"dead nodes\" " + node.getId() + " against current state");
-				logger.info("expected: " + listToString(deads));
+			if(differentLists(suspecting, deb.getDead())) {
+				logger.log(Level.SEVERE, "error comparing \"suspecting nodes\" " + node.getId() + " against current state");
+				logger.info("expected: " + listToString(suspecting));
 				logger.info("result: " + listToString(deb.getDead()));
 				success = false;
 			}

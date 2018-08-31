@@ -5,13 +5,13 @@ import java.util.List;
 public class StateInfo {
 	
 	private List<String> nodes;
-	private List<String> dead;
+	private List<String> suspecting;
 	private List<String> failing;
 	
 	public StateInfo(List<String> nodes, List<String> dead, List<String> failing) {
 		super();
 		this.nodes = nodes;
-		this.dead = dead;
+		this.suspecting = dead;
 		this.failing = failing;
 	}
 	
@@ -26,10 +26,10 @@ public class StateInfo {
 		this.nodes = nodes;
 	}
 	public List<String> getDead() {
-		return dead;
+		return suspecting;
 	}
 	public void setDead(List<String> dead) {
-		this.dead = dead;
+		this.suspecting = dead;
 	}
 	public List<String> getFailing() {
 		return failing;

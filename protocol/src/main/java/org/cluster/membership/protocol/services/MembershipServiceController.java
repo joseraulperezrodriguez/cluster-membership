@@ -6,9 +6,10 @@ import java.util.logging.Logger;
 import org.cluster.membership.common.debug.StateInfo;
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.core.ClusterView;
+import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.SynchronTypeWrapper;
+import org.cluster.membership.protocol.model.SynchronizationObjectWrapper;
 import org.cluster.membership.protocol.net.core.MembershipServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +43,13 @@ public class MembershipServiceController {
 		return true;
 	}
 	
+	@PostMapping("/shutdown")	
+	public boolean shutdown() {
+		logger.info("shutdown message received");
+		Global.shutdown(5);
+		return true;
+	}
+	
 	@PostMapping("/pause")	
 	public boolean pause(@RequestBody(required = true) long millis) {
 		logger.info("pause message received " + millis);
@@ -54,13 +62,9 @@ public class MembershipServiceController {
 		return clusterView.nodes();
 	}
 	
-	@GetMapping("/nodes-debug")
+	@GetMapping("/state-info")
 	public StateInfo nodesDebug() {
-		List<String> nodes = clusterView.nodesDebug();
-		List<String> dead = clusterView.deadNodes();
-		List<String> failed = clusterView.failingNodes();
-				
-		return new StateInfo(nodes, dead, failed);
+		return clusterView.getStateInfo();
 	}
 		
 	@PostMapping("/update/full-view")
@@ -83,7 +87,7 @@ public class MembershipServiceController {
 	}
 		
 	@PostMapping("/synchronize/{first-time}")
-	public SynchronTypeWrapper synchronize(@PathVariable(name="first-time")Long firstTime,@RequestBody(required = true) Node node) {		
+	public SynchronizationObjectWrapper synchronize(@PathVariable(name="first-time")Long firstTime,@RequestBody(required = true) Node node) {		
 		return clusterView.handlerUpdateNodeRequest(node, firstTime);
 	}
 	

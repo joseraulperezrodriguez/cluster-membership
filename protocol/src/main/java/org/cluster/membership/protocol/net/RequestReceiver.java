@@ -44,7 +44,7 @@ public class RequestReceiver {
 	public List<MessageResponse<?>> receive(Node from, List<Message> messages, ChannelHandlerContext ctx) {
 		List<MessageResponse<?>> ans = new ArrayList<MessageResponse<?>>();
 		
-		if(Global.isSynchronizing()) return ans;
+		if(!Global.isReady()) return ans;
 		
 		lastMessage = System.currentTimeMillis();
 		

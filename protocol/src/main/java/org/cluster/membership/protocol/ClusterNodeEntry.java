@@ -69,7 +69,7 @@ public class ClusterNodeEntry implements ApplicationRunner {
     			return;
     		}
     		logger.log(Level.SEVERE, "all seeds failed");
-    		Global.shutdown(10);
+    		Global.shutdown(5);
         	throw new Exception("Not able to complete subscription in any seed node");
         	
     	}
