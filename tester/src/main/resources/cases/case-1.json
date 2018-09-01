@@ -8,18 +8,14 @@
 			"data": {
 				"id": "A",
 				"address": "localhost",
-				"node-port": 7001,
-				"service-port": 6001,
-				"time-zone": "Europe/Madrid"
+				"time.zone": "Europe/Madrid"
 			}			
 		},
 		{
-			"type": "wait",
-			"data": 7000			
-		},
-		{
 			"type": "check",
-			"data": {		
+			"data": {
+				"try.interval": 3,
+				"try.times": 3,
 				"nodes": ["A"],
 				"suspecting": [],
 				"failing":[]
@@ -30,18 +26,14 @@
 			"data": {
 				"id": "B",
 				"address": "localhost",
-				"node-port": 7002,
-				"service-port": 6002,
-				"time-zone": "Europe/Madrid"
+				"time.zone": "Europe/Madrid"
 			}
-		},
-		{
-			"type": "wait",
-			"data": 7000			
 		},
 		{
 			"type": "check",
 			"data": {
+				"try.interval": 3,
+				"try.times": 3,			
 				"nodes": ["A","B"],
 				"suspecting": [],
 				"failing":[]

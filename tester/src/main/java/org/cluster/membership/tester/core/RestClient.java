@@ -35,7 +35,7 @@ public class RestClient {
 				Boolean.class);
 	}
 	
-	public static StateInfo nodes(Node node) {
+	public static StateInfo getStateInfo(Node node) {
 		return restTemplate.getForObject(getAddress(node, "/membership/state-info"), 
 				StateInfo.class);
 	}

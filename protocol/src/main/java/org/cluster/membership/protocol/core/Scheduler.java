@@ -59,7 +59,7 @@ public class Scheduler {
 
 		/**Send the pending rumors to a random node*/
 	
-		//logger.info("shedule iteration, node: " + node + " needs update: " + needsUpdate);
+		logger.info("shedule iteration, node: " + node + " needs update: " + needsUpdate);
 				
 		if(node != null) {
 			

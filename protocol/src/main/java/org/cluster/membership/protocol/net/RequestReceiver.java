@@ -63,9 +63,12 @@ public class RequestReceiver {
 			/**If message is SUSPECT_DEAD we insert again to allow the minimal time will
 			 * be prioritized, in this way we ensure all the nodes have the same 
 			 * expiration time for a node*/
-			if(clusterView.isRumor(m) && !mt.equals(MessageType.SUSPECT_DEAD)) continue;
+			if(clusterView.isRumor(m) && !mt.equals(MessageType.SUSPECT_DEAD)) { 
+				logger.info("Avoiding handling " + m + " message");
+				continue;			
+			}
 			
-			logger.info("Handling " + m + " message");
+			
 			
 			switch (mt) {
 				case UNSUBSCRIPTION: {
