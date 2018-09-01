@@ -21,7 +21,7 @@ public class DList implements Serializable {
 	/**
 	 * 
 	 */
-
+	
 	private ArrayList<Node> nodes;
 	private Set<Node> hashed;
 
@@ -36,11 +36,13 @@ public class DList implements Serializable {
 
 	/**Assumes arguments is a sorted list*/
 	public void addSortedNodes(DList dlist) {
-		nodes.clear();
-		hashed.clear();
-		for(Node n : dlist.nodes) {
-			nodes.add(n);
-			hashed.add(n);
+		synchronized (this) {
+			nodes.clear();
+			hashed.clear();
+			for(Node n : dlist.nodes) {
+				nodes.add(n);
+				hashed.add(n);
+			}
 		}
 
 	}
@@ -58,11 +60,10 @@ public class DList implements Serializable {
 	}
 
 	public void remove(Node node) {
-		Tuple2<Integer, Integer> bs = bs(node);	
-		if(bs.getA() != bs.getB() || bs.getA() >= nodes.size() || 
-				!this.get(bs.getA()).getId().equals(node.getId())) return;
-
 		synchronized(this) { 
+			Tuple2<Integer, Integer> bs = bs(node);	
+			if(bs.getA() != bs.getB() || bs.getA() >= nodes.size() || 
+					!this.get(bs.getA()).getId().equals(node.getId())) return;
 			nodes.remove((int)bs.getA());
 			hashed.remove(node);
 		}

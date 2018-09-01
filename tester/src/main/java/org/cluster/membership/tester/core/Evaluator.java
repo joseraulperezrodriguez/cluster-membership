@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import org.cluster.membership.common.debug.StateInfo;
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.common.model.util.Tuple2;
 import org.cluster.membership.tester.Config;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -50,7 +51,7 @@ public class Evaluator {
 		}
 		return null;
 	}
-
+	
 	public boolean evaluate(File file) throws Exception {
 
 		JsonNode node = objectMapper.readTree(file);
@@ -61,29 +62,27 @@ public class Evaluator {
 		JsonNode procedure = node.get("procedure");
 
 		Iterator<JsonNode> iterator = procedure.iterator();
-		List<Process> processes  = new ArrayList<Process>();
 		boolean testPassed = true;
 		while(iterator.hasNext()) {
 			JsonNode value = iterator.next();
-			boolean success = action(value, config, processes);
+			boolean success = action(value, config);
 			if(!success) {
 				testPassed = false;
 				logger.log(Level.SEVERE, "the step: '" + value.toString() + "', has failed to exeute successfuly");
 				break;
 			}
 		}
-		for(Process p : processes) p.destroy();		
 
 		return testPassed; 
 	}
 	
-	private boolean action(JsonNode node, JsonNode config, List<Process> processes) throws Exception {
+	private boolean action(JsonNode node, JsonNode config) throws Exception {
 
 		JsonNode data = node.get("data");
 		String type = node.get("type").asText(); 
 		//System.out.println(type);
 		switch(type) {
-			case "node":  processes.add(createAndLaunchNode(data, config)); break;			
+			case "node": createAndLaunchNode(data, config); break;			
 			case "wait":  wait(data); break;
 			case "pause":  pause(data); break;
 			case "unsubscribe":  unsubscribe(data); break;
@@ -120,20 +119,27 @@ public class Evaluator {
 				" --time.zone." + idx + "=" + node.getTimeZone().getID();
 	}
 
-	private Process createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {		
+	private void createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {		
 		String id = data.get("id").asText();
 		String address = data.get("address").asText();
-		int nodePort = data.get("node-port").asInt();
-		int servicePort = data.get("service-port").asInt();
-		String timeZone = data.get("time-zone").asText();
+		
+		Tuple2<Integer, Integer> ports = Config.getPorts();
+		assert(ports != null);
+		
+		int protocolPort = ports.getB();
+		int servicePort = ports.getA();
+		
+		//int nodePort = data.get("protocol.port").asInt();
+		//int servicePort = data.get("server.port").asInt();
+		String timeZone = data.get("time.zone").asText();
 
-		Node node = new Node(id, address, nodePort, servicePort, timeZone);
+		Node node = new Node(id, address, protocolPort, servicePort, timeZone);
 		
 		Config.newInstance(id);
 
 		Config.updateConfig(id, "id", id);
 		Config.updateConfig(id, "address", address);
-		Config.updateConfig(id, "protocol.port", String.valueOf(nodePort));
+		Config.updateConfig(id, "protocol.port", String.valueOf(protocolPort));
 		Config.updateConfig(id, "server.port", String.valueOf(servicePort));
 		Config.updateConfig(id, "time.zone", timeZone);
 
@@ -147,17 +153,23 @@ public class Evaluator {
 		processBuilder.redirectOutput(Config.logPath(id));		
 		createdNodes.put(id, node);
 		
-		return processBuilder.start();
-
+		Process p = processBuilder.start();
+		Runner.runningProcess.add(p);
+		
+		do {
+			Thread.sleep(1000);			
+		} while(!Config.isListening(address, servicePort) || 
+				!Config.isListening(address, protocolPort));
+		
 	}
 
 	private void wait(JsonNode data) throws Exception {
-		long time = data.asLong();		
+		long time = data.asLong() * 1000;		
 		Thread.sleep(time);
 	}
 
 	private void pause(JsonNode data)  {
-		String nodeId = data.get("node-id").asText(); 
+		String nodeId = data.get("node.id").asText(); 
 		long time = data.get("time").asLong();		
 		Node node = createdNodes.get(nodeId);
 		assert(RestClient.pause(node, time));
@@ -169,36 +181,51 @@ public class Evaluator {
 		assert(RestClient.unsubscribe(node));
 	}
 
-	private boolean check(JsonNode data) {
+	private boolean check(JsonNode data) throws Exception {
 
 		List<String> nodes = iteratorToList(data.get("nodes").iterator());
 		List<String> suspecting = iteratorToList(data.get("suspecting").iterator());
 		List<String> failing = iteratorToList(data.get("failing").iterator());
-
-		boolean success = true;
-		for(Node node : createdNodes.values()) {
-			StateInfo deb = RestClient.nodes(node);
-			
-			if(differentLists(nodes, deb.getNodes())) {
-				logger.log(Level.SEVERE, "error comparing \"cluster nodes\" " + node.getId() + " against current state");
-				logger.info("expected: " + listToString(nodes));
-				logger.info("result: " + listToString(deb.getNodes()));
-				success = false;
+		
+		int tryInterval = data.get("try.interval").asInt();
+		int tryTimes = data.get("try.times").asInt();
+		
+		for(int i = 1; i <= tryTimes; i++) {
+			Thread.sleep(tryInterval * 1000);
+			boolean success = true;
+			for(Node node : createdNodes.values()) {
+				StateInfo deb = RestClient.getStateInfo(node);
+				
+				if(differentLists(nodes, deb.getNodes())) {
+					if(i == tryTimes) {
+						logger.log(Level.SEVERE, "error comparing \"cluster nodes\" " + node.getId() + " against current state");
+						logger.info("expected: " + listToString(nodes));
+						logger.info("result: " + listToString(deb.getNodes()));
+					}
+					success = false;
+				}
+				if(differentLists(suspecting, deb.getDead())) {
+					if(i == tryTimes) {
+						logger.log(Level.SEVERE, "error comparing \"suspecting nodes\" " + node.getId() + " against current state");
+						logger.info("expected: " + listToString(suspecting));
+						logger.info("result: " + listToString(deb.getDead()));
+					}
+					success = false;
+				}
+				if(differentLists(failing, deb.getFailing())) {
+					if(i == tryTimes) {
+						logger.log(Level.SEVERE, "error comparing \"failing nodes\" " + node.getId() + " against current state");
+						logger.info("expected: " + listToString(failing));
+						logger.info("result: " + listToString(deb.getFailing()));
+					}
+					success = false;
+				}
 			}
-			if(differentLists(suspecting, deb.getDead())) {
-				logger.log(Level.SEVERE, "error comparing \"suspecting nodes\" " + node.getId() + " against current state");
-				logger.info("expected: " + listToString(suspecting));
-				logger.info("result: " + listToString(deb.getDead()));
-				success = false;
-			}
-			if(differentLists(failing, deb.getFailing())) {
-				logger.log(Level.SEVERE, "error comparing \"failing nodes\" " + node.getId() + " against current state");
-				logger.info("expected: " + listToString(failing));
-				logger.info("result: " + listToString(deb.getFailing()));
-				success = false;
-			}
+			if(success) return true;
 		}
-		return success;
+
+		
+		return false;
 
 	}
 	
