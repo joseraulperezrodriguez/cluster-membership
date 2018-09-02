@@ -1,7 +1,13 @@
 package org.cluster.membership.common.model.util;
 
-public class Tuple2<A,B> {
+import java.io.Serializable;
+
+public class Tuple2<A,B> implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private A a;
 	private B b;
 	

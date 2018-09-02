@@ -85,6 +85,15 @@ public class ValuePrioritySet<T> implements Serializable {
 		return (TreeSet<T>)ordered.tailSet(ele);
 	}
 	
+	public TreeSet<T> headSet(T ele) {
+		return (TreeSet<T>)ordered.headSet(ele);
+	}
+	
+	public TreeSet<T> between(T start, T end) {
+		TreeSet<T> tail = (TreeSet<T>)ordered.tailSet(start);
+		return (TreeSet<T>)tail.headSet(end);
+	}
+	
 	public TreeSet<T> getSet() {
 		return ordered;
 	}
@@ -116,6 +125,11 @@ public class ValuePrioritySet<T> implements Serializable {
 	public T last() {
 		if(hashed.isEmpty()) return null;		
 		return ordered.last();
+	}
+	
+	public T first() {
+		if(hashed.isEmpty()) return null;		
+		return ordered.first();
 	}
 	
 	private boolean contains(T el) { return hashed.get(el) != null; }

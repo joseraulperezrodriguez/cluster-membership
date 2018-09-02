@@ -11,4 +11,10 @@ public class DateTime {
 		return nowLocal;
 	}
 	
+	public static long utcTime(long localTime, TimeZone localTimeZone) {
+		long offset = localTimeZone.getOffset(localTime);
+		long nowUTC = localTime - offset;
+		return nowUTC;
+	}
+	
 }

@@ -1,8 +1,5 @@
 package org.cluster.membership.protocol.net;
 
-import java.util.TimeZone;
-
-import org.cluster.membership.common.model.util.DateTime;
 import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.ClusterView;
@@ -43,11 +40,14 @@ public class RequestMessageHandler {
 	}
 		
 	public void handlerSuspectDead(Message m) {			
-		TimeZone remoteTimeZone = m.getGeneratedTimeZone();
+		/*TimeZone remoteTimeZone = m.getGeneratedTimeZone();
 		long remoteTime = (Long)m.getData();
 		TimeZone localTimeZone = Config.THIS_PEER.getTimeZone();		
 		long localTime = DateTime.localTime(remoteTime, remoteTimeZone, localTimeZone);
-		clusterView.suspect(localTime, m);
+		clusterView.suspect(localTime, m);*/
+		
+		long time = (Long)m.getData();
+		clusterView.suspect(time, m);
 	}
 	
 	public void handlerKeepAlive(Message m) {

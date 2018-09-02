@@ -1,9 +1,9 @@
 package org.cluster.membership.protocol.model;
 
 import java.io.Serializable;
-import java.util.TimeZone;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.common.model.util.DateTime;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.MessageCategory;
 import org.cluster.membership.protocol.core.MessageType;
@@ -26,15 +26,12 @@ public class Message implements Comparable<Message>, Serializable {
 	
 	private long generatedTime;
 	
-	private TimeZone generatedTimeZone;
-
 	public Message(MessageType type, Node node, int iterations) {
 		assert(node != null);
 		this.type = type;
 		this.node = node;
 		this.iterations = iterations;
-		this.generatedTime = System.currentTimeMillis();
-		this.generatedTimeZone = Config.THIS_PEER.getTimeZone();
+		this.generatedTime = DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone());
 	}
 	
 	public Message(MessageType type, Node node, int iterations, Object data) {
@@ -46,10 +43,6 @@ public class Message implements Comparable<Message>, Serializable {
 	
 	public long getGeneratedTime() {
 		return generatedTime;
-	}
-
-	public TimeZone getGeneratedTimeZone() {
-		return generatedTimeZone;
 	}
 
 	public Message sended() {
@@ -135,6 +128,14 @@ public class Message implements Comparable<Message>, Serializable {
 	 * */
 	public static Message getMinTimeTemplate(long time) {
 		Message m  = new Message(MessageType.getMinPriority(), Node.getLowerNode(), 1);
+		m.generatedTime = time;
+		return m;
+	}
+	
+	/**Set the MessageType to the greatest possible value and Node to a maximal id value to make sure no real node is greater than it
+	 * */
+	public static Message getMaxTimeTemplate(long time) {
+		Message m  = new Message(MessageType.getMaxPriority(), Node.getLowerNode(), 1);
 		m.generatedTime = time;
 		return m;
 	}

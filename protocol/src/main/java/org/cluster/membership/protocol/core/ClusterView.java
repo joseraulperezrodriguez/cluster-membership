@@ -14,8 +14,9 @@ import org.cluster.membership.common.model.util.DateTime;
 import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.model.ClusterData;
+import org.cluster.membership.protocol.model.FrameMessageCount;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.SynchronizationObjectWrapper;
+import org.cluster.membership.protocol.model.SynchroObject;
 import org.cluster.membership.protocol.structures.DList;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
 import org.cluster.membership.protocol.structures.ValuePrioritySet;
@@ -92,7 +93,6 @@ public class ClusterView implements Serializable {
 	
 	public void init() { 		//nodes.addSortedNodes(Config.SEEDS);
 		nodes.add(Config.THIS_PEER);
-		Global.setReady(true);
 		logger.info("initialized node, added this peer to node list");
 	}
 	
@@ -109,7 +109,7 @@ public class ClusterView implements Serializable {
 		addToCluster(add);
 	}
 	
-	public SynchronizationObjectWrapper handlerUpdateNodeRequest(Node node, long lastRumor) {
+	public SynchroObject getSyncObject(Node node, FrameMessageCount frameMessCount) {
 		
 		if(isSuspectedDead(node)) {
 			Message keepAliveMessage = new Message(MessageType.KEEP_ALIVE, node, MathOp.log2n(getClusterSize()));
@@ -118,30 +118,47 @@ public class ClusterView implements Serializable {
 		
 		if(isFailing(node)) removeFailing(node);
 		
-		SynchronizationObjectWrapper result = getUpdatedView(lastRumor, node);
-		return result;
-		
+		SynchroObject result = getUpdatedView(frameMessCount, node);
+		return result;		
 	}
 
 	public Long lastRumorTime() {
 		Message last = receivedRumors.last();
-		return ((last == null) ? System.currentTimeMillis() : last.getGeneratedTime()); 
+		return ((last == null) ? DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone()) : last.getGeneratedTime()); 
+	}
+		
+	public void updateTailCount() {
+		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone());
+		long expectedIterations = (long)MathOp.log2n(getClusterSize());		
+		long timeFrame = expectedIterations * Config.ITERATION_INTERVAL_MS * Config.READ_IDDLE_ITERATIONS_FACTOR;		
+		long startFrame = nowUTC - timeFrame;
+		long endFrame = startFrame + (expectedIterations * Config.ITERATION_INTERVAL_MS);
+		endFrame -= (Config.ITERATION_INTERVAL_MS * Config.READ_IDDLE_ITERATIONS_FACTOR);
+		
+		TreeSet<Message> tail = receivedRumors.tailSet(Message.getMinTimeTemplate(startFrame));
+		int countTail = tail.tailSet(Message.getMinTimeTemplate(endFrame + 1)).size();
+		
+		Global.updateFrameMessageCount(new FrameMessageCount(startFrame, endFrame, tail.size() - countTail));
 	}
 
-	private SynchronizationObjectWrapper getUpdatedView(long firstTime, Node node) {
-		Message first = receivedRumors.last();
+	private SynchroObject getUpdatedView(FrameMessageCount frameMessCount, Node node) {
+		Message first = receivedRumors.first();
 
-		if(first == null || first.getGeneratedTime() > firstTime) {
-			return new SynchronizationObjectWrapper(myView(node), null);
+		if(first == null || first.getGeneratedTime() > frameMessCount.getStartTime()) {
+			return new SynchroObject(myView(node));
 		} else {
+			
+			TreeSet<Message> frame = receivedRumors.between(Message.getMinTimeTemplate(frameMessCount.getStartTime()),
+					Message.getMaxTimeTemplate(frameMessCount.getEndTime()));			
+			
 			ArrayList<Message> missingMessages = new ArrayList<>();
-			Iterator<Message> iterator = receivedRumors.tailSet(Message.getMinTimeTemplate(firstTime)).iterator();
+			if(frame.size() > frameMessCount.getCount()) {
+				Iterator<Message> iterator = frame.iterator();
+				while(iterator.hasNext()) missingMessages.add(iterator.next());
+			}
 
-			while(iterator.hasNext()) missingMessages.add(iterator.next());
-
-			return new SynchronizationObjectWrapper(null, missingMessages);
+			return new SynchroObject(missingMessages);
 		}
-
 	}
 	
 	/**START the synchronization part
@@ -218,8 +235,16 @@ public class ClusterView implements Serializable {
 		if(this.receivedRumors.size() > Config.MAX_RUMORS_LOG_SIZE) this.receivedRumors.pollFirst();
 		logger.info("added rumor: " + m);
 	}
+	
+	public void updateMyView(SynchroObject syncObjectWrapper) {
+		assert(syncObjectWrapper.getClusterData() != null ^ syncObjectWrapper.getMessages() != null);
+		
+		if(syncObjectWrapper.getClusterData() != null) updateMyViewFully(syncObjectWrapper.getClusterData());
+		else synchronizeMyView(syncObjectWrapper.getMessages());
+		
+	}
 
-	public void updateMyView(ClusterData clusterView) {
+	private void updateMyViewFully(ClusterData clusterView) {
 		this.failed.clear();
 		this.receivedRumors.clear();
 		this.nodes = clusterView.getNodes();
@@ -233,17 +258,15 @@ public class ClusterView implements Serializable {
 		logger.info("update my own view: " + clusterView);
 	}
 
-	public void updateMyView(List<Message> missingMessages) {
+	private void synchronizeMyView(List<Message> missingMessages) {
 		Set<Node> removingNodes = new TreeSet<Node>();
 		for(Message m : missingMessages) {
 			if(m.getType().equals(MessageType.ADD_TO_CLUSTER)) nodes.add(m.getNode());
 			else if(m.getType().equals(MessageType.REMOVE_FROM_CLUSTER)) nodes.remove(m.getNode());
 			else if(m.getType().equals(MessageType.SUSPECT_DEAD)) {
 				Long expirationTime = (Long)m.getData();
-				Long expirationTimeThisServer = DateTime.localTime(expirationTime, m.getGeneratedTimeZone(), Config.THIS_PEER.getTimeZone());
-
-				if(expirationTimeThisServer < System.currentTimeMillis()) 
-					suspectingNodesTimeout.add(new ValuePriorityEntry<Node, Long>(m.getNode(), expirationTimeThisServer), true);
+				if(expirationTime > DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone())) 
+					suspectingNodesTimeout.add(new ValuePriorityEntry<Node, Long>(m.getNode(), expirationTime), true);
 				else removingNodes.add(m.getNode());				
 			} 
 			else if(m.getType().equals(MessageType.KEEP_ALIVE)) {
@@ -288,21 +311,7 @@ public class ClusterView implements Serializable {
 	public Node getNodeAt(int index) throws IndexOutOfBoundsException { return nodes.get(index); }
 
 	/**Prepare the ClusterView object, for sending it to a node joining the cluster*/
-	public ClusterData myView(Node otherPeer) {
-		
-		Iterator<ValuePriorityEntry<Node, Long>> iterator = this.suspectingNodesTimeout.iterator();
-		ValuePrioritySet<ValuePriorityEntry<Node, Long>> suspectingNodesTimeout = 
-				new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-						ValuePriorityEntry.<Node, Long>ascPriorityComparator());
-		
-		while(iterator.hasNext()) {
-			ValuePriorityEntry<Node, Long> next = iterator.next();			
-			long convertedTime = DateTime.localTime(next.getValue(), Config.THIS_PEER.getTimeZone(), otherPeer.getTimeZone());
-
-			ValuePriorityEntry<Node, Long> updated = new ValuePriorityEntry<>(next.getKey(), convertedTime);
-			suspectingNodesTimeout.add(updated, true);
-		}
-		
+	public ClusterData myView(Node otherPeer) {		
 		ClusterData clusterData = new ClusterData(nodes, rumorsToSend.getSet(), suspectingNodesTimeout.getSet());
 		return clusterData;
 	}

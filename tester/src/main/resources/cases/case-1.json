@@ -14,8 +14,9 @@
 		{
 			"type": "check",
 			"data": {
+				"try.delay": 3,
 				"try.interval": 3,
-				"try.times": 3,
+				"try.times": 2,
 				"nodes": ["A"],
 				"suspecting": [],
 				"failing":[]
@@ -32,8 +33,9 @@
 		{
 			"type": "check",
 			"data": {
+				"try.delay": 3,
 				"try.interval": 3,
-				"try.times": 3,			
+				"try.times": 2,			
 				"nodes": ["A","B"],
 				"suspecting": [],
 				"failing":[]

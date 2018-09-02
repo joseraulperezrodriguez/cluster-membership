@@ -25,7 +25,7 @@ public class Config {
 	public static final long ITERATION_INTERVAL_MS = Long.parseLong(map.get("iteration.interval.ms"));
 	
 	/**The factor to multiply by iteration.interval.ms * (iterations=max.expected.node.log.2 || log2(cluster size)), and consider to send an update request*/
-	public static final long READ_IDDLE_ITERATIONS_FACTOR = Integer.parseInt(map.get("read.iddle.iteration.factor"));
+	public static final int READ_IDDLE_ITERATIONS_FACTOR = Integer.parseInt(map.get("read.iddle.iteration.factor"));
 
 	/**The time out for connection to other nodes*/
 	public static final long CONNECTION_TIME_OUT_MS = Long.parseLong(map.get("connection.timeout.ms"));

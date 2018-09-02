@@ -4,7 +4,6 @@ import java.net.URI;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.model.ClusterData;
-import org.cluster.membership.protocol.model.SynchronizationObjectWrapper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -26,16 +25,6 @@ public class RestClient {
 			String endPoint = getEndPoint(to, "membership/subscribe");
 			URI uri = new URI(endPoint);
 			return template.postForObject(uri, subscriptor, ClusterData.class);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-		
-	public SynchronizationObjectWrapper synchronize(Node to, Node updated,long firstTime) {
-		try {
-			URI uri = new URI(getEndPoint(to, "membership/synchronize/"+firstTime));			
-			return template.postForObject(uri, updated, SynchronizationObjectWrapper.class);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;

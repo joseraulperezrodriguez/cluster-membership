@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.Config;
+import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.RequestDescription;
 import org.cluster.membership.protocol.model.ResponseDescription;
@@ -45,7 +46,7 @@ public abstract class MembershipClientHandler extends ChannelInboundHandlerAdapt
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
-		ctx.writeAndFlush(new RequestDescription(Config.THIS_PEER, messages));
+		ctx.writeAndFlush(new RequestDescription(Config.THIS_PEER, Global.getFrameMessageCount(),messages));
 		startTime = System.currentTimeMillis();
 	}
 

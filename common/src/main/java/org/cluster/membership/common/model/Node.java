@@ -98,4 +98,8 @@ public class Node implements Comparable<Node>, Serializable {
 		return new Node(" "," ",0,0,TimeZone.getDefault());
 	}
 	
+	public static Node getGreaterNode() {
+		return new Node(String.valueOf('z' + 1),"",0,0,TimeZone.getDefault());
+	}
+	
 }
