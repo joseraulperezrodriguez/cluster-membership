@@ -21,8 +21,7 @@ public class Runner {
 		for(Process p : runningProcess)  kill(p);				
 		runningProcess.clear();
 	}
-	
-		
+			
 	public static void runTemplates() throws Exception {
 		File cases = new File(Config.casesPath);
 				
@@ -32,7 +31,7 @@ public class Runner {
 		for(File f: sortedByName) {
 			try {
 				boolean success = new Evaluator().evaluate(f);
-				if(success) logger.info("ACCEPTED test for file " + f.getName());
+				if(success) logger.info("PASSED test for file " + f.getName());
 				else logger.log(Level.SEVERE,"FAILED test for file " + f.getName());
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "FAILED test for file " + f.getName());

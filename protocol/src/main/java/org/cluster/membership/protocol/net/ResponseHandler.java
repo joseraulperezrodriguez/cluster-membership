@@ -87,7 +87,7 @@ public class ResponseHandler {
 			}
 		}
 		
-		clusterView.updateTailCount();
+		clusterView.updateFrameMessageCount();
 	}
 		
 	private void handleUnsubscription() {

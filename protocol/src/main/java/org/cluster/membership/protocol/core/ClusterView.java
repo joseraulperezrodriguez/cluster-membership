@@ -127,13 +127,12 @@ public class ClusterView implements Serializable {
 		return ((last == null) ? DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone()) : last.getGeneratedTime()); 
 	}
 		
-	public void updateTailCount() {
+	public void updateFrameMessageCount() {
 		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone());
 		long expectedIterations = (long)MathOp.log2n(getClusterSize());		
 		long timeFrame = expectedIterations * Config.ITERATION_INTERVAL_MS * Config.READ_IDDLE_ITERATIONS_FACTOR;		
 		long startFrame = nowUTC - timeFrame;
-		long endFrame = startFrame + (expectedIterations * Config.ITERATION_INTERVAL_MS);
-		endFrame -= (Config.ITERATION_INTERVAL_MS * Config.READ_IDDLE_ITERATIONS_FACTOR);
+		long endFrame = startFrame + (expectedIterations * Config.ITERATION_INTERVAL_MS * (Config.READ_IDDLE_ITERATIONS_FACTOR - 1));
 		
 		TreeSet<Message> tail = receivedRumors.tailSet(Message.getMinTimeTemplate(startFrame));
 		int countTail = tail.tailSet(Message.getMinTimeTemplate(endFrame + 1)).size();
@@ -143,12 +142,13 @@ public class ClusterView implements Serializable {
 
 	private SynchroObject getUpdatedView(FrameMessageCount frameMessCount, Node node) {
 		Message first = receivedRumors.first();
-
-		if(first == null || first.getGeneratedTime() > frameMessCount.getStartTime()) {
+		
+		if(first != null && first.getGeneratedTime() > frameMessCount.getStartTime()) {
 			return new SynchroObject(myView(node));
 		} else {
 			
-			TreeSet<Message> frame = receivedRumors.between(Message.getMinTimeTemplate(frameMessCount.getStartTime()),
+			TreeSet<Message> frame = receivedRumors.between(
+					Message.getMinTimeTemplate(frameMessCount.getStartTime()),
 					Message.getMaxTimeTemplate(frameMessCount.getEndTime()));			
 			
 			ArrayList<Message> missingMessages = new ArrayList<>();
@@ -261,6 +261,7 @@ public class ClusterView implements Serializable {
 	private void synchronizeMyView(List<Message> missingMessages) {
 		Set<Node> removingNodes = new TreeSet<Node>();
 		for(Message m : missingMessages) {
+			receivedRumors.add(m, true);
 			if(m.getType().equals(MessageType.ADD_TO_CLUSTER)) nodes.add(m.getNode());
 			else if(m.getType().equals(MessageType.REMOVE_FROM_CLUSTER)) nodes.remove(m.getNode());
 			else if(m.getType().equals(MessageType.SUSPECT_DEAD)) {
@@ -283,6 +284,8 @@ public class ClusterView implements Serializable {
 			failed.remove(nd);
 			suspectingNodesTimeout.remove(nd);			
 		}
+		logger.info("synchronize my own view: " + missingMessages.size() + " messages missing");
+		
 	}
 	/**END the synchronization part
 	 * *******************************
@@ -320,5 +323,5 @@ public class ClusterView implements Serializable {
 	public String toString() {
 		return "nodes: " + nodes.size() + " suspecting: " + suspectingNodesTimeout.size();
 	}
-
+	
 }

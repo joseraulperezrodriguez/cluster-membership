@@ -48,7 +48,10 @@ public class FrameMessageCount implements Serializable {
 		this.count = count;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return startTime + ":" + endTime + " -> " + count;
+	}
 	
 	
 

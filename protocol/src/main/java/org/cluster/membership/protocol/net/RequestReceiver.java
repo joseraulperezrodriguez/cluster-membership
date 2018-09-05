@@ -85,7 +85,7 @@ public class RequestReceiver {
 			
 		}
 		
-		clusterView.updateTailCount();
+		clusterView.updateFrameMessageCount();
 		
 		SynchroObject syncData = clusterView.getSyncObject(requestDescription.getNode(), 
 				requestDescription.getFrameMessCount());
