@@ -9,11 +9,10 @@ import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.SynchronizationObjectWrapper;
+import org.cluster.membership.protocol.model.SynchroObject;
 import org.cluster.membership.protocol.net.core.MembershipServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -69,13 +68,13 @@ public class MembershipServiceController {
 		
 	@PostMapping("/update/full-view")
 	public boolean updateView(@RequestBody(required = true)ClusterData clusterData) {
-		clusterView.updateMyView(clusterData);
+		clusterView.updateMyView(new SynchroObject(clusterData));
 		return true;
 	}
 	
 	@PostMapping("/update/commit-log")
 	public boolean updateView(@RequestBody(required = true)List<Message> clusterData) {
-		clusterView.updateMyView(clusterData);
+		clusterView.updateMyView(new SynchroObject(clusterData));
 		return true;
 	}
 	
@@ -85,12 +84,5 @@ public class MembershipServiceController {
 		clusterView.subscribe(node);
 		return clusterView.myView(node);
 	}
-		
-	@PostMapping("/synchronize/{first-time}")
-	public SynchronizationObjectWrapper synchronize(@PathVariable(name="first-time")Long firstTime,@RequestBody(required = true) Node node) {		
-		return clusterView.handlerUpdateNodeRequest(node, firstTime);
-	}
-	
-	
-	
+			
 }

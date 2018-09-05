@@ -187,9 +187,11 @@ public class Evaluator {
 		List<String> suspecting = iteratorToList(data.get("suspecting").iterator());
 		List<String> failing = iteratorToList(data.get("failing").iterator());
 		
+		int tryDelay = data.get("try.delay").asInt();
 		int tryInterval = data.get("try.interval").asInt();
 		int tryTimes = data.get("try.times").asInt();
 		
+		Thread.sleep(tryDelay * 1000);
 		for(int i = 1; i <= tryTimes; i++) {
 			Thread.sleep(tryInterval * 1000);
 			boolean success = true;

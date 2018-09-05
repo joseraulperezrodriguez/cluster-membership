@@ -6,6 +6,7 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.common.model.util.DateTime;
 import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.ClusterView;
@@ -29,7 +30,8 @@ public class ResponseHandler {
 	private ClusterView clusterView;
 		
 	public void addToFailed(Node node) {
-		clusterView.addFailed(new ValuePriorityEntry<Node, Long>(node, System.currentTimeMillis()));
+		clusterView.addFailed(new ValuePriorityEntry<Node, Long>(node, 
+				DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone())));
 	}
 		
 	public void restoreMessages(List<Message> messages) {
@@ -45,11 +47,12 @@ public class ResponseHandler {
 	}
 
 	public void suspectAll(TreeSet<Message> indirectMessages) {
-		long now = System.currentTimeMillis();
+		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone());
+		
 		int iterations = MathOp.log2n(clusterView.getClusterSize());
 		String messageSusp = "";
 		for(Message m : indirectMessages) {
-			long expirTime = now + Config.FAILING_NODE_EXPIRATION_TIME_MS;
+			long expirTime = nowUTC + Config.FAILING_NODE_EXPIRATION_TIME_MS;
 			Message sm  = new Message(MessageType.SUSPECT_DEAD, m.getNode(), 
 					iterations, expirTime);
 			clusterView.suspect(expirTime, sm);
@@ -58,7 +61,8 @@ public class ResponseHandler {
 	}
 
 	public void receive(ResponseDescription response, MembershipClientHandler membershipClientHandler) {
-		
+
+		clusterView.updateMyView(response.getSyncObject());
 		if(response.getReponses().size() == 0) {
 			restoreMessages(membershipClientHandler.getMessages());
 			return;
@@ -81,7 +85,9 @@ public class ResponseHandler {
 				case SUSPECT_DEAD: break;  
 				case UNSUBSCRIPTION: handleUnsubscription(); break;
 			}
-		}		
+		}
+		
+		clusterView.updateFrameMessageCount();
 	}
 		
 	private void handleUnsubscription() {

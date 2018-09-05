@@ -13,17 +13,31 @@ public class ResponseDescription implements Serializable {
 
 	private long responseTime;
 	
+	private SynchroObject syncObject;
+	
 	private List<MessageResponse<? extends Serializable>> reponses;
 
-	public ResponseDescription(List<MessageResponse<? extends Serializable>> reponses) {
+	public ResponseDescription(SynchroObject syncMessages,
+			List<MessageResponse<? extends Serializable>> reponses) {
 		super();
 		this.reponses = reponses;
+		this.syncObject = syncMessages;
 	}
 	
 	@SafeVarargs
-	public ResponseDescription(MessageResponse<? extends Serializable>... responses) {
+	public ResponseDescription(SynchroObject syncMessages, 
+			MessageResponse<? extends Serializable>... responses) {
 		super();
 		this.reponses = Arrays.asList(responses);
+		this.syncObject = syncMessages;
+	}
+
+	public SynchroObject getSyncObject() {
+		return syncObject;
+	}
+
+	public void setSyncObject(SynchroObject syncMessages) {
+		this.syncObject = syncMessages;
 	}
 
 	public long getResponseTime() {

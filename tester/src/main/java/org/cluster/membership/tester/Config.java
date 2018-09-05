@@ -116,7 +116,9 @@ public class Config {
 	}
 
 	public static void newInstance(String id) throws Exception {
-		File folder = new File(Config.instancesContainer + File.separator + id);
+		File folder = new File(Config.instancesContainer + File.separator + id);		
+		if(folder.exists()) folder.delete();
+		
 		File source = new File(Config.templateContainer);
 
 		FileSystemUtils.copyRecursively(source, folder);

@@ -1,8 +1,5 @@
 package org.cluster.membership.protocol.net.core;
 
-import java.util.List;
-
-import org.cluster.membership.protocol.model.MessageResponse;
 import org.cluster.membership.protocol.model.RequestDescription;
 import org.cluster.membership.protocol.model.ResponseDescription;
 import org.cluster.membership.protocol.net.RequestReceiver;
@@ -23,8 +20,7 @@ public class MembershipServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		RequestDescription request = (RequestDescription)msg;
-		List<MessageResponse<?>> messages = messageReceiver.receive(request.getNode(), request.getData(), ctx);				
-		ResponseDescription response = new ResponseDescription(messages);		
+		ResponseDescription response = messageReceiver.receive(request, ctx);						
 		ctx.writeAndFlush(response);
 	
 	}

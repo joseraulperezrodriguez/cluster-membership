@@ -1,22 +1,32 @@
 package org.cluster.membership.protocol.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class SynchronizationObjectWrapper {
+public class SynchroObject implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private ClusterData clusterData;
 	
 	private List<Message> messages;
 
 
-	public SynchronizationObjectWrapper() {}
+	public SynchroObject() {}
 	
-	public SynchronizationObjectWrapper(ClusterData clusterData, List<Message> messages) {
+	public SynchroObject(ClusterData clusterData) {
 		super();
 		this.clusterData = clusterData;
+	}
+	
+	public SynchroObject(List<Message> messages) {
+		super();
 		this.messages = messages;
 	}
-
+	
 	public ClusterData getClusterData() {
 		return clusterData;
 	}

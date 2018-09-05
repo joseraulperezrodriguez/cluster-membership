@@ -1,31 +1,28 @@
 package org.cluster.membership.protocol.core;
 
+import org.cluster.membership.common.model.util.DateTime;
 import org.cluster.membership.protocol.ClusterNodeEntry;
+import org.cluster.membership.protocol.Config;
+import org.cluster.membership.protocol.model.FrameMessageCount;
 import org.springframework.boot.SpringApplication;
 
 public class Global {
 
-	private static boolean synchronizing;
+	private static FrameMessageCount frameMessCount;
 	
-	private static boolean ready;
-	
-	protected static synchronized void setSynchronizing(boolean value) {
-		synchronizing = value;
-		if(value) setReady(false);
+	static {
+		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone());
+		frameMessCount = new FrameMessageCount(nowUTC,nowUTC,0);
 	}
 	
-	public static boolean isSynchronizing() {
-		return synchronizing;
+	public static void updateFrameMessageCount(FrameMessageCount frameMessageCount) {
+		Global.frameMessCount = frameMessageCount;
 	}
 	
-	public static synchronized void setReady(boolean value) {
-		ready = value;
+	public static FrameMessageCount getFrameMessageCount() {
+		return frameMessCount;
 	}
-	
-	public static boolean isReady() {
-		return ready;
-	}
-	
+			
 	public static void shutdown(long seconds) {
 		new Runnable() {			
 			@Override
@@ -36,13 +33,8 @@ public class Global {
 				} catch(Exception e) {
 					SpringApplication.exit(ClusterNodeEntry.applicationContext, () -> 0);
 				}
-
 			}
 		}.run();
-	}
-	
-	static {
-		Global.synchronizing = false;
 	}
 
 }

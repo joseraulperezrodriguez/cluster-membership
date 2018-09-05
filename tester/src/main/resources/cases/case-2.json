@@ -40,6 +40,25 @@
 				"suspecting": [],
 				"failing":[]
 			}
+		},
+		{
+			"type": "node",
+			"data": {
+				"id": "C",
+				"address": "localhost",
+				"time.zone": "Europe/Madrid"
+			}
+		},
+		{
+			"type": "check",
+			"data": {
+				"try.delay": 6,
+				"try.interval": 2,
+				"try.times": 2,			
+				"nodes": ["A","B","C"],
+				"suspecting": [],
+				"failing":[]
+			}
 		}		
 	]
 }				

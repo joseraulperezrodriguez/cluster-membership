@@ -7,6 +7,7 @@ import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.ClusterData;
+import org.cluster.membership.protocol.model.SynchroObject;
 import org.cluster.membership.protocol.net.RestClient;
 import org.cluster.membership.protocol.net.core.MembershipServer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public class ClusterNodeEntry implements ApplicationRunner {
     			ClusterData view = restClient.subscribe(nd, Config.THIS_PEER);
     			if(view == null) continue;     			
     			logger.info("subscribed successfuly against node: " + nd + " with view " + view);    			
-    			clusterView.updateMyView(view);
+    			clusterView.updateMyView(new SynchroObject(view));
     			return;
     		}
     		logger.log(Level.SEVERE, "all seeds failed");

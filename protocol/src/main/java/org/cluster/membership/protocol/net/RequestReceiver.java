@@ -7,10 +7,12 @@ import java.util.logging.Logger;
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.core.ClusterView;
-import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.MessageResponse;
+import org.cluster.membership.protocol.model.RequestDescription;
+import org.cluster.membership.protocol.model.ResponseDescription;
+import org.cluster.membership.protocol.model.SynchroObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,33 +23,18 @@ public class RequestReceiver {
 	
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 	
-	private long lastMessage;
-	
 	@Autowired
 	private RequestMessageHandler messageHandler;
 	
 	@Autowired
 	private ClusterView clusterView;
 	
-	public RequestReceiver() {
-		this.lastMessage = System.currentTimeMillis();
-	}
-	
-	public long getLastMessage() {
-		return lastMessage;
-	}
-	
-	public void setLastMessage(long time) {
-		if(Global.isSynchronizing()) this.lastMessage = time;
-	}
-
-	public List<MessageResponse<?>> receive(Node from, List<Message> messages, ChannelHandlerContext ctx) {
-		List<MessageResponse<?>> ans = new ArrayList<MessageResponse<?>>();
+	public ResponseDescription receive(RequestDescription requestDescription, ChannelHandlerContext ctx) {
+		Node from = requestDescription.getNode();		
+		List<Message> messages = requestDescription.getData();
 		
-		if(!Global.isReady()) return ans;
-		
-		lastMessage = System.currentTimeMillis();
-		
+		List<MessageResponse<?>> mResponses = new ArrayList<MessageResponse<?>>();
+						
 		if(clusterView.isFailing(from)) clusterView.removeFailing(from);
 		
 		if(clusterView.isSuspectedDead(from)) {
@@ -68,8 +55,6 @@ public class RequestReceiver {
 				continue;			
 			}
 			
-			
-			
 			switch (mt) {
 				case UNSUBSCRIPTION: {
 					messageHandler.handlerUnsubscription(m);
@@ -77,7 +62,7 @@ public class RequestReceiver {
 				}
 				case PROBE: {
 					MessageResponse<Boolean> mr = messageHandler.handlerProbe(m, ctx);
-					if(mr != null) ans.add(mr);
+					if(mr != null) mResponses.add(mr);
 					break;
 				} 
 				case SUSPECT_DEAD: {
@@ -100,7 +85,12 @@ public class RequestReceiver {
 			
 		}
 		
-		return ans;
+		clusterView.updateFrameMessageCount();
+		
+		SynchroObject syncData = clusterView.getSyncObject(requestDescription.getNode(), 
+				requestDescription.getFrameMessCount());
+		
+		return new ResponseDescription(syncData, mResponses);
 		
 	}
 
