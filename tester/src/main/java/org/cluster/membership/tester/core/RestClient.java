@@ -26,17 +26,17 @@ public class RestClient {
 	}
 	
 	public static boolean shutdown(Node node) {
-		return restTemplate.postForObject(getAddress(node, "/membership/shutdown"), null, 
+		return restTemplate.postForObject(getAddress(node, "/membership/debug/shutdown"), null, 
 				Boolean.class);
 	}
 	
 	public static boolean pause(Node node, long time) {
-		return restTemplate.postForObject(getAddress(node, "/membership/pause"), time, 
+		return restTemplate.postForObject(getAddress(node, "/membership/debug/pause"), time, 
 				Boolean.class);
 	}
 	
 	public static StateInfo getStateInfo(Node node) {
-		return restTemplate.getForObject(getAddress(node, "/membership/state-info"), 
+		return restTemplate.getForObject(getAddress(node, "/membership/debug/state-info"), 
 				StateInfo.class);
 	}
 

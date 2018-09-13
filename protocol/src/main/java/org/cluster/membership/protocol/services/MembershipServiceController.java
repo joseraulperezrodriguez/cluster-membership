@@ -8,8 +8,6 @@ import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.ClusterData;
-import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.model.SynchroObject;
 import org.cluster.membership.protocol.net.core.MembershipServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,41 +40,6 @@ public class MembershipServiceController {
 		return true;
 	}
 	
-	@PostMapping("/shutdown")	
-	public boolean shutdown() {
-		logger.info("shutdown message received");
-		Global.shutdown(5);
-		return true;
-	}
-	
-	@PostMapping("/pause")	
-	public boolean pause(@RequestBody(required = true) long millis) {
-		logger.info("pause message received " + millis);
-		membershipServer.pause(millis);
-		return true;
-	}
-	
-	@GetMapping("/nodes")
-	public List<Node> nodes() {		
-		return clusterView.nodes();
-	}
-	
-	@GetMapping("/state-info")
-	public StateInfo nodesDebug() {
-		return clusterView.getStateInfo();
-	}
-		
-	@PostMapping("/update/full-view")
-	public boolean updateView(@RequestBody(required = true)ClusterData clusterData) {
-		clusterView.updateMyView(new SynchroObject(clusterData));
-		return true;
-	}
-	
-	@PostMapping("/update/commit-log")
-	public boolean updateView(@RequestBody(required = true)List<Message> clusterData) {
-		clusterView.updateMyView(new SynchroObject(clusterData));
-		return true;
-	}
 	
 	@PostMapping("/subscribe")
 	public ClusterData subscribe(@RequestBody(required = true)Node node) {
@@ -84,5 +47,30 @@ public class MembershipServiceController {
 		clusterView.subscribe(node);
 		return clusterView.myView(node);
 	}
+	
+	@GetMapping("/nodes")
+	public List<Node> nodes() {		
+		return clusterView.nodes();
+	}
+	
+	@PostMapping("/debug/shutdown")	
+	public boolean shutdown() {
+		logger.info("shutdown message received");
+		Global.shutdown(5);
+		return true;
+	}
+	
+	@PostMapping("/debug/pause")	
+	public boolean pause(@RequestBody(required = true) long millis) {
+		logger.info("pause message received " + millis);
+		membershipServer.pause(millis);
+		return true;
+	}
+	
+	@GetMapping("/debug/state-info")
+	public StateInfo nodesDebug() {
+		return clusterView.getStateInfo();
+	}
+		
 			
 }

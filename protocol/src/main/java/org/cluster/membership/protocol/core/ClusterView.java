@@ -293,7 +293,7 @@ public class ClusterView implements Serializable {
 	 * *******************************/
 
 
-	public ValuePriorityEntry<Node, Long> pollFailed() { return failed.pollFirst(); }
+	public ValuePriorityEntry<Node, Long> pollFailed() { return failed.pollLast(); }
 
 	public boolean isSuspectedDead(Node nd) { 
 		return suspectingNodesTimeout.contains(ValuePriorityEntry.<Node, Long>getKeyTemplate(nd), true); 
