@@ -1,4 +1,4 @@
-#Membership protocol and services
+# Membership protocol and services
 
 This project provides an implementation for offering cluster membership services with the aim of being useful and extensible in any case that need answer to the question: *who are the peers in the cluster*?
 </br></br> 
@@ -6,7 +6,7 @@ Two main components are part of this system:
 - [A gossip like protocol](#a-gossip-like-protocol)
 - [Membership services](#membership-services)
 
-##A gossip like protocol
+## A gossip like protocol
 
 Used for message propagation to the cluster and membership management. The protocol works as follows.
 
@@ -68,7 +68,7 @@ because the message started in this frame has stopped already the propagation an
 
 Implementation details in the source code documentation.
 
-##Membership services
+## Membership services
 
 A REST API for consumer to get info about the cluster
 
