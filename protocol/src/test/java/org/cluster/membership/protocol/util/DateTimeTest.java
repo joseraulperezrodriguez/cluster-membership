@@ -45,10 +45,7 @@ public class DateTimeTest
 		long offset = madridTZ.getOffset(nowMadrid);
 		long nowUTC = nowMadrid - offset;
 		
-		assert(nowUTC == nowMadrid - (hour*2));		
-		
 		long nowHavana = havanaTZ.getOffset(nowUTC) + nowUTC;
-		
 		assert(nowHavana == nowMadrid - (hour*6));
     }
     

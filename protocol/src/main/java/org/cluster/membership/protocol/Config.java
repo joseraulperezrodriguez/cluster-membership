@@ -12,39 +12,39 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.common.model.util.EnvUtils;
 import org.cluster.membership.protocol.structures.DList;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.system.ApplicationHome;
 
 public class Config {
 	private static final Logger logger = Logger.getLogger(Config.class.getName());
 	
-	private static final HashMap<String, String> map = Parsing.readAppConfig();
+	private static HashMap<String, String> map;// = Parsing.readAppConfig();
 			
 	/**The time interval for making requests to other nodes in the cluster*/
-	public static final long ITERATION_INTERVAL_MS = Long.parseLong(map.get("iteration.interval.ms"));
+	public static long ITERATION_INTERVAL_MS;
 	
 	/**The factor to multiply by iteration.interval.ms * (iterations=max.expected.node.log.2 || log2(cluster size)), and consider to send an update request*/
-	public static final int READ_IDDLE_ITERATIONS_FACTOR = Integer.parseInt(map.get("read.iddle.iteration.factor"));
+	public static int READ_IDDLE_ITERATIONS_FACTOR;
 
 	/**The time out for connection to other nodes*/
-	public static final long CONNECTION_TIME_OUT_MS = Long.parseLong(map.get("connection.timeout.ms"));
+	public static long CONNECTION_TIME_OUT_MS;
 		
 	/**The time to wait for a node sends a keep alive signal, to avoid removing from cluster*/
-	public static final long FAILING_NODE_EXPIRATION_TIME_MS = Long.parseLong(map.get("failing.node.expiration.time.ms"));//one day
+	public static long FAILING_NODE_EXPIRATION_TIME_MS;//one day
 				
 	/**The max  number of iterations to select a random node*/
-	public static final int MAX_EXPECTED_NODE_LOG_2_SIZE = Integer.parseInt(map.get("max.expected.node.log.2"));
+	public static int MAX_EXPECTED_NODE_LOG_2_SIZE;
 	
 	
 	/**The max length of the set for storing rumors messages, used for recovery other nodes later*/
-	public static final int MAX_RUMORS_LOG_SIZE = Integer.parseInt(map.get("max.rumor.log.size"));
+	public static int MAX_RUMORS_LOG_SIZE;
 	
 	/**The max number of bytes allowed to transfer between client and server*/
-	public static final int MAX_OBJECT_SIZE = Integer.parseInt(map.get("max.object.size"));
+	public static int MAX_OBJECT_SIZE;
 	
 	
-	public static final Node THIS_PEER = Parsing.readThisPeer();
+	public static Node THIS_PEER;
 	
 	public static final DList SEEDS = new DList();
 	
@@ -57,9 +57,21 @@ public class Config {
 				(MAX_RUMORS_LOG_SIZE < 10*1000*1000) && THIS_PEER != null;
 	}
 	
-	public static void read(ApplicationArguments args) throws Exception {		
-		Parsing.setSeedNodes(args);
+	public static void read(ApplicationArguments args) throws Exception {
+		if(args.containsOption("home")) Parsing.homePath = args.getOptionValues("home").get(0);			
+		else Parsing.homePath = EnvUtils.getHomePath(ClusterNodeEntry.class, Parsing.configFolder);
+
+		map = Parsing.readAppConfig();
+		ITERATION_INTERVAL_MS = Long.parseLong(map.get("iteration.interval.ms"));
+		READ_IDDLE_ITERATIONS_FACTOR = Integer.parseInt(map.get("read.iddle.iteration.factor"));
+		CONNECTION_TIME_OUT_MS = Long.parseLong(map.get("connection.timeout.ms"));
+		FAILING_NODE_EXPIRATION_TIME_MS = Long.parseLong(map.get("failing.node.expiration.time.ms"));//one day
+		MAX_EXPECTED_NODE_LOG_2_SIZE = Integer.parseInt(map.get("max.expected.node.log.2"));
+		MAX_RUMORS_LOG_SIZE = Integer.parseInt(map.get("max.rumor.log.size"));
+		MAX_OBJECT_SIZE = Integer.parseInt(map.get("max.object.size"));
+		THIS_PEER = Parsing.readThisPeer();
 		
+		Parsing.setSeedNodes(args);		
 		String appProperties = "using properties: \n";
 		for(Map.Entry<String, String> entry : map.entrySet()) 
 			appProperties += entry.getKey() + "=" + entry.getValue() + "\n";
@@ -75,20 +87,13 @@ public class Config {
 		private static final String servicePort = "server.port";
 		private static final String timeZone = "time.zone";		
 		
-		private static final String homePath = getHomePath();
+		//private static final String homePath = getHomePath();
 		
 		private static final String configFolder = "config";
 		private static final String appConfigFile = "app.properties";
 		
-		private static String getHomePath() {
-			ApplicationHome home = new ApplicationHome(ClusterNodeEntry.class); 
-			String path = home.getDir().getAbsolutePath();
-			String configFolderPath = path + File.separator + configFolder;
-			File configFolder = new File(configFolderPath);
-			if(!configFolder.exists()) return path + File.separator + "target";
-			return path;
-		}
-
+		private static String homePath;
+		
 		private static Properties prop(String file) throws Exception {			
 			String peerConf = homePath + File.separator + file;
 			Properties p = new Properties();
@@ -166,7 +171,7 @@ public class Config {
 				
 				if(contains == 0) break;
 				if(contains == -1) throw new Exception("Error reading config for node " + count + 
-						", some attributes are missing or bad configured");
+						", some attributes are missing or wrongly configured");
 				
 				try {				
 					

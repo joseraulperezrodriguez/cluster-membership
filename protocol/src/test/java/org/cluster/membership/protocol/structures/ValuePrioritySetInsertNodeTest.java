@@ -4,17 +4,15 @@ import java.util.Iterator;
 import java.util.TimeZone;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.protocol.ClusterNodeEntryTest;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  * Unit test for simple App.
  */
-public class ValuePrioritySetInsertNodeTest 
-    extends TestCase
-{
+public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
 	
 	
 	private final Node a = new Node("A", "A 1", 7001, 6001, TimeZone.getDefault());
@@ -28,8 +26,7 @@ public class ValuePrioritySetInsertNodeTest
      *
      * @param testName name of the test case
      */
-    public ValuePrioritySetInsertNodeTest( String testName )
-    {
+    public ValuePrioritySetInsertNodeTest( String testName ) throws Exception {
         super( testName );
     }
 

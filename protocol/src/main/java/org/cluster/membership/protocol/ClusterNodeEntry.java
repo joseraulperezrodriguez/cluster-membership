@@ -30,6 +30,7 @@ public class ClusterNodeEntry implements ApplicationRunner {
 	
 	public static ConfigurableApplicationContext applicationContext;
 	
+	
     public static void main( String[] args ) {
     	String argsString = ""; for(String s : args) argsString += s + " ";
     	logger.info("started program with args: " + argsString);
