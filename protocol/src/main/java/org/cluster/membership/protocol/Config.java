@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.common.model.util.EnvUtils;
+import org.cluster.membership.common.model.util.Literals;
 import org.cluster.membership.protocol.structures.DList;
 import org.springframework.boot.ApplicationArguments;
 
@@ -62,13 +63,13 @@ public class Config {
 		else Parsing.homePath = EnvUtils.getHomePath(ClusterNodeEntry.class, Parsing.configFolder);
 
 		map = Parsing.readAppConfig();
-		ITERATION_INTERVAL_MS = Long.parseLong(map.get("iteration.interval.ms"));
-		READ_IDDLE_ITERATIONS_FACTOR = Integer.parseInt(map.get("read.iddle.iteration.factor"));
-		CONNECTION_TIME_OUT_MS = Long.parseLong(map.get("connection.timeout.ms"));
-		FAILING_NODE_EXPIRATION_TIME_MS = Long.parseLong(map.get("failing.node.expiration.time.ms"));//one day
-		MAX_EXPECTED_NODE_LOG_2_SIZE = Integer.parseInt(map.get("max.expected.node.log.2"));
-		MAX_RUMORS_LOG_SIZE = Integer.parseInt(map.get("max.rumor.log.size"));
-		MAX_OBJECT_SIZE = Integer.parseInt(map.get("max.object.size"));
+		ITERATION_INTERVAL_MS = Long.parseLong(map.get(Literals.ITERATION_INTERVAL_MS));
+		READ_IDDLE_ITERATIONS_FACTOR = Integer.parseInt(map.get(Literals.READ_IDDLE_ITERATIONS_FACTOR));
+		CONNECTION_TIME_OUT_MS = Long.parseLong(map.get(Literals.CONNECTION_TIME_OUT_MS));
+		FAILING_NODE_EXPIRATION_TIME_MS = Long.parseLong(map.get(Literals.FAILING_NODE_EXPIRATION_TIME_MS));//one day
+		MAX_EXPECTED_NODE_LOG_2_SIZE = Integer.parseInt(map.get(Literals.MAX_EXPECTED_NODE_LOG_2_SIZE));
+		MAX_RUMORS_LOG_SIZE = Integer.parseInt(map.get(Literals.MAX_RUMORS_LOG_SIZE));
+		MAX_OBJECT_SIZE = Integer.parseInt(map.get(Literals.MAX_OBJECT_SIZE));
 		THIS_PEER = Parsing.readThisPeer();
 		
 		Parsing.setSeedNodes(args);		
@@ -81,13 +82,6 @@ public class Config {
 	
 	private static class Parsing {
 		
-		private static final String id = "id";
-		private static final String address = "address";
-		private static final String protocolPort = "protocol.port";
-		private static final String servicePort = "server.port";
-		private static final String timeZone = "time.zone";		
-		
-		//private static final String homePath = getHomePath();
 		
 		private static final String configFolder = "config";
 		private static final String appConfigFile = "app.properties";
@@ -105,17 +99,17 @@ public class Config {
 			try {				
 				Properties p = prop(configFolder + File.separator  + appConfigFile);
 				boolean noId = false;
-				String cId = map.get(id).trim();
+				String cId = map.get(Literals.NODE_ID).trim();
 				if(cId.isEmpty()) {
 					noId = true;
 					cId = UUID.randomUUID().toString();
-					p.setProperty(id, cId);
+					p.setProperty(Literals.NODE_ID, cId);
 				}
 
-				String cAddress = map.get(address).trim();
-				Integer cProtocolPort = Integer.parseInt(map.get(protocolPort).trim());
-				Integer cServicePort = Integer.parseInt(map.get(servicePort).trim());
-				String cTimeZone = map.get(timeZone).trim();
+				String cAddress = map.get(Literals.NODE_ADDRESS).trim();
+				Integer cProtocolPort = Integer.parseInt(map.get(Literals.NODE_PROTOCOL_PORT).trim());
+				Integer cServicePort = Integer.parseInt(map.get(Literals.NODE_SERVER_PORT).trim());
+				String cTimeZone = map.get(Literals.NODE_TIME_ZONE).trim();
 				
 				
 				Node node = new Node(cId, cAddress, cProtocolPort, cServicePort, TimeZone.getTimeZone(cTimeZone));
@@ -162,11 +156,11 @@ public class Config {
 		private static void setSeedNodes(ApplicationArguments args) throws Exception {
 			int count = 1;
 			do {
-				int contains = containsOptions(args, id + "." + count, 
-						address + "." + count,
-						protocolPort + "." + count,
-						servicePort + "." + count,
-						timeZone + "." + count
+				int contains = containsOptions(args, Literals.NODE_ID + "." + count, 
+						Literals.NODE_ADDRESS + "." + count,
+						Literals.NODE_PROTOCOL_PORT + "." + count,
+						Literals.NODE_SERVER_PORT + "." + count,
+						Literals.NODE_TIME_ZONE + "." + count
 						);
 				
 				if(contains == 0) break;
@@ -175,11 +169,11 @@ public class Config {
 				
 				try {				
 					
-					String cId = args.getOptionValues(id + "." + count).get(0);
-					String cAddress = args.getOptionValues(address + "." + count).get(0);
-					int cProtocolPort = Integer.parseInt(args.getOptionValues(protocolPort + "." + count).get(0));
-					int cServicePort = Integer.parseInt(args.getOptionValues(servicePort + "." + count).get(0));
-					String cTimeZone = args.getOptionValues(timeZone + "." + count).get(0);
+					String cId = args.getOptionValues(Literals.NODE_ID + "." + count).get(0);
+					String cAddress = args.getOptionValues(Literals.NODE_ADDRESS + "." + count).get(0);
+					int cProtocolPort = Integer.parseInt(args.getOptionValues(Literals.NODE_PROTOCOL_PORT + "." + count).get(0));
+					int cServicePort = Integer.parseInt(args.getOptionValues(Literals.NODE_SERVER_PORT + "." + count).get(0));
+					String cTimeZone = args.getOptionValues(Literals.NODE_TIME_ZONE + "." + count).get(0);
 					
 					Node n = new Node(cId, cAddress, cProtocolPort, cServicePort, TimeZone.getTimeZone(cTimeZone));
 					Config.SEEDS.add(n);

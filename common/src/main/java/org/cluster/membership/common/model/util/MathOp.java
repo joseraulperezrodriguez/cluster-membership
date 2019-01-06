@@ -9,4 +9,10 @@ public class MathOp {
 		return iterations + 1;		
 	}
 	
+	public static int waitTime(int size, int interval) {
+		int iterations = MathOp.log2n(size) + 1;
+		int time = iterations * interval;
+		return time;
+	}
+	
 }

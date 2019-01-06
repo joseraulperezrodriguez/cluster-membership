@@ -27,15 +27,22 @@ public abstract class AbstractEnvConfig {
 	private int servicePort = 1;
 	private int protocolPort = 1;
 	
+	private Properties properties;
+	
 	public AbstractEnvConfig(String homePath, String programPath) throws Exception {
 		this.homePath = homePath;
 		this.casesPath = homePath + File.separator + "cases";
 		this.prepareEnvironment(programPath);
 	}
 
+	public String getProgramName() {
+		return programName;
+	}
+	
 	private void initPorts(String configPath) throws Exception {
 		Properties p = new Properties();
-		p.load(new FileInputStream(configPath));		
+		p.load(new FileInputStream(configPath));
+		
 		servicePort = Integer.parseInt(p.getProperty("server.port"));
 		protocolPort = Integer.parseInt(p.getProperty("protocol.port"));
 	}
@@ -102,9 +109,16 @@ public abstract class AbstractEnvConfig {
 		Properties p = new Properties();
 		p.load(new FileInputStream(path));
 		p.setProperty(key, value);
-		p.store(new FileOutputStream(path), "date: " + System.currentTimeMillis());		
+		p.store(new FileOutputStream(path), "date: " + System.currentTimeMillis());	
+		
+		if(id.equals(templateFolder)) properties = p;
 	}
-
+	
+	
+	public String getProp(String key) {
+		return properties.getProperty(key);		
+	}
+	
 	public String programPath(String id) {
 		return instancesContainer + File.separator + id + File.separator + programName;
 	}

@@ -1,10 +1,5 @@
 package org.cluster.membership.tester;
 
-import org.cluster.membership.common.model.util.EnvUtils;
-import org.cluster.membership.tester.config.AbstractEnvConfig;
-import org.cluster.membership.tester.config.MultipleVMEnvConfig;
-import org.cluster.membership.tester.runner.AbstractRunner;
-import org.cluster.membership.tester.runner.MultipleVMRunner;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.WebApplicationType;
@@ -25,11 +20,12 @@ public class MultipleVMTesterEntry implements ApplicationRunner {
 	
 	@Override
     public void run(ApplicationArguments args) throws Exception {	
-    	String pathToProgram = args.getOptionValues("program-path").get(0);
+    	/*String pathToProgram = args.getOptionValues("program-path").get(0);
     	String homePath = EnvUtils.getHomePath(MultipleVMTesterEntry.class, AbstractEnvConfig.configFolder);
     	AbstractEnvConfig config = new MultipleVMEnvConfig(homePath, pathToProgram);
-    	AbstractRunner runner = new MultipleVMRunner(config);
-    	runner.runTemplates();
+    	IEvaluator evaluator = new BasicEvaluator();
+    	AbstractRunner runner = new MultipleVMRunner(config, evaluator);
+    	runner.runTemplates();*/
     }
 	
 }

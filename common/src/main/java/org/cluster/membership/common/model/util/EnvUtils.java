@@ -45,11 +45,11 @@ public class EnvUtils {
 	}
 
 	public static String generateNodeCommandLineArguments(Node node, int idx) {
-		return " --id." + idx + "=" + node.getId() +
-				" --address." + idx + "=" + node.getAddress() +
-				" --protocol.port." + idx + "=" + node.getProtocolPort() +
-				" --server.port." + idx + "=" + node.getServicePort() +
-				" --time.zone." + idx + "=" + node.getTimeZone().getID();
+		return " --" + Literals.NODE_ID + "." + idx + "=" + node.getId() +
+				" --" + Literals.NODE_ADDRESS + "." + idx + "=" + node.getAddress() +
+				" --" + Literals.NODE_PROTOCOL_PORT + "." + idx + "=" + node.getProtocolPort() +
+				" --" + Literals.NODE_SERVER_PORT + "." + idx + "=" + node.getServicePort() +
+				" --" + Literals.NODE_TIME_ZONE + "." + idx + "=" + node.getTimeZone().getID();
 	}
 
 	

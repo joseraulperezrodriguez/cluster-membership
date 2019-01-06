@@ -1,6 +1,6 @@
 {	
 	"config": {
-		"iteration.interval.ms": 3000	
+		"iteration.interval.ms": 1500	
 	},
 	"procedure": [
 		{
@@ -12,17 +12,6 @@
 			}			
 		},
 		{
-			"type": "check",
-			"data": {
-				"try.delay": 3,
-				"try.interval": 3,
-				"try.times": 2,
-				"nodes": ["A"],
-				"suspecting": [],
-				"failing":[]
-			}
-		},
-		{
 			"type": "node",
 			"data": {
 				"id": "B",
@@ -31,33 +20,11 @@
 			}
 		},
 		{
-			"type": "check",
-			"data": {
-				"try.delay": 3,
-				"try.interval": 3,
-				"try.times": 2,			
-				"nodes": ["A","B"],
-				"suspecting": [],
-				"failing":[]
-			}
-		},
-		{
 			"type": "node",
 			"data": {
 				"id": "C",
 				"address": "localhost",
 				"time.zone": "Europe/Madrid"
-			}
-		},
-		{
-			"type": "check",
-			"data": {
-				"try.delay": 6,
-				"try.interval": 2,
-				"try.times": 2,			
-				"nodes": ["A","B","C"],
-				"suspecting": [],
-				"failing":[]
 			}
 		}		
 	]

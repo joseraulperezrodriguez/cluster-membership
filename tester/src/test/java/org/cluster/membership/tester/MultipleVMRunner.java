@@ -1,4 +1,4 @@
-package org.cluster.membership.tester.runner;
+package org.cluster.membership.tester;
 
 import java.io.File;
 import java.util.Arrays;
@@ -6,14 +6,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.cluster.membership.tester.config.AbstractEnvConfig;
-import org.cluster.membership.tester.deploy.MultipleVMDeploymentSimulator;
+import org.cluster.membership.tester.core.IEvaluator;
+import org.cluster.membership.tester.core.Snapshot;
+import org.cluster.membership.tester.deploy.MultipleVMDeploymentAndExecutionSimulator;
 
 public class MultipleVMRunner extends AbstractRunner {
 	
 	private Logger logger = Logger.getLogger(MultipleVMRunner.class.getName());	
 	
-	public MultipleVMRunner(AbstractEnvConfig appConfig) {
-		super(appConfig);
+	public MultipleVMRunner(AbstractEnvConfig appConfig, IEvaluator evaluator) {
+		super(appConfig, evaluator);
 	}
 		
 	public void runTemplates() throws Exception {
@@ -21,13 +23,15 @@ public class MultipleVMRunner extends AbstractRunner {
 				
 		File[] sortedByName = cases.listFiles();
 		Arrays.sort(sortedByName, (a, b) -> a.getName().compareTo(b.getName()));
-		
 		for(File f: sortedByName) {
-			MultipleVMDeploymentSimulator deployment = new MultipleVMDeploymentSimulator(getAppConfig());			
+			MultipleVMDeploymentAndExecutionSimulator deployment = new MultipleVMDeploymentAndExecutionSimulator(getAppConfig());			
 			try {
-				boolean success = new MultipleVMDeploymentSimulator(getAppConfig()).evaluate(f);
-				if(success) logger.info("PASSED test for file " + f.getName());
-				else logger.log(Level.SEVERE,"FAILED test for file " + f.getName());
+				//boolean success = new MultipleVMDeploymentSimulator(getAppConfig()).deploy(f);
+				Snapshot snapshot = deployment.deploy(f);
+				Double success = getEvaluator().evaluate(snapshot);
+				
+				String message = "FAILED test for file " + f.getName();
+				assertEquals(message, 1, success, 0.5);
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "FAILED test for file " + f.getName());
 				logger.log(Level.SEVERE, "error trace below:");

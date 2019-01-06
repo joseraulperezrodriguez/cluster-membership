@@ -1,39 +1,38 @@
 package org.cluster.membership.tester.deploy;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.UUID;
 
-import org.cluster.membership.common.debug.StateInfo;
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.common.model.util.EnvUtils;
 import org.cluster.membership.common.model.util.Tuple2;
 import org.cluster.membership.tester.config.AbstractEnvConfig;
-import org.cluster.membership.tester.core.RestClient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 
-public class MultipleVMDeploymentSimulator extends AbstractDeploymentSimulator {
+public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymentAndExecutionSimulator {
 
 
-	private Logger logger = Logger.getLogger(MultipleVMDeploymentSimulator.class.getName());
+	//private Logger logger = Logger.getLogger(MultipleVMDeploymentSimulator.class.getName());
 	
 	private List<Process> runningProcess;
 	
-	public MultipleVMDeploymentSimulator(AbstractEnvConfig appConfig) {
+	private String killToken;
+	
+	public MultipleVMDeploymentAndExecutionSimulator(AbstractEnvConfig appConfig) {
 		super(appConfig);
 		this.runningProcess = new ArrayList<Process>();
+		this.killToken = UUID.randomUUID().toString();
 	}
 	
 	public List<Process> getRunningProcesses() {
 		return runningProcess;
 	}
 
-	protected void createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {		
+	protected Node createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {		
 		String id = data.get("id").asText();
 		String address = data.get("address").asText();
 		
@@ -59,7 +58,7 @@ public class MultipleVMDeploymentSimulator extends AbstractDeploymentSimulator {
 
 		Node commandLineParam = getCreatedNodes().size() > 0 ? getRandomNode() : null;		
 		String args = commandLineParam != null ? EnvUtils.generateNodeCommandLineArguments(commandLineParam,1) : "";		
-		String command = "java -jar " + getAppConfig().programPath(id) + " " + args.trim() + " --mode=DEBUG";
+		String command = "java -jar -Xmx1G " + getAppConfig().programPath(id) + " " + args.trim() + " --mode=DEBUG --kill=" + killToken;
 		
 		ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
 		processBuilder.directory(getAppConfig().cd(id));
@@ -75,13 +74,15 @@ public class MultipleVMDeploymentSimulator extends AbstractDeploymentSimulator {
 		} while(!EnvUtils.isListening(address, servicePort) || 
 				!EnvUtils.isListening(address, protocolPort));
 		
+		return node;
+		
 	}
 
-	protected boolean check(JsonNode data) throws Exception {
+	/*protected boolean snapshot(JsonNode data) throws Exception {
 
-		List<String> nodes = iteratorToList(data.get("nodes").iterator());
-		List<String> suspecting = iteratorToList(data.get("suspecting").iterator());
-		List<String> failing = iteratorToList(data.get("failing").iterator());
+		Set<String> nodes = iteratorToList(data.get("nodes").iterator());
+		Set<String> suspecting = iteratorToList(data.get("suspecting").iterator());
+		Set<String> failing = iteratorToList(data.get("failing").iterator());
 		
 		int tryDelay = data.get("try.delay").asInt();
 		int tryInterval = data.get("try.interval").asInt();
@@ -102,11 +103,11 @@ public class MultipleVMDeploymentSimulator extends AbstractDeploymentSimulator {
 					}
 					success = false;
 				}
-				if(differentLists(suspecting, deb.getDead())) {
+				if(differentLists(suspecting, deb.getFailing())) {
 					if(i == tryTimes) {
 						logger.log(Level.SEVERE, "error comparing \"suspecting nodes\" " + node.getId() + " against current state");
 						logger.info("expected: " + listToString(suspecting));
-						logger.info("result: " + listToString(deb.getDead()));
+						logger.info("result: " + listToString(deb.getFailing()));
 					}
 					success = false;
 				}
@@ -125,45 +126,42 @@ public class MultipleVMDeploymentSimulator extends AbstractDeploymentSimulator {
 		
 		return false;
 
-	}
+	}*/
 	
-	private String listToString(List<String> list) {
-		StringBuilder strList = new StringBuilder();
-		Collections.sort(list);		
+	/*private String listToString(Set<String> list) {
+		StringBuilder strList = new StringBuilder();		
 		for(String s: list) strList.append(s + " ");		
 		return strList.toString();
 	}
 	
-	private boolean differentLists(List<String> a, List<String> b) {
-		if(a.size() != b.size()) return true;
-		
-		Collections.sort(a);
-		Collections.sort(b);
-		
-		for(int i = 0; i < a.size(); i++)
-			if(!a.get(i).equals(b.get(i))) 
+	private boolean differentLists(Set<String> a, Set<String> b) {
+		if(a.size() != b.size()) return true;		
+		for(String s : a) {
+			if(!b.contains(s)) {
 				return true;
-			
+			}
+		}
 		return false;	
 	}
 
-	private List<String> iteratorToList(Iterator<JsonNode> iterator) {
-		List<String> list = new ArrayList<String>();		
+	private Set<String> iteratorToList(Iterator<JsonNode> iterator) {
+		Set<String> list = new HashSet<String>();		
 		while(iterator.hasNext()) {
 			JsonNode current = iterator.next();
 			list.add(current.asText());			
 		}		
 		return list;
-	}
-
-	private void killProcesses() {
-		for(Process p : runningProcess) p.destroyForcibly();				
-		runningProcess.clear();
-	}
+	}*/
 		
 	@Override
 	public void undeploy() {
-		killProcesses();		
+		String command = "pkill -f " + killToken;
+		ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
+		try {
+			processBuilder.start();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 
