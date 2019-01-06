@@ -2,18 +2,21 @@ package org.cluster.membership.tester.deploy;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.common.model.util.EnvUtils;
 import org.cluster.membership.common.model.util.Tuple2;
-import org.cluster.membership.tester.config.AbstractEnvConfig;
+import org.cluster.membership.tester.config.LocalEnvConfig;
+import org.cluster.membership.tester.config.MultipleVMEnvConfig;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
 
-public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymentAndExecutionSimulator {
+public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymentAndExecutionSimulator<MultipleVMEnvConfig> {
 
 
 	//private Logger logger = Logger.getLogger(MultipleVMDeploymentSimulator.class.getName());
@@ -22,12 +25,12 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 	
 	private String killToken;
 	
-	public MultipleVMDeploymentAndExecutionSimulator(AbstractEnvConfig appConfig) {
+	public MultipleVMDeploymentAndExecutionSimulator(MultipleVMEnvConfig appConfig) {
 		super(appConfig);
 		this.runningProcess = new ArrayList<Process>();
 		this.killToken = UUID.randomUUID().toString();
 	}
-	
+		
 	public List<Process> getRunningProcesses() {
 		return runningProcess;
 	}
@@ -77,82 +80,20 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 		return node;
 		
 	}
-
-	/*protected boolean snapshot(JsonNode data) throws Exception {
-
-		Set<String> nodes = iteratorToList(data.get("nodes").iterator());
-		Set<String> suspecting = iteratorToList(data.get("suspecting").iterator());
-		Set<String> failing = iteratorToList(data.get("failing").iterator());
-		
-		int tryDelay = data.get("try.delay").asInt();
-		int tryInterval = data.get("try.interval").asInt();
-		int tryTimes = data.get("try.times").asInt();
-		
-		Thread.sleep(tryDelay * 1000);
-		for(int i = 1; i <= tryTimes; i++) {
-			Thread.sleep(tryInterval * 1000);
-			boolean success = true;
-			for(Node node : getCreatedNodes().values()) {
-				StateInfo deb = RestClient.getStateInfo(node);
-				
-				if(differentLists(nodes, deb.getNodes())) {
-					if(i == tryTimes) {
-						logger.log(Level.SEVERE, "error comparing \"cluster nodes\" " + node.getId() + " against current state");
-						logger.info("expected: " + listToString(nodes));
-						logger.info("result: " + listToString(deb.getNodes()));
-					}
-					success = false;
-				}
-				if(differentLists(suspecting, deb.getFailing())) {
-					if(i == tryTimes) {
-						logger.log(Level.SEVERE, "error comparing \"suspecting nodes\" " + node.getId() + " against current state");
-						logger.info("expected: " + listToString(suspecting));
-						logger.info("result: " + listToString(deb.getFailing()));
-					}
-					success = false;
-				}
-				if(differentLists(failing, deb.getFailing())) {
-					if(i == tryTimes) {
-						logger.log(Level.SEVERE, "error comparing \"failing nodes\" " + node.getId() + " against current state");
-						logger.info("expected: " + listToString(failing));
-						logger.info("result: " + listToString(deb.getFailing()));
-					}
-					success = false;
-				}
-			}
-			if(success) return true;
-		}
-
-		
-		return false;
-
-	}*/
 	
-	/*private String listToString(Set<String> list) {
-		StringBuilder strList = new StringBuilder();		
-		for(String s: list) strList.append(s + " ");		
-		return strList.toString();
-	}
-	
-	private boolean differentLists(Set<String> a, Set<String> b) {
-		if(a.size() != b.size()) return true;		
-		for(String s : a) {
-			if(!b.contains(s)) {
-				return true;
-			}
-		}
-		return false;	
-	}
+	protected void readConfig(JsonNode config) throws Exception {
 
-	private Set<String> iteratorToList(Iterator<JsonNode> iterator) {
-		Set<String> list = new HashSet<String>();		
+		Iterator<Entry<String, JsonNode>> iterator = config.fields();
 		while(iterator.hasNext()) {
-			JsonNode current = iterator.next();
-			list.add(current.asText());			
-		}		
-		return list;
-	}*/
-		
+			Entry<String, JsonNode> entry = iterator.next();
+			String key = entry.getKey();
+			String value = entry.getValue().toString();
+
+			getAppConfig().updateConfig(LocalEnvConfig.templateFolder, key, value);
+		}
+
+	}
+
 	@Override
 	public void undeploy() {
 		String command = "pkill -f " + killToken;

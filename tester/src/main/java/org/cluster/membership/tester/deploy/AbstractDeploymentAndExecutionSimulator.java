@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 import java.util.Timer;
@@ -24,7 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
-public abstract class AbstractDeploymentAndExecutionSimulator {
+public abstract class AbstractDeploymentAndExecutionSimulator<T extends AbstractEnvConfig> {
 
 	private ObjectMapper objectMapper;
 
@@ -38,9 +37,9 @@ public abstract class AbstractDeploymentAndExecutionSimulator {
 
 	private TreeMap<Long, Set<String>> timeToWake;
 
-	private AbstractEnvConfig appConfig;
+	private T appConfig;
 
-	public AbstractDeploymentAndExecutionSimulator(AbstractEnvConfig appConfig) {
+	public AbstractDeploymentAndExecutionSimulator(T appConfig) {
 		this.appConfig = appConfig;
 		this.createdNodes = new HashMap<String, Node>();
 		this.objectMapper = new ObjectMapper();
@@ -52,7 +51,7 @@ public abstract class AbstractDeploymentAndExecutionSimulator {
 		timer.schedule(new WakeUpPaused(lastView, timeToWake), 1000, 1600);
 	}
 
-	public AbstractEnvConfig getAppConfig() {
+	public T getAppConfig() {
 		return appConfig;
 	}
 
@@ -123,18 +122,7 @@ public abstract class AbstractDeploymentAndExecutionSimulator {
 	}
 
 
-	private void readConfig(JsonNode config) throws Exception {
-
-		Iterator<Entry<String, JsonNode>> iterator = config.fields();
-		while(iterator.hasNext()) {
-			Entry<String, JsonNode> entry = iterator.next();
-			String key = entry.getKey();
-			String value = entry.getValue().toString();
-
-			appConfig.updateConfig(AbstractEnvConfig.templateFolder, key, value);
-		}
-
-	}
+	protected abstract void readConfig(JsonNode config) throws Exception;
 
 	protected abstract Node createAndLaunchNode(JsonNode data, JsonNode config) throws Exception;
 

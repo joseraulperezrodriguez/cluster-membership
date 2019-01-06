@@ -2,7 +2,6 @@ package org.cluster.membership.tester;
 
 import java.io.File;
 
-import org.cluster.membership.tester.config.AbstractEnvConfig;
 import org.cluster.membership.tester.config.MultipleVMEnvConfig;
 import org.cluster.membership.tester.core.BasicEvaluator;
 import org.cluster.membership.tester.core.IEvaluator;
@@ -16,7 +15,7 @@ import junit.framework.TestSuite;
  */
 public class MultipleVMTesterEntryTest extends TestCase {
     
-	private AbstractRunner runner;
+	private MultipleVMRunner runner;
 	
 	/**
      * Create the test case
@@ -29,7 +28,8 @@ public class MultipleVMTesterEntryTest extends TestCase {
         String homePath = System.getProperty("user.dir") + File.separator + "target";
         String programPath = System.getProperty("multiple.vm.program.path");
         if(programPath == null) return;
-        AbstractEnvConfig config = new MultipleVMEnvConfig(homePath, programPath);
+        System.out.println("DEBUG P " + programPath);
+        MultipleVMEnvConfig config = new MultipleVMEnvConfig(homePath, programPath);
     	IEvaluator evaluator = new BasicEvaluator();    	
     	runner = new MultipleVMRunner(config, evaluator);    	
         

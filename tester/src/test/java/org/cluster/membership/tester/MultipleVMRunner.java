@@ -5,21 +5,21 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.cluster.membership.tester.config.AbstractEnvConfig;
+import org.cluster.membership.tester.config.MultipleVMEnvConfig;
 import org.cluster.membership.tester.core.IEvaluator;
 import org.cluster.membership.tester.core.Snapshot;
 import org.cluster.membership.tester.deploy.MultipleVMDeploymentAndExecutionSimulator;
 
-public class MultipleVMRunner extends AbstractRunner {
+public class MultipleVMRunner extends AbstractRunner<MultipleVMEnvConfig> {
 	
 	private Logger logger = Logger.getLogger(MultipleVMRunner.class.getName());	
 	
-	public MultipleVMRunner(AbstractEnvConfig appConfig, IEvaluator evaluator) {
+	public MultipleVMRunner(MultipleVMEnvConfig appConfig, IEvaluator evaluator) {
 		super(appConfig, evaluator);
 	}
 		
 	public void runTemplates() throws Exception {
-		File cases = new File(getAppConfig().casesPath);
+		File cases = new File(getAppConfig().getCasesPath());
 				
 		File[] sortedByName = cases.listFiles();
 		Arrays.sort(sortedByName, (a, b) -> a.getName().compareTo(b.getName()));

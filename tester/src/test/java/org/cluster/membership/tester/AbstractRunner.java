@@ -5,13 +5,13 @@ import org.cluster.membership.tester.core.IEvaluator;
 
 import junit.framework.TestCase;
 
-public abstract class AbstractRunner extends TestCase{
+public abstract class AbstractRunner<T extends AbstractEnvConfig> extends TestCase{
 	
-	private AbstractEnvConfig appConfig;
+	private T appConfig;
 	
 	private IEvaluator evaluator;
 	
-	public AbstractRunner(AbstractEnvConfig appConfig, IEvaluator evaluator) {
+	public AbstractRunner(T appConfig, IEvaluator evaluator) {
 		this.appConfig = appConfig;
 		this.evaluator = evaluator;
 	}
@@ -20,7 +20,7 @@ public abstract class AbstractRunner extends TestCase{
 		return evaluator;
 	}
 	
-	public AbstractEnvConfig getAppConfig() {
+	public T getAppConfig() {
 		return appConfig;
 	}
 	

@@ -1,5 +1,6 @@
 package org.cluster.membership.tester.util;
 
+import java.io.File;
 import java.util.Set;
 
 public class Utils {
@@ -14,6 +15,12 @@ public class Utils {
 		}
 		
 		return true;
+	}
+	
+	public static File createFolder(String path) throws Exception {
+		File folder = new File(path);
+		if(!folder.exists())folder.mkdir();
+		return folder;
 	}
 
 }
