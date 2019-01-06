@@ -3,33 +3,29 @@ package org.cluster.membership.protocol.structures;
 import java.util.TimeZone;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.protocol.ClusterNodeEntryTest;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  * Unit test for simple App.
  */
-public class DListTest 
-    extends TestCase
-{
+public class DListTest extends ClusterNodeEntryTest {
 	
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public DListTest( String testName )
-    {
+    public DListTest( String testName ) throws Exception {
         super( testName );
     }
 
     /**
      * @return the suite of tests being tested
      */
-    public static Test suite()
-    {
+    public static Test suite() {
         return new TestSuite( DListTest.class );
     }
      

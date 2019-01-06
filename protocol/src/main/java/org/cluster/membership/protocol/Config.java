@@ -12,39 +12,40 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.common.model.util.EnvUtils;
+import org.cluster.membership.common.model.util.Literals;
 import org.cluster.membership.protocol.structures.DList;
 import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.system.ApplicationHome;
 
 public class Config {
 	private static final Logger logger = Logger.getLogger(Config.class.getName());
 	
-	private static final HashMap<String, String> map = Parsing.readAppConfig();
+	private static HashMap<String, String> map;// = Parsing.readAppConfig();
 			
 	/**The time interval for making requests to other nodes in the cluster*/
-	public static final long ITERATION_INTERVAL_MS = Long.parseLong(map.get("iteration.interval.ms"));
+	public static long ITERATION_INTERVAL_MS;
 	
 	/**The factor to multiply by iteration.interval.ms * (iterations=max.expected.node.log.2 || log2(cluster size)), and consider to send an update request*/
-	public static final int READ_IDDLE_ITERATIONS_FACTOR = Integer.parseInt(map.get("read.iddle.iteration.factor"));
+	public static int READ_IDDLE_ITERATIONS_FACTOR;
 
 	/**The time out for connection to other nodes*/
-	public static final long CONNECTION_TIME_OUT_MS = Long.parseLong(map.get("connection.timeout.ms"));
+	public static long CONNECTION_TIME_OUT_MS;
 		
 	/**The time to wait for a node sends a keep alive signal, to avoid removing from cluster*/
-	public static final long FAILING_NODE_EXPIRATION_TIME_MS = Long.parseLong(map.get("failing.node.expiration.time.ms"));//one day
+	public static long FAILING_NODE_EXPIRATION_TIME_MS;//one day
 				
 	/**The max  number of iterations to select a random node*/
-	public static final int MAX_EXPECTED_NODE_LOG_2_SIZE = Integer.parseInt(map.get("max.expected.node.log.2"));
+	public static int MAX_EXPECTED_NODE_LOG_2_SIZE;
 	
 	
 	/**The max length of the set for storing rumors messages, used for recovery other nodes later*/
-	public static final int MAX_RUMORS_LOG_SIZE = Integer.parseInt(map.get("max.rumor.log.size"));
+	public static int MAX_RUMORS_LOG_SIZE;
 	
 	/**The max number of bytes allowed to transfer between client and server*/
-	public static final int MAX_OBJECT_SIZE = Integer.parseInt(map.get("max.object.size"));
+	public static int MAX_OBJECT_SIZE;
 	
 	
-	public static final Node THIS_PEER = Parsing.readThisPeer();
+	public static Node THIS_PEER;
 	
 	public static final DList SEEDS = new DList();
 	
@@ -57,9 +58,21 @@ public class Config {
 				(MAX_RUMORS_LOG_SIZE < 10*1000*1000) && THIS_PEER != null;
 	}
 	
-	public static void read(ApplicationArguments args) throws Exception {		
-		Parsing.setSeedNodes(args);
+	public static void read(ApplicationArguments args) throws Exception {
+		if(args.containsOption("home")) Parsing.homePath = args.getOptionValues("home").get(0);			
+		else Parsing.homePath = EnvUtils.getHomePath(ClusterNodeEntry.class, Parsing.configFolder);
+
+		map = Parsing.readAppConfig();
+		ITERATION_INTERVAL_MS = Long.parseLong(map.get(Literals.ITERATION_INTERVAL_MS));
+		READ_IDDLE_ITERATIONS_FACTOR = Integer.parseInt(map.get(Literals.READ_IDDLE_ITERATIONS_FACTOR));
+		CONNECTION_TIME_OUT_MS = Long.parseLong(map.get(Literals.CONNECTION_TIME_OUT_MS));
+		FAILING_NODE_EXPIRATION_TIME_MS = Long.parseLong(map.get(Literals.FAILING_NODE_EXPIRATION_TIME_MS));//one day
+		MAX_EXPECTED_NODE_LOG_2_SIZE = Integer.parseInt(map.get(Literals.MAX_EXPECTED_NODE_LOG_2_SIZE));
+		MAX_RUMORS_LOG_SIZE = Integer.parseInt(map.get(Literals.MAX_RUMORS_LOG_SIZE));
+		MAX_OBJECT_SIZE = Integer.parseInt(map.get(Literals.MAX_OBJECT_SIZE));
+		THIS_PEER = Parsing.readThisPeer();
 		
+		Parsing.setSeedNodes(args);		
 		String appProperties = "using properties: \n";
 		for(Map.Entry<String, String> entry : map.entrySet()) 
 			appProperties += entry.getKey() + "=" + entry.getValue() + "\n";
@@ -69,26 +82,12 @@ public class Config {
 	
 	private static class Parsing {
 		
-		private static final String id = "id";
-		private static final String address = "address";
-		private static final String protocolPort = "protocol.port";
-		private static final String servicePort = "server.port";
-		private static final String timeZone = "time.zone";		
-		
-		private static final String homePath = getHomePath();
 		
 		private static final String configFolder = "config";
 		private static final String appConfigFile = "app.properties";
 		
-		private static String getHomePath() {
-			ApplicationHome home = new ApplicationHome(ClusterNodeEntry.class); 
-			String path = home.getDir().getAbsolutePath();
-			String configFolderPath = path + File.separator + configFolder;
-			File configFolder = new File(configFolderPath);
-			if(!configFolder.exists()) return path + File.separator + "target";
-			return path;
-		}
-
+		private static String homePath;
+		
 		private static Properties prop(String file) throws Exception {			
 			String peerConf = homePath + File.separator + file;
 			Properties p = new Properties();
@@ -100,17 +99,17 @@ public class Config {
 			try {				
 				Properties p = prop(configFolder + File.separator  + appConfigFile);
 				boolean noId = false;
-				String cId = map.get(id).trim();
+				String cId = map.get(Literals.NODE_ID).trim();
 				if(cId.isEmpty()) {
 					noId = true;
 					cId = UUID.randomUUID().toString();
-					p.setProperty(id, cId);
+					p.setProperty(Literals.NODE_ID, cId);
 				}
 
-				String cAddress = map.get(address).trim();
-				Integer cProtocolPort = Integer.parseInt(map.get(protocolPort).trim());
-				Integer cServicePort = Integer.parseInt(map.get(servicePort).trim());
-				String cTimeZone = map.get(timeZone).trim();
+				String cAddress = map.get(Literals.NODE_ADDRESS).trim();
+				Integer cProtocolPort = Integer.parseInt(map.get(Literals.NODE_PROTOCOL_PORT).trim());
+				Integer cServicePort = Integer.parseInt(map.get(Literals.NODE_SERVER_PORT).trim());
+				String cTimeZone = map.get(Literals.NODE_TIME_ZONE).trim();
 				
 				
 				Node node = new Node(cId, cAddress, cProtocolPort, cServicePort, TimeZone.getTimeZone(cTimeZone));
@@ -157,24 +156,24 @@ public class Config {
 		private static void setSeedNodes(ApplicationArguments args) throws Exception {
 			int count = 1;
 			do {
-				int contains = containsOptions(args, id + "." + count, 
-						address + "." + count,
-						protocolPort + "." + count,
-						servicePort + "." + count,
-						timeZone + "." + count
+				int contains = containsOptions(args, Literals.NODE_ID + "." + count, 
+						Literals.NODE_ADDRESS + "." + count,
+						Literals.NODE_PROTOCOL_PORT + "." + count,
+						Literals.NODE_SERVER_PORT + "." + count,
+						Literals.NODE_TIME_ZONE + "." + count
 						);
 				
 				if(contains == 0) break;
 				if(contains == -1) throw new Exception("Error reading config for node " + count + 
-						", some attributes are missing or bad configured");
+						", some attributes are missing or wrongly configured");
 				
 				try {				
 					
-					String cId = args.getOptionValues(id + "." + count).get(0);
-					String cAddress = args.getOptionValues(address + "." + count).get(0);
-					int cProtocolPort = Integer.parseInt(args.getOptionValues(protocolPort + "." + count).get(0));
-					int cServicePort = Integer.parseInt(args.getOptionValues(servicePort + "." + count).get(0));
-					String cTimeZone = args.getOptionValues(timeZone + "." + count).get(0);
+					String cId = args.getOptionValues(Literals.NODE_ID + "." + count).get(0);
+					String cAddress = args.getOptionValues(Literals.NODE_ADDRESS + "." + count).get(0);
+					int cProtocolPort = Integer.parseInt(args.getOptionValues(Literals.NODE_PROTOCOL_PORT + "." + count).get(0));
+					int cServicePort = Integer.parseInt(args.getOptionValues(Literals.NODE_SERVER_PORT + "." + count).get(0));
+					String cTimeZone = args.getOptionValues(Literals.NODE_TIME_ZONE + "." + count).get(0);
 					
 					Node n = new Node(cId, cAddress, cProtocolPort, cServicePort, TimeZone.getTimeZone(cTimeZone));
 					Config.SEEDS.add(n);

@@ -3,17 +3,17 @@ package org.cluster.membership.protocol.core;
 import java.util.TimeZone;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.protocol.ClusterNodeEntryTest;
 import org.cluster.membership.protocol.model.Message;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  * Unit test for simple App.
  */
 public class MessageTest 
-    extends TestCase
+    extends ClusterNodeEntryTest
 {
 	
 	private Node a = new Node("A", "A 1", 7001, 6001, TimeZone.getDefault());
@@ -24,7 +24,7 @@ public class MessageTest
      *
      * @param testName name of the test case
      */
-    public MessageTest( String testName )
+    public MessageTest( String testName ) throws Exception
     {
         super( testName );
     }

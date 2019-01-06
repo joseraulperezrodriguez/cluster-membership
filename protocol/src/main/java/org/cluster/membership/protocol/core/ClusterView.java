@@ -2,6 +2,7 @@ package org.cluster.membership.protocol.core;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -75,7 +76,7 @@ public class ClusterView implements Serializable {
 
 	public List<Node> nodes() { return nodes.list(); }
 	
-	public StateInfo getStateInfo() {
+	/*public StateInfo getStateInfo() {
 		List<String> nodesId = new ArrayList<String>();
 		for(Node n : nodes.list()) nodesId.add(n.getId());		
 		
@@ -89,7 +90,23 @@ public class ClusterView implements Serializable {
 		
 		StateInfo si = new StateInfo(nodesId, suspectingNodes, failingNodes);
 		return si;		
-	}	
+	}*/
+	
+	public StateInfo getStateInfo() {
+		Set<String> nodesId = new HashSet<String>();
+		for(Node n : nodes.list()) nodesId.add(n.getId());		
+		
+		Iterator<ValuePriorityEntry<Node, Long>> iteratorSuspecting = suspectingNodesTimeout.iterator();		
+		Set<String> suspectingNodes = new HashSet<String>();		
+		while(iteratorSuspecting.hasNext()) suspectingNodes.add(iteratorSuspecting.next().getKey().getId());
+		
+		Iterator<ValuePriorityEntry<Node, Long>> iteratorFailing = failed.iterator();		
+		Set<String> failingNodes = new HashSet<String>();		
+		while(iteratorFailing.hasNext()) failingNodes.add(iteratorFailing.next().getKey().getId());
+		
+		StateInfo si = new StateInfo(nodesId, suspectingNodes, failingNodes);
+		return si;		
+	}
 	
 	public void init() { 		//nodes.addSortedNodes(Config.SEEDS);
 		nodes.add(Config.THIS_PEER);

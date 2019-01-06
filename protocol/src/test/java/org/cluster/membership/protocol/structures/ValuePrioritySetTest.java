@@ -13,9 +13,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
-public class ValuePrioritySetTest 
-    extends TestCase
-{
+public class ValuePrioritySetTest extends TestCase {
 	
 	
 	private final Node a = new Node("A", "A 1", 7001, 6001, TimeZone.getDefault());
@@ -29,8 +27,7 @@ public class ValuePrioritySetTest
      *
      * @param testName name of the test case
      */
-    public ValuePrioritySetTest( String testName )
-    {
+    public ValuePrioritySetTest( String testName ) throws Exception {
         super( testName );
     }
 

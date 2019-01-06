@@ -94,6 +94,13 @@
 				<version>1.5</version>
 				<executions>
 					<execution>
+						<id>bundle</id>
+						<goals>
+							<goal>bundle</goal>
+						</goals>
+					</execution>					
+					<execution>
+					    <id>process</id>
 						<goals>
 							<goal>process</goal>
 						</goals>
@@ -106,6 +113,11 @@
 						</configuration>
 					</execution>
 				</executions>
+				<configuration>
+					<includes>
+						<include>**/*</include>
+					</includes>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

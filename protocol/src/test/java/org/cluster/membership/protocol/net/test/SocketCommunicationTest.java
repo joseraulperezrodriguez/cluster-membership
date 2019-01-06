@@ -3,25 +3,25 @@ package org.cluster.membership.protocol.net.test;
 import java.util.TimeZone;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.protocol.ClusterNodeEntryTest;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.Message;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  * Unit test for simple App.
  */
-public class SocketCommunicationTest extends TestCase {
+public class SocketCommunicationTest extends ClusterNodeEntryTest {
 	
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public SocketCommunicationTest( String testName ) {
+    public SocketCommunicationTest( String testName ) throws Exception {
         super( testName );
     }
 

@@ -1,6 +1,6 @@
 {	
 	"config": {
-		"iteration.interval.ms": 3000	
+		"iteration.interval.ms": 1500	
 	},
 	"procedure": [
 		{
@@ -12,33 +12,11 @@
 			}			
 		},
 		{
-			"type": "check",
-			"data": {
-				"try.delay": 3,
-				"try.interval": 3,
-				"try.times": 2,
-				"nodes": ["A"],
-				"suspecting": [],
-				"failing":[]
-			}
-		},
-		{
 			"type": "node",
 			"data": {
 				"id": "B",
 				"address": "localhost",
 				"time.zone": "Europe/Madrid"
-			}
-		},
-		{
-			"type": "check",
-			"data": {
-				"try.delay": 3,
-				"try.interval": 3,
-				"try.times": 2,			
-				"nodes": ["A","B"],
-				"suspecting": [],
-				"failing":[]
 			}
 		},
 		{
@@ -50,33 +28,11 @@
 			}
 		},
 		{
-			"type": "check",
-			"data": {
-				"try.delay": 6,
-				"try.interval": 2,
-				"try.times": 2,			
-				"nodes": ["A","B","C"],
-				"suspecting": [],
-				"failing":[]
-			}
-		},
-		{
 			"type": "node",
 			"data": {
 				"id": "D",
 				"address": "localhost",
 				"time.zone": "Europe/Madrid"
-			}
-		},
-		{
-			"type": "check",
-			"data": {
-				"try.delay": 10,
-				"try.interval": 2,
-				"try.times": 2,			
-				"nodes": ["A","B","C","D"],
-				"suspecting": [],
-				"failing":[]
 			}
 		},
 		{
@@ -88,33 +44,11 @@
 			}
 		},
 		{
-			"type": "check",
-			"data": {
-				"try.delay": 8,
-				"try.interval": 3,
-				"try.times": 2,			
-				"nodes": ["A","B","C","D","E"],
-				"suspecting": [],
-				"failing":[]
-			}
-		},
-		{
 			"type": "node",
 			"data": {
 				"id": "F",
 				"address": "localhost",
 				"time.zone": "Europe/Madrid"
-			}
-		},
-		{
-			"type": "check",
-			"data": {
-				"try.delay": 8,
-				"try.interval": 3,
-				"try.times": 2,			
-				"nodes": ["A","B","C","D","E","F"],
-				"suspecting": [],
-				"failing":[]
 			}
 		}		
 	]
