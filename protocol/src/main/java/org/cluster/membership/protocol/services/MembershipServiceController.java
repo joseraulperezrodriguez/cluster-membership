@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 
 import org.cluster.membership.common.debug.StateInfo;
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.protocol.ClusterNodeEntry;
+import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.ClusterData;
@@ -27,6 +29,9 @@ public class MembershipServiceController {
 	
 	@Autowired
 	private MembershipServer membershipServer;
+	
+	@Autowired
+	private Config config;
 			
 	@GetMapping("/size")	
 	public int getSize() {
@@ -55,8 +60,8 @@ public class MembershipServiceController {
 	
 	@PostMapping("/debug/shutdown")	
 	public boolean shutdown(@RequestBody(required = true) int seconds) {
-		logger.info("shutdown message received");
-		Global.shutdown(seconds);
+		logger.info("shutdown message received: " + config.getThisPeer());
+		Global.shutdown(ClusterNodeEntry.applicationContexts.get(config.getThisPeer()), seconds);
 		return true;
 	}
 	

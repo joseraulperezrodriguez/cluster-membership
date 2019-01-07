@@ -16,6 +16,10 @@ import junit.framework.TestSuite;
  */
 public class SocketCommunicationTest extends ClusterNodeEntryTest {
 	
+	private TimeZone timeZone = TimeZone.getDefault();
+	
+	private Config config = new Config(Node.getGreaterNode());
+	
     /**
      * Create the test case
      *
@@ -38,13 +42,13 @@ public class SocketCommunicationTest extends ClusterNodeEntryTest {
     	MembershipClientHandlerTest handler = new MembershipClientHandlerTest("Message", String.class);
     	
     	MembershipServerTest server = new MembershipServerTest(7001,
-    			new MembershipServerHandlerTest());
+    			new MembershipServerHandlerTest(), config);
     	ServerRunner serverRunner = new ServerRunner(server);
     	serverRunner.start();
-    	Thread.sleep(Config.CONNECTION_TIME_OUT_MS);
-    	MembershipClientTest.connect(to, handler);
+    	Thread.sleep(config.getConnectionTimeOutMs());
+    	MembershipClientTest.connect(to, handler, config);
     	
-    	Thread.sleep(Config.CONNECTION_TIME_OUT_MS);
+    	Thread.sleep(config.getConnectionTimeOutMs());
     	assert(handler.getAsserted());
     	server.shutdownSync();
     	    	
@@ -53,18 +57,18 @@ public class SocketCommunicationTest extends ClusterNodeEntryTest {
     public void testConnectionServer2() throws Exception {    	
     	
     	Node to = new Node("A","localhost",7001, 6001, TimeZone.getDefault());
-    	Message message = new Message(MessageType.ADD_TO_CLUSTER, to, 5);
+    	Message message = new Message(MessageType.ADD_TO_CLUSTER, to, 5, timeZone);
     	
     	MembershipClientHandlerTest handler = new MembershipClientHandlerTest(message, Message.class);
     	
     	MembershipServerTest server = new MembershipServerTest(7001,
-    			new MembershipServerHandlerTest());
+    			new MembershipServerHandlerTest(), config);
     	ServerRunner serverRunner = new ServerRunner(server);
     	serverRunner.start();
-    	Thread.sleep(Config.CONNECTION_TIME_OUT_MS);
-    	MembershipClientTest.connect(to, handler);
+    	Thread.sleep(config.getConnectionTimeOutMs());
+    	MembershipClientTest.connect(to, handler, config);
     	
-    	Thread.sleep(Config.CONNECTION_TIME_OUT_MS);
+    	Thread.sleep(config.getConnectionTimeOutMs());
     	assert(handler.getAsserted());
     	server.shutdownSync();    	
     }
@@ -74,22 +78,22 @@ public class SocketCommunicationTest extends ClusterNodeEntryTest {
     	Node forward = new Node("B","localhost",7002, 6001, TimeZone.getDefault());    	
     	
     	MembershipServerTest serverFwd = new MembershipServerTest(7002,
-    			new MembershipServerForwardHandlerTest(to));
+    			new MembershipServerForwardHandlerTest(to, config), config);
     	ServerRunner serverFwdRunner = new ServerRunner(serverFwd);
     	serverFwdRunner.start();
     	
     	MembershipServerTest server = new MembershipServerTest(7001,
-    			new MembershipServerHandlerTest());
+    			new MembershipServerHandlerTest(), config);
     	ServerRunner serverRunner = new ServerRunner(server);
     	serverRunner.start();
 
     	
-    	Thread.sleep(Config.CONNECTION_TIME_OUT_MS);
-    	Message message = new Message(MessageType.ADD_TO_CLUSTER, to, 5);
+    	Thread.sleep(config.getConnectionTimeOutMs());
+    	Message message = new Message(MessageType.ADD_TO_CLUSTER, to, 5, timeZone);
     	MembershipClientHandlerTest handler = new MembershipClientHandlerTest(message, Message.class);
-    	MembershipClientTest.connect(forward, handler);
+    	MembershipClientTest.connect(forward, handler, config);
     	
-    	Thread.sleep(Config.CONNECTION_TIME_OUT_MS);
+    	Thread.sleep(config.getConnectionTimeOutMs());
     	assert(handler.getAsserted());
     	serverFwd.shutdownSync();
     	server.shutdownSync();

@@ -26,7 +26,7 @@ public class MembershipClient {
 	
 	private static Logger logger = Logger.getLogger(MembershipClient.class.getName());
 		
-	public static void connect(Node to, MembershipClientHandler handler) {
+	public static void connect(Node to, MembershipClientHandler handler, Config config) {
 		
 		EventLoopGroup group = new NioEventLoopGroup();
         try {
@@ -40,9 +40,9 @@ public class MembershipClient {
                     p.addLast(new JdkZlibEncoder(),
                   		  	  new JdkZlibDecoder());
                     p.addLast(
-                    		new ReadTimeoutHandler(Config.CONNECTION_TIME_OUT_MS, TimeUnit.MILLISECONDS),
+                    		new ReadTimeoutHandler(config.getConnectionTimeOutMs(), TimeUnit.MILLISECONDS),
                             objectEncoder,
-                            new ObjectDecoder(Config.MAX_OBJECT_SIZE,ClassResolvers.cacheDisabled(null)),
+                            new ObjectDecoder(config.getMaxObjectSize(),ClassResolvers.cacheDisabled(null)),
                             handler);
                 }
              });

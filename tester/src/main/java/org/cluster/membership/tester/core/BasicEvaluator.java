@@ -16,7 +16,7 @@ public class BasicEvaluator implements IEvaluator {
 
 		for(int i = 0; i < snaphot.getExpected().size(); i++) {
 			StateInfo cur = snaphot.getExpected().get(i);
-			int size = cur.getNodes().size() / 2;
+			int size = cur.getNodes().size();
 			List<Tuple2<Node, StateInfo>> states = snaphot.getResult();
 			
 			int nodesEquals = 0;

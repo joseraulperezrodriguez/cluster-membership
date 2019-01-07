@@ -66,15 +66,12 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 		processBuilder.directory(getAppConfig().cd(id));
 		processBuilder.redirectErrorStream(true);
 		processBuilder.redirectOutput(getAppConfig().logPath(id));		
-		getCreatedNodes().put(id, node);
-		
+				
 		Process p = processBuilder.start();
+
+		EnvUtils.waitUntilStarted(address, servicePort, protocolPort);		
+		getCreatedNodes().put(id, node);
 		runningProcess.add(p);
-		
-		do {
-			Thread.sleep(1000);			
-		} while(!EnvUtils.isListening(address, servicePort) || 
-				!EnvUtils.isListening(address, protocolPort));
 		
 		return node;
 		

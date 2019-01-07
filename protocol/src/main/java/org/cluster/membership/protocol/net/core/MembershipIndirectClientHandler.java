@@ -1,6 +1,7 @@
 package org.cluster.membership.protocol.net.core;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.protocol.model.FrameMessageCount;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.net.ResponseHandler;
 
@@ -11,8 +12,8 @@ public class MembershipIndirectClientHandler extends MembershipClientHandler {
 	private ChannelHandlerContext directContext;
 	
 
-	public MembershipIndirectClientHandler(Node to, Message message, ResponseHandler responseHandler, ChannelHandlerContext directContext) {
-		super(responseHandler, to, message);		
+	public MembershipIndirectClientHandler(FrameMessageCount frameMessageCount, Node from, Node to, Message message, ResponseHandler responseHandler, ChannelHandlerContext directContext) {
+		super(frameMessageCount, responseHandler, from, to, message);		
 		this.directContext = directContext;
 	}
 

@@ -60,10 +60,10 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
     					Message.getIteratorPriorityAscComparator());
     	
-    	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 2);
-    	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3);
-    	Message o3 = new Message(MessageType.REMOVE_FROM_CLUSTER, e, 1);
-    	Message o4 = new Message(MessageType.PROBE, d, 4);
+    	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 2, TimeZone.getDefault());
+    	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3, TimeZone.getDefault());
+    	Message o3 = new Message(MessageType.REMOVE_FROM_CLUSTER, e, 1, TimeZone.getDefault());
+    	Message o4 = new Message(MessageType.PROBE, d, 4, TimeZone.getDefault());
     	
     	set.add(o1, true);
     	set.add(o2, true);
@@ -86,10 +86,10 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
     					Message.getIteratorPriorityAscComparator());
     	
-    	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 2);
-    	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3);
-    	Message o3 = new Message(MessageType.REMOVE_FROM_CLUSTER, e, 1);
-    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, d, 4);
+    	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 2, TimeZone.getDefault());
+    	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3, TimeZone.getDefault());
+    	Message o3 = new Message(MessageType.REMOVE_FROM_CLUSTER, e, 1, TimeZone.getDefault());
+    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, d, 4, TimeZone.getDefault());
     	
     	set.add(o1, true);
     	set.add(o2, true);
@@ -112,10 +112,10 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
     					Message.getIteratorPriorityAscComparator());
     	
-    	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 4);
-    	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3);
-    	Message o3 = new Message(MessageType.REMOVE_FROM_CLUSTER, e, 1);
-    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, d, 2);
+    	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 4, TimeZone.getDefault());
+    	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3, TimeZone.getDefault());
+    	Message o3 = new Message(MessageType.REMOVE_FROM_CLUSTER, e, 1, TimeZone.getDefault());
+    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, d, 2, TimeZone.getDefault());
     	
     	set.add(o1, true);
     	set.add(o2, true);
@@ -138,9 +138,9 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
     					Message.getIteratorPriorityAscComparator());
     	
-    	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 1);
-    	Message o2 = new Message(MessageType.ADD_TO_CLUSTER, d, 2);
-    	Message o3 = new Message(MessageType.ADD_TO_CLUSTER, d, 3);
+    	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 1, TimeZone.getDefault());
+    	Message o2 = new Message(MessageType.ADD_TO_CLUSTER, d, 2, TimeZone.getDefault());
+    	Message o3 = new Message(MessageType.ADD_TO_CLUSTER, d, 3, TimeZone.getDefault());
     	
     	set.add(o1, true);
     	set.add(o2, true);
@@ -156,12 +156,12 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
     					Message.getIteratorPriorityAscComparator());
     	
-    	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 4);
-    	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3);
-    	Message o3 = new Message(MessageType.REMOVE_FROM_CLUSTER, e, 1);
-    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, d, 2);
-    	Message o6 = new Message(MessageType.ADD_TO_CLUSTER, a, 2);
-    	Message o5 = new Message(MessageType.ADD_TO_CLUSTER, c, 2);
+    	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 4, TimeZone.getDefault());
+    	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3, TimeZone.getDefault());
+    	Message o3 = new Message(MessageType.REMOVE_FROM_CLUSTER, e, 1, TimeZone.getDefault());
+    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, d, 2, TimeZone.getDefault());
+    	Message o6 = new Message(MessageType.ADD_TO_CLUSTER, a, 2, TimeZone.getDefault());
+    	Message o5 = new Message(MessageType.ADD_TO_CLUSTER, c, 2, TimeZone.getDefault());
     	
     	
     	set.add(o1, true);
@@ -187,9 +187,9 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
     					Message.getIteratorPriorityAscComparator());
     	
-    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, d, 2);
-    	Message o6 = new Message(MessageType.ADD_TO_CLUSTER, a, 2);
-    	Message o5 = new Message(MessageType.ADD_TO_CLUSTER, c, 2);
+    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, d, 2, TimeZone.getDefault());
+    	Message o6 = new Message(MessageType.ADD_TO_CLUSTER, a, 2, TimeZone.getDefault());
+    	Message o5 = new Message(MessageType.ADD_TO_CLUSTER, c, 2, TimeZone.getDefault());
     	
     	
     	set.add(o4, true);
@@ -211,9 +211,9 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
     					Message.getIteratorPriorityAscComparator());
     	
-    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, a, 2);
-    	Message o6 = new Message(MessageType.PROBE, a, 2);
-    	Message o5 = new Message(MessageType.SUSPECT_DEAD, a, 2);
+    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, a, 2, TimeZone.getDefault());
+    	Message o6 = new Message(MessageType.PROBE, a, 2, TimeZone.getDefault());
+    	Message o5 = new Message(MessageType.SUSPECT_DEAD, a, 2, TimeZone.getDefault());
     	
     	
     	set.add(o4, true);
@@ -235,11 +235,11 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
     					Message.getIteratorPriorityAscComparator());
     	
-    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, a, 2);
-    	Message o6 = new Message(MessageType.PROBE, a, 2);
-    	Message o5 = new Message(MessageType.SUSPECT_DEAD, a, 2);
-    	Message o3 = new Message(MessageType.SUSPECT_DEAD, b, 5);
-    	Message o2 = new Message(MessageType.SUSPECT_DEAD, b, 2);
+    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, a, 2, TimeZone.getDefault());
+    	Message o6 = new Message(MessageType.PROBE, a, 2, TimeZone.getDefault());
+    	Message o5 = new Message(MessageType.SUSPECT_DEAD, a, 2, TimeZone.getDefault());
+    	Message o3 = new Message(MessageType.SUSPECT_DEAD, b, 5, TimeZone.getDefault());
+    	Message o2 = new Message(MessageType.SUSPECT_DEAD, b, 2, TimeZone.getDefault());
     	
     	
     	set.add(o4, true);
@@ -263,11 +263,11 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
     					Message.getIteratorPriorityAscComparator());
     	
-    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, a, 2);
-    	Message o6 = new Message(MessageType.PROBE, a, 2);
-    	Message o5 = new Message(MessageType.SUSPECT_DEAD, a, 2);
-    	Message o3 = new Message(MessageType.SUSPECT_DEAD, b, 5);
-    	Message o2 = new Message(MessageType.SUSPECT_DEAD, b, 2);
+    	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, a, 2, TimeZone.getDefault());
+    	Message o6 = new Message(MessageType.PROBE, a, 2, TimeZone.getDefault());
+    	Message o5 = new Message(MessageType.SUSPECT_DEAD, a, 2, TimeZone.getDefault());
+    	Message o3 = new Message(MessageType.SUSPECT_DEAD, b, 5, TimeZone.getDefault());
+    	Message o2 = new Message(MessageType.SUSPECT_DEAD, b, 2, TimeZone.getDefault());
     	
     	
     	set.add(o4, true);

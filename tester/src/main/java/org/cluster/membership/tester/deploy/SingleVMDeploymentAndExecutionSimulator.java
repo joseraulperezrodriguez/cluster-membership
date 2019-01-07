@@ -10,6 +10,7 @@ import org.cluster.membership.common.model.util.Literals;
 import org.cluster.membership.common.model.util.Tuple2;
 import org.cluster.membership.protocol.ClusterNodeEntry;
 import org.cluster.membership.tester.config.LocalEnvConfig;
+import org.cluster.membership.tester.core.RestClient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -48,17 +49,15 @@ public class SingleVMDeploymentAndExecutionSimulator extends AbstractDeploymentA
 		String instanceHome = getAppConfig().getInstancesContainer() + File.separator + node.getId();
 		
 		Node commandLineParam = getCreatedNodes().size() > 0 ? getRandomNode() : null;		
-		String args = commandLineParam != null ? EnvUtils.generateNodeCommandLineArguments(commandLineParam,1) : "" +
+		String args = (commandLineParam != null ? EnvUtils.generateNodeCommandLineArguments(commandLineParam,1) : "") +
 			 " --" + Literals.APP_MODE + "=" + Literals.APP_DEBUG_MODE + 
 			 " --" + Literals.APP_HOME + "=" + instanceHome;	
 		String[] argsA = args.split("\\s+");
 		
 		ClusterNodeEntry.main(argsA);
 		
-		do {
-			Thread.sleep(1000);			
-		} while(!EnvUtils.isListening(address, servicePort) || 
-				!EnvUtils.isListening(address, protocolPort));
+		EnvUtils.waitUntilStarted(address, servicePort, protocolPort);		
+		getCreatedNodes().put(id, node);
 		
 		return node;
 		
@@ -79,13 +78,8 @@ public class SingleVMDeploymentAndExecutionSimulator extends AbstractDeploymentA
 
 	@Override
 	public void undeploy() {
-		/*String command = "pkill -f " + killToken;
-		ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
-		try {
-			processBuilder.start();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}*/
+		for(Node nd : getCreatedNodes().values()) 
+			RestClient.shutdown(nd, 2);			
 	}
 
 

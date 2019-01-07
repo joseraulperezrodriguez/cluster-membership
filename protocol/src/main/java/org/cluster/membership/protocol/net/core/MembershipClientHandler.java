@@ -4,8 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.cluster.membership.common.model.Node;
-import org.cluster.membership.protocol.Config;
-import org.cluster.membership.protocol.core.Global;
+import org.cluster.membership.protocol.model.FrameMessageCount;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.RequestDescription;
 import org.cluster.membership.protocol.model.ResponseDescription;
@@ -17,6 +16,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 public abstract class MembershipClientHandler extends ChannelInboundHandlerAdapter {
 
 	private Node to;
+	private Node from;
 	private List<Message> messages;
 	private int messagesReaded;
 	private long startTime;
@@ -25,19 +25,22 @@ public abstract class MembershipClientHandler extends ChannelInboundHandlerAdapt
 	
 	private ResponseHandler responseHandler;
 	
+	private FrameMessageCount frameMessageCount;
 	
-	public MembershipClientHandler(ResponseHandler responseHandler, Node to, List<Message> messages) {
-		this.responseHandler = responseHandler;
-		this.to = to;
-		this.messages = messages;
-		this.messagesReaded = 0; 
-		this.totalExpectedMessages = 0;
+	public MembershipClientHandler(FrameMessageCount frameMessageCount, ResponseHandler responseHandler, Node from, Node to, List<Message> messages) {
+		build(frameMessageCount, responseHandler,from, to, messages);
 	}
 	
-	public MembershipClientHandler(ResponseHandler responseHandler, Node to, Message... messages) {
+	public MembershipClientHandler(FrameMessageCount frameMessageCount, ResponseHandler responseHandler, Node from, Node to, Message... messages) {
+		build(frameMessageCount, responseHandler, from, to, Arrays.asList(messages));
+	}
+	
+	public void build(FrameMessageCount frameMessageCount, ResponseHandler responseHandler, Node from, Node to, List<Message> messages) {
+		this.frameMessageCount = frameMessageCount;
 		this.responseHandler = responseHandler;
+		this.from = from;
 		this.to = to;
-		this.messages = Arrays.asList(messages);
+		this.messages = messages;
 		this.messagesReaded = 0; 
 		this.totalExpectedMessages = 0;
 	}
@@ -46,7 +49,7 @@ public abstract class MembershipClientHandler extends ChannelInboundHandlerAdapt
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) {
-		ctx.writeAndFlush(new RequestDescription(Config.THIS_PEER, Global.getFrameMessageCount(),messages));
+		ctx.writeAndFlush(new RequestDescription(from, this.frameMessageCount, messages));
 		startTime = System.currentTimeMillis();
 	}
 

@@ -1,7 +1,9 @@
 package org.cluster.membership.tester;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -50,13 +52,14 @@ public class SingleVMTesterEntryTest extends TestCase {
 		
 		File[] sortedByName = cases.listFiles();
 		Arrays.sort(sortedByName, (a, b) -> a.getName().compareTo(b.getName()));
+		List<Double> ans = new ArrayList<Double>();
 		for(File f: sortedByName) {
 			SingleVMDeploymentAndExecutionSimulator deployment = new SingleVMDeploymentAndExecutionSimulator(config);			
 			try {
 				//boolean success = new MultipleVMDeploymentSimulator(getAppConfig()).deploy(f);
 				Snapshot snapshot = deployment.deploy(f);
 				Double success = evaluator.evaluate(snapshot);
-				
+				ans.add(success);
 				String message = "FAILED test for file " + f.getName();
 				testArg(success, message);
 			} catch (Exception e) {
@@ -65,13 +68,12 @@ public class SingleVMTesterEntryTest extends TestCase {
 				e.printStackTrace();
 			}
 			deployment.undeploy();
-			break;
 		}
+		for(Double dbl:ans)System.out.println("success: " + dbl);
         assertTrue( true );
     }
     
     public void testArg(Double success, String message) {
     	assertEquals(message, 1, success, 0.5);
-    	System.out.println("success: " + success);
     }
 }

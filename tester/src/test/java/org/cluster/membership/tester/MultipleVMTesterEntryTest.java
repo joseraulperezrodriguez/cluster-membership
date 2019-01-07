@@ -1,7 +1,9 @@
 package org.cluster.membership.tester;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,6 +57,7 @@ public class MultipleVMTesterEntryTest extends TestCase {
 		
 		File[] sortedByName = cases.listFiles();
 		Arrays.sort(sortedByName, (a, b) -> a.getName().compareTo(b.getName()));
+		List<Double> ans = new ArrayList<Double>();
 		for(File f: sortedByName) {
 			MultipleVMDeploymentAndExecutionSimulator deployment = new MultipleVMDeploymentAndExecutionSimulator(config);			
 			try {
@@ -64,6 +67,7 @@ public class MultipleVMTesterEntryTest extends TestCase {
 				
 				String message = "FAILED test for file " + f.getName();
 				testArg(success, message);
+				ans.add(success);
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "FAILED test for file " + f.getName());
 				logger.log(Level.SEVERE, "error trace below:");
@@ -71,6 +75,7 @@ public class MultipleVMTesterEntryTest extends TestCase {
 			}
 			deployment.undeploy();
 		}
+		for(Double dbl:ans)System.out.println("success: " + dbl);
         assertTrue( true );
     }
     

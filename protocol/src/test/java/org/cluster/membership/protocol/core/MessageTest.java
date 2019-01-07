@@ -39,10 +39,10 @@ public class MessageTest
 
     
     public void testEquals() {
-    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3);
-    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 3);    	
-    	Message m3 = new Message(MessageType.PROBE, a, 3);
-    	Message m4 = new Message(MessageType.PROBE, b, 3);
+    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3, TimeZone.getDefault());
+    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 3, TimeZone.getDefault());    	
+    	Message m3 = new Message(MessageType.PROBE, a, 3, TimeZone.getDefault());
+    	Message m4 = new Message(MessageType.PROBE, b, 3, TimeZone.getDefault());
     	    	
     	assert(m1.equals(m2));    	
     	assert(!m1.equals(m3));
@@ -50,10 +50,10 @@ public class MessageTest
     }
     
     public void testCompareTo1() {
-    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3);
-    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 3);    	
-    	Message m3 = new Message(MessageType.PROBE, a, 3);
-    	Message m4 = new Message(MessageType.PROBE, b, 3);
+    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3, TimeZone.getDefault());
+    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 3, TimeZone.getDefault());    	
+    	Message m3 = new Message(MessageType.PROBE, a, 3, TimeZone.getDefault());
+    	Message m4 = new Message(MessageType.PROBE, b, 3, TimeZone.getDefault());
     	    	
     	assert(m1.compareTo(m2) == 0);    	
     	assert(m1.compareTo(m3) == -1);
@@ -61,8 +61,8 @@ public class MessageTest
     }
     
     public void comparator() {
-    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3);
-    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 1);
+    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3, TimeZone.getDefault());
+    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 1, TimeZone.getDefault());
     	
     	assert(Message.getIterationsAscComparator().compare(m2, m1) < 0);
     	

@@ -43,6 +43,13 @@ public class EnvUtils {
 		if(!configFolder.exists()) return path + File.separator + "target";
 		return path;
 	}
+	
+	public static void waitUntilStarted(String address, int servicePort, int protocolPort) throws Exception {
+		do {
+			Thread.sleep(1000);			
+		} while(!EnvUtils.isListening(address, servicePort) || 
+				!EnvUtils.isListening(address, protocolPort));
+	}
 
 	public static String generateNodeCommandLineArguments(Node node, int idx) {
 		return " --" + Literals.NODE_ID + "." + idx + "=" + node.getId() +

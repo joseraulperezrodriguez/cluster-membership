@@ -1,6 +1,7 @@
 package org.cluster.membership.protocol.core;
 
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
@@ -30,7 +31,10 @@ public class Scheduler {
 
 	@Autowired
 	private ResponseHandler responseReceiver;
-
+	
+	@Autowired
+	private Config config;
+	
 	@Scheduled(fixedRateString = "${iteration.interval.ms}")
 	public synchronized void  performIteration() {
 
@@ -39,6 +43,7 @@ public class Scheduler {
 		/**Selecting a random node from node List, best effort to be not suspected of failing nodes*/
 		Node node = randomService.getRandom(clusterView);
 
+		TimeZone currentTimeZone = config.getThisPeer().getTimeZone();
 
 		/**Send the pending rumors to a random node*/
 		if(node != null) {
@@ -46,23 +51,23 @@ public class Scheduler {
 			logger.info("node " + node + " selected for send messages and probe");
 			List<Message> messages = clusterView.getPendingRumors();
 
-			if(messages.size() == 0) messages.add(new Message(MessageType.PROBE, node, 0));
+			if(messages.size() == 0) messages.add(new Message(MessageType.PROBE, node, 0, currentTimeZone));
 			ValuePriorityEntry<Node, Long> firstFailed = clusterView.pollFailed();
 			if(firstFailed != null) {
-				messages.add(new Message(MessageType.PROBE, firstFailed.getKey(),0));
+				messages.add(new Message(MessageType.PROBE, firstFailed.getKey(),0, currentTimeZone));
 				clusterView.addFailed(new ValuePriorityEntry<Node, Long>(firstFailed.getKey(), 
-						DateTime.utcTime(now, Config.THIS_PEER.getTimeZone())));
+						DateTime.utcTime(now, config.getThisPeer().getTimeZone())));
 			}
 
-			MembershipClientHandler handler = new MembershipDirectClientHandler(responseReceiver, node, messages);		
-			MembershipClient.connect(node, handler);
+			MembershipClientHandler handler = new MembershipDirectClientHandler(clusterView.getFrameMessageCount(), responseReceiver, config.getThisPeer(), node, messages);		
+			MembershipClient.connect(node, handler, config);
 		} else {
 			ValuePriorityEntry<Node, Long> firstFailed = clusterView.pollFailed();
 			if(firstFailed == null) return;
-			long expirTime = DateTime.utcTime(now, Config.THIS_PEER.getTimeZone()) + Config.FAILING_NODE_EXPIRATION_TIME_MS;
+			long expirTime = DateTime.utcTime(now, config.getThisPeer().getTimeZone()) + config.getFailingNodeExpirationTimeMs();
 			int iterations = MathOp.log2n(clusterView.getClusterSize());
 			Message sm  = new Message(MessageType.SUSPECT_DEAD, firstFailed.getKey(), 
-					iterations, expirTime);
+					iterations, currentTimeZone, expirTime);
 			clusterView.suspect(expirTime, sm);
 		}
 

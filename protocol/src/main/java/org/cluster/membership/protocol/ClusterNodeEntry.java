@@ -1,10 +1,14 @@
 package org.cluster.membership.protocol;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.protocol.Config.Parsing;
 import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.ClusterData;
@@ -30,41 +34,48 @@ public class ClusterNodeEntry implements ApplicationRunner {
 	
 	private static Logger logger = Logger.getLogger(ClusterNodeEntry.class.getName());
 	
-	public static ConfigurableApplicationContext applicationContext;
+	public static Map<Node, ConfigurableApplicationContext> applicationContexts
+	 = new HashMap<Node, ConfigurableApplicationContext>();
 	
+	public static Properties properties;
+	public static ApplicationArguments appArguments;
+	
+	public static final Semaphore mutex = new Semaphore(1);
 	
     public static void main( String[] args ) throws Exception {
+    	
+    	mutex.acquire();
+    	
     	String argsString = ""; for(String s : args) argsString += s + " ";
     	logger.info("started program with args: " + argsString);
     	
-    	ApplicationArguments appArguments = new DefaultApplicationArguments(args);
-    	Properties properties =Config.read(appArguments);    	
-    	assert(Config.isValid());
-
-    	
-    	/*Map<String, Object> properties = new HashMap<String, Object>();
-    	properties.put(Literals.NODE_SERVER_PORT,Config.THIS_PEER.getServicePort());
-    	properties.put(Literals.ITERATION_INTERVAL_MS,Config.ITERATION_INTERVAL_MS);*/
+    	appArguments = new DefaultApplicationArguments(args);
+        properties = Config.read(appArguments);    	
+    	assert(Config.isValid(properties, appArguments));
     	    	
-    	applicationContext = new SpringApplicationBuilder(ClusterNodeEntry.class)
+    	Node thisNode = Parsing.readThisPeer(properties, Parsing.getHome(appArguments));
+    	applicationContexts.put(thisNode, new SpringApplicationBuilder(ClusterNodeEntry.class)
                 //.properties("spring.config.name:app")
     			.properties(properties)
                 .build()
-                .run(args);
+                .run(args));
     }
         
     @Autowired
     private MembershipServer membershipServer;
+    
+    @Autowired
+    private Config config;
         
     @Autowired
     private ClusterView clusterView;
     
     @Autowired
     private RestClient restClient;
-        
+    
     @Override
     public void run(ApplicationArguments args) throws Exception {
-    	logger.info("node started in peer: " + Config.THIS_PEER);
+    	logger.info("node started in peer: " + config.getThisPeer());
     	
     	//Config.read(args);    	
     	//assert(Config.isValid());
@@ -72,18 +83,18 @@ public class ClusterNodeEntry implements ApplicationRunner {
     	membershipServer.listen();
     	
     	clusterView.init();
-    	
-    	if(Config.SEEDS.size() > 0) {
-    		for(Node nd: Config.SEEDS.list()) {
+
+    	if(config.getSeeds().size() > 0) {
+    		for(Node nd: config.getSeeds().list()) {
     			logger.info("trying to subscribe against node: " + nd);
-    			ClusterData view = restClient.subscribe(nd, Config.THIS_PEER);
+    			ClusterData view = restClient.subscribe(nd, config.getThisPeer());
     			if(view == null) continue;     			
     			logger.info("subscribed successfuly against node: " + nd + " with view " + view);    			
     			clusterView.updateMyView(new SynchroObject(view));
     			return;
     		}
     		logger.log(Level.SEVERE, "all seeds failed");
-    		Global.shutdown(5);
+    		Global.shutdown(applicationContexts.get(config.getThisPeer()), 5);
         	throw new Exception("Not able to complete subscription in any seed node");
         	
     	}

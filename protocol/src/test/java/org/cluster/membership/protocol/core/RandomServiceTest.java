@@ -4,6 +4,7 @@ import java.util.TimeZone;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.ClusterNodeEntryTest;
+import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.structures.DList;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
@@ -74,7 +75,8 @@ public class RandomServiceTest
 		
 		this.clusterView = new ClusterView(nodes, suspectingNodesTimeout, failed, rumorsToSend, receivedRumors);
 		
-		this.randomService = new RandomService();
+		Config config = new Config(Node.getGreaterNode());
+		this.randomService = new RandomService(config);
     	
     	nodes.add(a);
     	nodes.add(b);
