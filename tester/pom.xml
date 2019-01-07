@@ -29,6 +29,13 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.cluster.membership</groupId>
+			<artifactId>membership-protocol</artifactId>
+			<version>${protocol.version}</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -104,6 +111,9 @@
 								<resourceBundle>
 									org.cluster.membership:membership-protocol-common:${protocol.version}
 								</resourceBundle>
+								<resourceBundle>
+									org.cluster.membership:membership-protocol:${protocol.version}
+								</resourceBundle>								
 							</resourceBundles>
 						</configuration>
 					</execution>

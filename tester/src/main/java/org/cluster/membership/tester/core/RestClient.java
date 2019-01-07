@@ -25,8 +25,8 @@ public class RestClient {
 				Boolean.class);
 	}
 	
-	public static boolean shutdown(Node node) {
-		return restTemplate.postForObject(getAddress(node, "/membership/debug/shutdown"), null, 
+	public static boolean shutdown(Node node, int seconds) {
+		return restTemplate.postForObject(getAddress(node, "/membership/debug/shutdown"), seconds, 
 				Boolean.class);
 	}
 	

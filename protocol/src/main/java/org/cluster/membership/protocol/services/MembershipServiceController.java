@@ -54,9 +54,9 @@ public class MembershipServiceController {
 	}
 	
 	@PostMapping("/debug/shutdown")	
-	public boolean shutdown() {
+	public boolean shutdown(@RequestBody(required = true) int seconds) {
 		logger.info("shutdown message received");
-		Global.shutdown(5);
+		Global.shutdown(seconds);
 		return true;
 	}
 	

@@ -4,13 +4,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.common.model.util.EnvUtils;
 import org.cluster.membership.common.model.util.Tuple2;
-import org.cluster.membership.tester.config.LocalEnvConfig;
 import org.cluster.membership.tester.config.MultipleVMEnvConfig;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -53,11 +52,11 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 		
 		getAppConfig().newInstance(id);
 
-		getAppConfig().updateConfig(id, "id", id);
-		getAppConfig().updateConfig(id, "address", address);
-		getAppConfig().updateConfig(id, "protocol.port", String.valueOf(protocolPort));
-		getAppConfig().updateConfig(id, "server.port", String.valueOf(servicePort));
-		getAppConfig().updateConfig(id, "time.zone", timeZone);
+		getAppConfig().updateConfigInstance(id, "id", id);
+		getAppConfig().updateConfigInstance(id, "address", address);
+		getAppConfig().updateConfigInstance(id, "protocol.port", String.valueOf(protocolPort));
+		getAppConfig().updateConfigInstance(id, "server.port", String.valueOf(servicePort));
+		getAppConfig().updateConfigInstance(id, "time.zone", timeZone);
 
 		Node commandLineParam = getCreatedNodes().size() > 0 ? getRandomNode() : null;		
 		String args = commandLineParam != null ? EnvUtils.generateNodeCommandLineArguments(commandLineParam,1) : "";		
@@ -89,7 +88,7 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 			String key = entry.getKey();
 			String value = entry.getValue().toString();
 
-			getAppConfig().updateConfig(LocalEnvConfig.templateFolder, key, value);
+			getAppConfig().updateConfigInstance(getAppConfig().getTemplateFolder(), key, value);
 		}
 
 	}

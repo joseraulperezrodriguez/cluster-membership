@@ -16,5 +16,12 @@ public class Literals {
 	public static final String NODE_SERVER_PORT = "server.port";
 	public static final String NODE_TIME_ZONE = "time.zone";
 	
+	public static final String APP_HOME = "app.home";
+	public static final String APP_PROP_FILE = "app.properties";
+	public static final String APP_MODE = "mode";
+	public static final String APP_RELEASE_MODE = "RELEASE";
+	public static final String APP_DEBUG_MODE = "DEBUG";
+	
+	
 	
 }

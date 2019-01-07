@@ -12,10 +12,10 @@ import org.springframework.util.FileSystemUtils;
 
 public class LocalEnvConfig extends AbstractEnvConfig {
 	
-	public static final String instancesFolder = "instances";
-	public static final String templateFolder = "template";
-	public static final String configFolder = "config";
-	public static final String appProperties = "app.properties";
+	private String instancesFolder = "instances";
+	private String templateFolder = "template";
+	private String configFolder = "config";
+	private String appProperties = "app.properties";
 	
 	private String homePath;// = getHomePath();
 	private String casesPath;	
@@ -34,6 +34,10 @@ public class LocalEnvConfig extends AbstractEnvConfig {
 
 	}
 	
+	public String getTemplateFolder() { return templateFolder; }
+	
+	public String getInstancesContainer() { return instancesContainer; }
+	
 	public void newInstance(String id) throws Exception {
 		File folder = new File(this.instancesContainer + File.separator + id);		
 		if(folder.exists()) folder.delete();
@@ -43,7 +47,7 @@ public class LocalEnvConfig extends AbstractEnvConfig {
 		FileSystemUtils.copyRecursively(source, folder);
 	}
 
-	public void updateConfig(String id, String key, String value) throws Exception {
+	/*public void updateConfig(String id, String key, String value) throws Exception {
 		String path = instancesContainer + File.separator + id + File.separator + configFolder +
 				File.separator + appProperties;
 
@@ -53,6 +57,23 @@ public class LocalEnvConfig extends AbstractEnvConfig {
 		p.store(new FileOutputStream(path), "date: " + System.currentTimeMillis());	
 		
 		if(id.equals(templateFolder)) properties = p;
+	}*/
+	
+	public void updateConfigInstance(String id, String key, String value) throws Exception {
+		String path = instancesContainer + File.separator + id;
+		updateConfigFile(path, key, value);
+		updateConfigFile(homePath, key, value);
+	}
+		
+	public void updateConfigFile(String configPath, String key, String value) throws Exception {
+		String path = configPath + File.separator + configFolder + File.separator + appProperties;
+
+		Properties p = new Properties();
+		p.load(new FileInputStream(path));
+		p.setProperty(key, value);
+		p.store(new FileOutputStream(path), "date: " + System.currentTimeMillis());	
+		
+		if(configPath.equals(templateContainer)) properties = p;
 	}
 
 	public void prepareEnvironment() throws Exception {
