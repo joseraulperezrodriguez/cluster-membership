@@ -46,18 +46,6 @@ public class LocalEnvConfig extends AbstractEnvConfig {
 
 		FileSystemUtils.copyRecursively(source, folder);
 	}
-
-	/*public void updateConfig(String id, String key, String value) throws Exception {
-		String path = instancesContainer + File.separator + id + File.separator + configFolder +
-				File.separator + appProperties;
-
-		Properties p = new Properties();
-		p.load(new FileInputStream(path));
-		p.setProperty(key, value);
-		p.store(new FileOutputStream(path), "date: " + System.currentTimeMillis());	
-		
-		if(id.equals(templateFolder)) properties = p;
-	}*/
 	
 	public void updateConfigInstance(String id, String key, String value) throws Exception {
 		String path = instancesContainer + File.separator + id;
