@@ -26,12 +26,14 @@ public class MembershipServerTest {
 	private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     private ChannelInboundHandlerAdapter serverHandler;
+    private Config config;
 	
-	public MembershipServerTest(int port, ChannelInboundHandlerAdapter serverHandler) {
+	public MembershipServerTest(int port, ChannelInboundHandlerAdapter serverHandler, Config config) {
 		this.port = port;
 		this.bossGroup = new NioEventLoopGroup(1);
 	    this.workerGroup = new NioEventLoopGroup();
 	    this.serverHandler = serverHandler;
+	    this.config = config;
 	}
 	
 	
@@ -51,7 +53,7 @@ public class MembershipServerTest {
                     		  new JdkZlibDecoder());
                     p.addLast(                    		
                             new ObjectEncoder(),
-                            new ObjectDecoder(Config.MAX_OBJECT_SIZE, ClassResolvers.cacheDisabled(null)),
+                            new ObjectDecoder(config.getMaxObjectSize(), ClassResolvers.cacheDisabled(null)),
                             serverHandler);
                     
                 }

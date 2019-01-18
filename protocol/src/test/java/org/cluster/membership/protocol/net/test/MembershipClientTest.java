@@ -22,7 +22,7 @@ import io.netty.handler.timeout.ReadTimeoutHandler;
 
 public class MembershipClientTest {
 		
-	public static void connect(Node to, ChannelInboundHandlerAdapter handler) {
+	public static void connect(Node to, ChannelInboundHandlerAdapter handler, Config config) {
 		
 		EventLoopGroup group = new NioEventLoopGroup();
         try {
@@ -33,15 +33,14 @@ public class MembershipClientTest {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {                	
                     ChannelPipeline p = ch.pipeline();
-                    p.addLast(new ReadTimeoutHandler(Config.CONNECTION_TIME_OUT_MS * 2, TimeUnit.MILLISECONDS));
+                    p.addLast(new ReadTimeoutHandler(config.getConnectionTimeOutMs() * 1, TimeUnit.MILLISECONDS));
                     
                     p.addLast(new JdkZlibEncoder(),
                   		  	  new JdkZlibDecoder());
                     p.addLast(                    		
                             new ObjectEncoder(),
-                            new ObjectDecoder(Config.MAX_OBJECT_SIZE,ClassResolvers.cacheDisabled(null)),
-                            handler);
-                    
+                            new ObjectDecoder(config.getMaxObjectSize(),ClassResolvers.cacheDisabled(null)),
+                            handler);                    
                 }
              });
 

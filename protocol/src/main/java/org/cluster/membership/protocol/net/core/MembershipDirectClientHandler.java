@@ -6,6 +6,7 @@ import java.util.TreeSet;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.core.MessageType;
+import org.cluster.membership.protocol.model.FrameMessageCount;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.ResponseDescription;
 import org.cluster.membership.protocol.net.ResponseHandler;
@@ -19,8 +20,8 @@ public class MembershipDirectClientHandler extends MembershipClientHandler {
 	private TreeSet<Message> indirectMessages;
 	private boolean directReceived;
 	
-	public MembershipDirectClientHandler(ResponseHandler responseHandler, Node to, List<Message> messages) {
-		super(responseHandler, to, messages);
+	public MembershipDirectClientHandler(FrameMessageCount frameMessageCount, ResponseHandler responseHandler, Node from, Node to, List<Message> messages) {
+		super(frameMessageCount, responseHandler, from, to, messages);
 		
 		indirectMessages = new TreeSet<Message>();
 		
@@ -34,8 +35,8 @@ public class MembershipDirectClientHandler extends MembershipClientHandler {
 		
 	}
 	
-	public MembershipDirectClientHandler(ResponseHandler responseHandler, Node to, Message... messages) {
-		this(responseHandler, to, Arrays.asList(messages));		
+	public MembershipDirectClientHandler(FrameMessageCount frameMessageCount,ResponseHandler responseHandler, Node from, Node to, Message... messages) {
+		this(frameMessageCount, responseHandler, from, to, Arrays.asList(messages));		
 	}
 	
 	public boolean isIndirectMessage(Message m) {

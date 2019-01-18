@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.common.model.util.DateTime;
 import org.cluster.membership.common.model.util.MathOp;
+import org.cluster.membership.protocol.ClusterNodeEntry;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.Global;
@@ -28,10 +29,13 @@ public class ResponseHandler {
 
 	@Autowired
 	private ClusterView clusterView;
-		
+	
+	@Autowired
+	private Config config;
+	
 	public void addToFailed(Node node) {
 		clusterView.addFailed(new ValuePriorityEntry<Node, Long>(node, 
-				DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone())));
+				DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone())));
 	}
 		
 	public void restoreMessages(List<Message> messages) {
@@ -47,14 +51,14 @@ public class ResponseHandler {
 	}
 
 	public void suspectAll(TreeSet<Message> indirectMessages) {
-		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone());
+		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
 		
 		int iterations = MathOp.log2n(clusterView.getClusterSize());
 		String messageSusp = "";
 		for(Message m : indirectMessages) {
-			long expirTime = nowUTC + Config.FAILING_NODE_EXPIRATION_TIME_MS;
+			long expirTime = nowUTC + config.getFailingNodeExpirationTimeMs();
 			Message sm  = new Message(MessageType.SUSPECT_DEAD, m.getNode(), 
-					iterations, expirTime);
+					iterations, config.getThisPeer().getTimeZone(), expirTime);
 			clusterView.suspect(expirTime, sm);
 		}
 		logger.info("Supecting messages: \n" + messageSusp);
@@ -91,7 +95,7 @@ public class ResponseHandler {
 	}
 		
 	private void handleUnsubscription() {
-		Global.shutdown(5);
+		Global.shutdown(ClusterNodeEntry.applicationContexts.get(config.getThisPeer()), 5);
 	}
 	
 }

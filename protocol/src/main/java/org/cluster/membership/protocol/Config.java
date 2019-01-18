@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.UUID;
@@ -16,108 +14,172 @@ import org.cluster.membership.common.model.util.EnvUtils;
 import org.cluster.membership.common.model.util.Literals;
 import org.cluster.membership.protocol.structures.DList;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Config {
+	
 	private static final Logger logger = Logger.getLogger(Config.class.getName());
 	
-	private static HashMap<String, String> map;// = Parsing.readAppConfig();
-			
 	/**The time interval for making requests to other nodes in the cluster*/
-	public static long ITERATION_INTERVAL_MS;
+	private long iterationIntervalMs;
 	
 	/**The factor to multiply by iteration.interval.ms * (iterations=max.expected.node.log.2 || log2(cluster size)), and consider to send an update request*/
-	public static int READ_IDDLE_ITERATIONS_FACTOR;
+	private int readIddleIterationsFactor;
 
 	/**The time out for connection to other nodes*/
-	public static long CONNECTION_TIME_OUT_MS;
+	private long connectionTimeOutMs;
 		
 	/**The time to wait for a node sends a keep alive signal, to avoid removing from cluster*/
-	public static long FAILING_NODE_EXPIRATION_TIME_MS;//one day
+	private long failingNodeExpirationTimeMs;//one day
 				
 	/**The max  number of iterations to select a random node*/
-	public static int MAX_EXPECTED_NODE_LOG_2_SIZE;
+	private int maxExpectedNodeLog2Size;
 	
 	
 	/**The max length of the set for storing rumors messages, used for recovery other nodes later*/
-	public static int MAX_RUMORS_LOG_SIZE;
+	private int maxRumorsLogSize;
 	
 	/**The max number of bytes allowed to transfer between client and server*/
-	public static int MAX_OBJECT_SIZE;
+	private int maxObjectSize;
 	
 	
-	public static Node THIS_PEER;
+	private Node thisPeer;
 	
-	public static final DList SEEDS = new DList();
+	private DList seeds;
 	
-	public static final String[] MODE = new String[] {"RELEASE"};
+	private String mode;
 	
-	public static boolean isValid() {
+	public Config() throws Exception {
+		try {
+			Properties properties = ClusterNodeEntry.properties;
+			ApplicationArguments args = ClusterNodeEntry.appArguments;
+
+			String appHome = Parsing.getHome(args);
+			
+			iterationIntervalMs = Long.parseLong(properties.getProperty(Literals.ITERATION_INTERVAL_MS));
+			readIddleIterationsFactor = Integer.parseInt(properties.getProperty(Literals.READ_IDDLE_ITERATIONS_FACTOR));
+			connectionTimeOutMs = Long.parseLong(properties.getProperty(Literals.CONNECTION_TIME_OUT_MS));
+			failingNodeExpirationTimeMs = Long.parseLong(properties.getProperty(Literals.FAILING_NODE_EXPIRATION_TIME_MS));//one day
+			maxExpectedNodeLog2Size = Integer.parseInt(properties.getProperty(Literals.MAX_EXPECTED_NODE_LOG_2_SIZE));
+			maxRumorsLogSize = Integer.parseInt(properties.getProperty(Literals.MAX_RUMORS_LOG_SIZE));
+			maxObjectSize = Integer.parseInt(properties.getProperty(Literals.MAX_OBJECT_SIZE));
+			thisPeer = Parsing.readThisPeer(properties, appHome);
+			
+			seeds = Parsing.readSeedNodes(args);
+			
+			mode = Parsing.getMode(args);
+			
+			
+		} catch (Exception e) {
+			ClusterNodeEntry.mutex.release();
+			throw e;
+		}
+		ClusterNodeEntry.mutex.release();
+		
+
+	}
+	
+	public Config(Node thisPeer) {
+		this.iterationIntervalMs = 3000l;
+		this.connectionTimeOutMs = 1000l;
+		this.readIddleIterationsFactor = 3;
+		this.failingNodeExpirationTimeMs = 86400000l;
+		this.maxExpectedNodeLog2Size = 32;
+		this.maxRumorsLogSize = 1000000;
+		this.maxObjectSize = 2147483647;
+		
+		this.thisPeer = thisPeer;
+		this.seeds = new DList();
+		this.mode = Literals.APP_DEBUG_MODE;
+	}
+	
+	public long getIterationIntervalMs() { return iterationIntervalMs; }
+	public int getReadIddleIterationsFactor() { return readIddleIterationsFactor; }
+	public long getConnectionTimeOutMs() { return connectionTimeOutMs; }
+	public long getFailingNodeExpirationTimeMs() { return failingNodeExpirationTimeMs; }
+	public int getMaxExpectedNodeLog2Size() { return maxExpectedNodeLog2Size; }
+	public int getMaxRumorsLogSize() { return maxRumorsLogSize; }
+	public int getMaxObjectSize() { return maxObjectSize; }
+	public Node getThisPeer() { return thisPeer; }
+	public DList getSeeds() { return seeds; }
+	public String getMode() { return mode; }
+
+	public static boolean isValid(Properties properties, ApplicationArguments args) {
+		long ITERATION_INTERVAL_MS = Long.parseLong(properties.getProperty(Literals.ITERATION_INTERVAL_MS));
+		long CONNECTION_TIME_OUT_MS = Long.parseLong(properties.getProperty(Literals.CONNECTION_TIME_OUT_MS));
+		long FAILING_NODE_EXPIRATION_TIME_MS = Long.parseLong(properties.getProperty(Literals.FAILING_NODE_EXPIRATION_TIME_MS));
+		long MAX_RUMORS_LOG_SIZE = Long.parseLong(properties.getProperty(Literals.MAX_RUMORS_LOG_SIZE));
+		
+		String appHome = Parsing.getHome(args);
+		
+		Node node = Parsing.readThisPeer(properties, appHome);
+		
 		return (ITERATION_INTERVAL_MS > 500 && ITERATION_INTERVAL_MS < 1000*60) &&
 				(CONNECTION_TIME_OUT_MS > 100 && CONNECTION_TIME_OUT_MS < 1000*60) &&
 				(FAILING_NODE_EXPIRATION_TIME_MS > 1000*60*60 && FAILING_NODE_EXPIRATION_TIME_MS < 1000*60*60*24*3) &&
-				(MAX_RUMORS_LOG_SIZE < 10*1000*1000) && THIS_PEER != null;
+				(MAX_RUMORS_LOG_SIZE < 10*1000*1000) && node != null;
 	}
 	
-	public static void read(ApplicationArguments args) throws Exception {
-		if(args.containsOption("home")) Parsing.homePath = args.getOptionValues("home").get(0);			
-		else Parsing.homePath = EnvUtils.getHomePath(ClusterNodeEntry.class, Parsing.configFolder);
+	public static Properties read(ApplicationArguments args) throws Exception {
+		String appHome = Parsing.getHome(args);
 
-		map = Parsing.readAppConfig();
-		ITERATION_INTERVAL_MS = Long.parseLong(map.get(Literals.ITERATION_INTERVAL_MS));
-		READ_IDDLE_ITERATIONS_FACTOR = Integer.parseInt(map.get(Literals.READ_IDDLE_ITERATIONS_FACTOR));
-		CONNECTION_TIME_OUT_MS = Long.parseLong(map.get(Literals.CONNECTION_TIME_OUT_MS));
-		FAILING_NODE_EXPIRATION_TIME_MS = Long.parseLong(map.get(Literals.FAILING_NODE_EXPIRATION_TIME_MS));//one day
-		MAX_EXPECTED_NODE_LOG_2_SIZE = Integer.parseInt(map.get(Literals.MAX_EXPECTED_NODE_LOG_2_SIZE));
-		MAX_RUMORS_LOG_SIZE = Integer.parseInt(map.get(Literals.MAX_RUMORS_LOG_SIZE));
-		MAX_OBJECT_SIZE = Integer.parseInt(map.get(Literals.MAX_OBJECT_SIZE));
-		THIS_PEER = Parsing.readThisPeer();
+		Properties properties = Parsing.prop(appHome);
 		
-		Parsing.setSeedNodes(args);		
 		String appProperties = "using properties: \n";
-		for(Map.Entry<String, String> entry : map.entrySet()) 
-			appProperties += entry.getKey() + "=" + entry.getValue() + "\n";
+		for(Object key : properties.keySet()) 
+			appProperties += key + "=" + properties.getProperty(key.toString()) + "\n";
 		
-		logger.info(appProperties);				
+		logger.info(appProperties);			
+		
+		return properties;
 	}
 	
-	private static class Parsing {
+	public static class Parsing {
 		
 		
 		private static final String configFolder = "config";
-		private static final String appConfigFile = "app.properties";
+		private static final String appConfigFile = Literals.APP_PROP_FILE;
 		
-		private static String homePath;
+		//private static String appHome;
 		
-		private static Properties prop(String file) throws Exception {			
-			String peerConf = homePath + File.separator + file;
+		private static Properties prop(String appHome) throws Exception {			
+			String peerConf = appHome + File.separator + Parsing.configFolder + File.separator  + Parsing.appConfigFile;
 			Properties p = new Properties();
 			p.load(new FileInputStream(peerConf));			
 			return p;
 		}
 		
-		private static Node readThisPeer() {
+		public static String getHome(ApplicationArguments args) {
+			String appHome = "";
+			if(args.containsOption(Literals.APP_HOME)) appHome = args.getOptionValues(Literals.APP_HOME).get(0);			
+			else appHome = EnvUtils.getHomePath(ClusterNodeEntry.class, Parsing.configFolder);
+			return appHome;
+		}
+		
+		public static Node readThisPeer(Properties properties, String appHome) {
 			try {				
-				Properties p = prop(configFolder + File.separator  + appConfigFile);
+				//Properties p = prop(configFolder + File.separator  + appConfigFile);
 				boolean noId = false;
-				String cId = map.get(Literals.NODE_ID).trim();
+				String cId = properties.getProperty(Literals.NODE_ID).trim();
 				if(cId.isEmpty()) {
 					noId = true;
 					cId = UUID.randomUUID().toString();
-					p.setProperty(Literals.NODE_ID, cId);
+					properties.setProperty(Literals.NODE_ID, cId);
 				}
 
-				String cAddress = map.get(Literals.NODE_ADDRESS).trim();
-				Integer cProtocolPort = Integer.parseInt(map.get(Literals.NODE_PROTOCOL_PORT).trim());
-				Integer cServicePort = Integer.parseInt(map.get(Literals.NODE_SERVER_PORT).trim());
-				String cTimeZone = map.get(Literals.NODE_TIME_ZONE).trim();
+				String cAddress = properties.getProperty(Literals.NODE_ADDRESS).trim();
+				Integer cProtocolPort = Integer.parseInt(properties.getProperty(Literals.NODE_PROTOCOL_PORT).trim());
+				Integer cServicePort = Integer.parseInt(properties.getProperty(Literals.NODE_SERVER_PORT).trim());
+				String cTimeZone = properties.getProperty(Literals.NODE_TIME_ZONE).trim();
 				
 				
 				Node node = new Node(cId, cAddress, cProtocolPort, cServicePort, TimeZone.getTimeZone(cTimeZone));
 				
 				if(noId) {
-					OutputStream outFile = new FileOutputStream(homePath + File.separator + configFolder + 						
+					OutputStream outFile = new FileOutputStream(appHome + File.separator + configFolder + 						
 						File.separator + appConfigFile);
-					p.store(outFile, (noId ? "#The node id has been generated by the program" : ""));				
+					properties.store(outFile, (noId ? "#The node id has been generated by the program" : ""));				
 
 				}				
 				return node;
@@ -126,23 +188,7 @@ public class Config {
 				return null;
 			}			
 		}
-				
-		private static HashMap<String, String> readAppConfig() {
-			try {
-				Properties p = prop(configFolder + File.separator  + "app.properties");
-				
-				HashMap<String, String> map = new HashMap<String, String>();
-				
-				for(Object key : p.keySet()) map.put(key.toString().trim(), p.getProperty(key.toString()).trim());
-				
-				return map;
-			} catch(Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-			
-		}
-		
+						
 		private static int containsOptions(ApplicationArguments args, String... options) {		
 			int count = 0;
 			
@@ -153,7 +199,16 @@ public class Config {
 			
 		}
 		
-		private static void setSeedNodes(ApplicationArguments args) throws Exception {
+		private static String getMode(ApplicationArguments args) throws Exception {
+			if(args.containsOption(Literals.APP_MODE)) {
+				String mode = args.getOptionValues(Literals.APP_MODE).get(0);
+				if(!mode.equals(Literals.APP_DEBUG_MODE) && !mode.equals(Literals.APP_RELEASE_MODE)) throw new Exception("Invalid mode argument");				
+				return mode;
+			} else return Literals.APP_RELEASE_MODE;
+		}
+		
+		private static DList readSeedNodes(ApplicationArguments args) throws Exception {
+			DList seeds = new DList(); 
 			int count = 1;
 			do {
 				int contains = containsOptions(args, Literals.NODE_ID + "." + count, 
@@ -176,19 +231,15 @@ public class Config {
 					String cTimeZone = args.getOptionValues(Literals.NODE_TIME_ZONE + "." + count).get(0);
 					
 					Node n = new Node(cId, cAddress, cProtocolPort, cServicePort, TimeZone.getTimeZone(cTimeZone));
-					Config.SEEDS.add(n);
+					seeds.add(n);
 
 				} catch(Exception e) {
 					throw new Exception("The node " + count + " is not configured properly.");
 				}
 				count++;
 			} while(true);
-			
-			if(args.containsOption("mode")) {
-				String mode = args.getOptionValues("mode").get(0);
-				if(!mode.equals("DEBUG") && !mode.equals("RELEASE")) throw new Exception("Invalid mode argument");				
-				Config.MODE[0] = mode;
-			}			
+						
+			return seeds;
 		}
 	}
 }

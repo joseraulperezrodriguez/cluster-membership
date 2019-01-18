@@ -1,5 +1,6 @@
 package org.cluster.membership.protocol.net.core;
 
+import org.cluster.membership.common.model.util.Literals;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.net.RequestReceiver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,11 @@ public class MembershipServer extends Thread {
     private RequestReceiver requestReceiver;
 
 	
-	private static ObjectEncoder objectEncoder = new ObjectEncoder();
+	private ObjectEncoder objectEncoder = new ObjectEncoder();
 
+	@Autowired
+	private Config config;
+	
 	@Autowired
 	public MembershipServer(RequestReceiver requestReceiver) {
 		this.requestReceiver = requestReceiver;
@@ -49,7 +53,7 @@ public class MembershipServer extends Thread {
 	public void run() {
         try {
     		this.membershipServerHandler = (
-    				Config.MODE[0].equals("DEBUG") ? new MembershipServerHandlerDebug(requestReceiver) : 
+    				config.getMode().equals(Literals.APP_DEBUG_MODE) ? new MembershipServerHandlerDebug(requestReceiver) : 
     					new MembershipServerHandler(requestReceiver));
 
         	
@@ -68,13 +72,13 @@ public class MembershipServer extends Thread {
                   		  	  new JdkZlibDecoder());
                     p.addLast(
                             objectEncoder,
-                            new ObjectDecoder(Config.MAX_OBJECT_SIZE, ClassResolvers.cacheDisabled(null)),
+                            new ObjectDecoder(config.getMaxObjectSize(), ClassResolvers.cacheDisabled(null)),
                             membershipServerHandler);
                 }
              });
 
             // Bind and start to accept incoming connections.
-            b.bind(Config.THIS_PEER.getProtocolPort()).sync().channel().closeFuture().sync();
+            b.bind(config.getThisPeer().getProtocolPort()).sync().channel().closeFuture().sync();
         }
         catch (InterruptedException e) {    
         	e.printStackTrace();

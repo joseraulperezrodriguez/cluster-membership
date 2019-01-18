@@ -13,6 +13,7 @@ import org.cluster.membership.common.debug.StateInfo;
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.common.model.util.DateTime;
 import org.cluster.membership.common.model.util.MathOp;
+import org.cluster.membership.protocol.ClusterNodeEntry;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.FrameMessageCount;
@@ -21,6 +22,7 @@ import org.cluster.membership.protocol.model.SynchroObject;
 import org.cluster.membership.protocol.structures.DList;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
 import org.cluster.membership.protocol.structures.ValuePrioritySet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 
@@ -33,6 +35,10 @@ public class ClusterView implements Serializable {
 	
 	private static Logger logger = Logger.getLogger(ClusterView.class.getName());
 
+	private Config config;
+	
+	private FrameMessageCount frameMessCount;
+	
 	/**All nodes available until now in the cluster, including the failing ones and marked for dead*/
 	private DList nodes;
 
@@ -61,8 +67,12 @@ public class ClusterView implements Serializable {
 		this.receivedRumors = receivedRumors;
 	}
 
-	public ClusterView() {
+	@Autowired
+	public ClusterView(Config config) {
 		super();
+		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
+		frameMessCount = new FrameMessageCount(nowUTC,nowUTC,0);		
+		this.config = config;
 		this.nodes = new DList();
 		this.suspectingNodesTimeout = new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
 				ValuePriorityEntry.<Node, Long>ascPriorityComparator());
@@ -76,21 +86,7 @@ public class ClusterView implements Serializable {
 
 	public List<Node> nodes() { return nodes.list(); }
 	
-	/*public StateInfo getStateInfo() {
-		List<String> nodesId = new ArrayList<String>();
-		for(Node n : nodes.list()) nodesId.add(n.getId());		
-		
-		Iterator<ValuePriorityEntry<Node, Long>> iteratorSuspecting = suspectingNodesTimeout.iterator();		
-		List<String> suspectingNodes = new ArrayList<String>();		
-		while(iteratorSuspecting.hasNext()) suspectingNodes.add(iteratorSuspecting.next().getKey().getId());
-		
-		Iterator<ValuePriorityEntry<Node, Long>> iteratorFailing = failed.iterator();		
-		List<String> failingNodes = new ArrayList<String>();		
-		while(iteratorFailing.hasNext()) failingNodes.add(iteratorFailing.next().getKey().getId());
-		
-		StateInfo si = new StateInfo(nodesId, suspectingNodes, failingNodes);
-		return si;		
-	}*/
+	public FrameMessageCount getFrameMessageCount() { return frameMessCount; }
 	
 	public StateInfo getStateInfo() {
 		Set<String> nodesId = new HashSet<String>();
@@ -109,27 +105,27 @@ public class ClusterView implements Serializable {
 	}
 	
 	public void init() { 		//nodes.addSortedNodes(Config.SEEDS);
-		nodes.add(Config.THIS_PEER);
+		nodes.add(config.getThisPeer());
 		logger.info("initialized node, added this peer to node list");
 	}
 	
 	public void unsubscribe() {
 		if(getClusterSize() > 1) {
-			Message uns = new Message(MessageType.UNSUBSCRIPTION, Config.THIS_PEER, 1);
+			Message uns = new Message(MessageType.UNSUBSCRIPTION, config.getThisPeer(), 1, config.getThisPeer().getTimeZone());
 			rumorsToSend.add(uns, true);
-		} else Global.shutdown(5);		
+		} else Global.shutdown(ClusterNodeEntry.applicationContexts.get(config.getThisPeer()), 5);		
 	}
 	
 	public void subscribe(Node node) {
 		logger.info("subscribe received from node: " + node);
-		Message add = new Message(MessageType.ADD_TO_CLUSTER, node, MathOp.log2n(getClusterSize()));
+		Message add = new Message(MessageType.ADD_TO_CLUSTER, node, MathOp.log2n(getClusterSize()), config.getThisPeer().getTimeZone());
 		addToCluster(add);
 	}
 	
 	public SynchroObject getSyncObject(Node node, FrameMessageCount frameMessCount) {
 		
 		if(isSuspectedDead(node)) {
-			Message keepAliveMessage = new Message(MessageType.KEEP_ALIVE, node, MathOp.log2n(getClusterSize()));
+			Message keepAliveMessage = new Message(MessageType.KEEP_ALIVE, node, MathOp.log2n(getClusterSize()), config.getThisPeer().getTimeZone());
 			keepAlive(keepAliveMessage);
 		}
 		
@@ -141,20 +137,20 @@ public class ClusterView implements Serializable {
 
 	public Long lastRumorTime() {
 		Message last = receivedRumors.last();
-		return ((last == null) ? DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone()) : last.getGeneratedTime()); 
+		return ((last == null) ? DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone()) : last.getGeneratedTime()); 
 	}
 		
 	public void updateFrameMessageCount() {
-		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone());
+		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
 		long expectedIterations = (long)MathOp.log2n(getClusterSize());		
-		long timeFrame = expectedIterations * Config.ITERATION_INTERVAL_MS * Config.READ_IDDLE_ITERATIONS_FACTOR;		
+		long timeFrame = expectedIterations * config.getIterationIntervalMs() * config.getReadIddleIterationsFactor();		
 		long startFrame = nowUTC - timeFrame;
-		long endFrame = startFrame + (expectedIterations * Config.ITERATION_INTERVAL_MS * (Config.READ_IDDLE_ITERATIONS_FACTOR - 1));
+		long endFrame = startFrame + (expectedIterations * config.getIterationIntervalMs() * (config.getReadIddleIterationsFactor() - 1));
 		
-		TreeSet<Message> tail = receivedRumors.tailSet(Message.getMinTimeTemplate(startFrame));
-		int countTail = tail.tailSet(Message.getMinTimeTemplate(endFrame + 1)).size();
+		TreeSet<Message> tail = receivedRumors.tailSet(Message.getMinTimeTemplate(startFrame, config.getThisPeer().getTimeZone()));
+		int countTail = tail.tailSet(Message.getMinTimeTemplate(endFrame + 1, config.getThisPeer().getTimeZone())).size();
 		
-		Global.updateFrameMessageCount(new FrameMessageCount(startFrame, endFrame, tail.size() - countTail));
+		frameMessCount = new FrameMessageCount(startFrame, endFrame, tail.size() - countTail);
 	}
 
 	private SynchroObject getUpdatedView(FrameMessageCount frameMessCount, Node node) {
@@ -165,8 +161,8 @@ public class ClusterView implements Serializable {
 		} else {
 			
 			TreeSet<Message> frame = receivedRumors.between(
-					Message.getMinTimeTemplate(frameMessCount.getStartTime()),
-					Message.getMaxTimeTemplate(frameMessCount.getEndTime()));			
+					Message.getMinTimeTemplate(frameMessCount.getStartTime(), config.getThisPeer().getTimeZone()),
+					Message.getMaxTimeTemplate(frameMessCount.getEndTime(), config.getThisPeer().getTimeZone()));			
 			
 			ArrayList<Message> missingMessages = new ArrayList<>();
 			if(frame.size() > frameMessCount.getCount()) {
@@ -249,7 +245,7 @@ public class ClusterView implements Serializable {
 	public void addRumor(Message m) { 
 		addRumorsToSend(m);
 		this.receivedRumors.add(m, true);
-		if(this.receivedRumors.size() > Config.MAX_RUMORS_LOG_SIZE) this.receivedRumors.pollFirst();
+		if(this.receivedRumors.size() > config.getMaxRumorsLogSize()) this.receivedRumors.pollFirst();
 		logger.info("added rumor: " + m);
 	}
 	
@@ -270,7 +266,7 @@ public class ClusterView implements Serializable {
 		this.suspectingNodesTimeout = new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
 				ValuePriorityEntry.<Node, Long>ascPriorityComparator(), clusterView.getSuspectingNodesTimeout());
 		
-		this.nodes.add(Config.THIS_PEER);
+		this.nodes.add(config.getThisPeer());
 		
 		logger.info("update my own view: " + clusterView);
 	}
@@ -283,7 +279,7 @@ public class ClusterView implements Serializable {
 			else if(m.getType().equals(MessageType.REMOVE_FROM_CLUSTER)) nodes.remove(m.getNode());
 			else if(m.getType().equals(MessageType.SUSPECT_DEAD)) {
 				Long expirationTime = (Long)m.getData();
-				if(expirationTime > DateTime.utcTime(System.currentTimeMillis(), Config.THIS_PEER.getTimeZone())) 
+				if(expirationTime > DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone())) 
 					suspectingNodesTimeout.add(new ValuePriorityEntry<Node, Long>(m.getNode(), expirationTime), true);
 				else removingNodes.add(m.getNode());				
 			} 

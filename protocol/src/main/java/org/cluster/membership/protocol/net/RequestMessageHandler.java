@@ -22,18 +22,22 @@ public class RequestMessageHandler {
 	@Autowired
 	private ResponseHandler responseHandler;
 		
+	@Autowired
+	private Config config;
+	
 	public void handlerUnsubscription(Message m) {
-		Message rem = new Message(MessageType.REMOVE_FROM_CLUSTER, m.getNode(), MathOp.log2n(clusterView.getClusterSize()));
+		Message rem = new Message(MessageType.REMOVE_FROM_CLUSTER, m.getNode(), MathOp.log2n(clusterView.getClusterSize()), config.getThisPeer().getTimeZone());
 		clusterView.removeFromCluster(rem);
 	}
 	
 	public MessageResponse<Boolean> handlerProbe(Message m, ChannelHandlerContext ctx) {
-		if(m.getNode().equals(Config.THIS_PEER)) {
+		if(m.getNode().equals(config.getThisPeer())) {
 			MessageResponse<Boolean> response = new MessageResponse<Boolean>(true, m);
 			return response;
 		} else {
 			MembershipClient.connect(m.getNode(), 
-					new MembershipIndirectClientHandler(m.getNode(),m, responseHandler,ctx));
+					new MembershipIndirectClientHandler(clusterView.getFrameMessageCount(), config.getThisPeer(), m.getNode(),m, responseHandler,ctx),
+					config);
 			return null;
 		}		
 		
