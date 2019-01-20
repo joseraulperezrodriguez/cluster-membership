@@ -40,6 +40,13 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<testFailureIgnore>true</testFailureIgnore>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
@@ -52,7 +59,7 @@
 							<outputDirectory>${basedir}/target/</outputDirectory>
 							<resources>
 								<resource>
-										<directory>${basedir}/target/maven-shared-archive-resources</directory>
+									<directory>${basedir}/target/maven-shared-archive-resources</directory>
 									<filtering>false</filtering>
 								</resource>
 							</resources>
@@ -73,7 +80,7 @@
 							<outputDirectory>${basedir}/target/${artifact.id}-${protocol.version}</outputDirectory>
 							<resources>
 								<resource>
-										<directory>${basedir}/target/maven-shared-archive-resources</directory>
+									<directory>${basedir}/target/maven-shared-archive-resources</directory>
 									<filtering>false</filtering>
 								</resource>
 							</resources>
@@ -90,9 +97,9 @@
 						<goals>
 							<goal>bundle</goal>
 						</goals>
-					</execution>					
+					</execution>
 					<execution>
-					    <id>process</id>
+						<id>process</id>
 						<goals>
 							<goal>process</goal>
 						</goals>
