@@ -53,7 +53,6 @@ public class SingleVMTesterEntryTest extends TestCase {
 		File[] sortedByName = cases.listFiles();
 		Arrays.sort(sortedByName, (a, b) -> a.getName().compareTo(b.getName()));
 		List<Double> ans = new ArrayList<Double>();
-		int count = 0;
 		for(File f: sortedByName) {
 			SingleVMDeploymentAndExecutionSimulator deployment = new SingleVMDeploymentAndExecutionSimulator(config);			
 			try {
@@ -69,8 +68,6 @@ public class SingleVMTesterEntryTest extends TestCase {
 				e.printStackTrace();
 			}
 			deployment.undeploy();
-			count++;
-			if(count == 3) break;
 		}
 		for(Double dbl:ans)System.out.println("success: " + dbl);
         assertTrue( true );
