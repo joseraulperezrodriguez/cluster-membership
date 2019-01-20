@@ -8,7 +8,7 @@ jobs:
     filters: 
       branches: 
         only:
-     	  - master
+          - master
           - ci-cd
     docker:
       # specify the version you desire here
