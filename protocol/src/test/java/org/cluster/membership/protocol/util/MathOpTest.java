@@ -9,17 +9,14 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
-public class MathOpTest 
-    extends TestCase
-{
+public class MathOpTest extends TestCase {
 		
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public MathOpTest( String testName )
-    {
+    public MathOpTest( String testName ) {
         super( testName );
         
     }
@@ -27,8 +24,7 @@ public class MathOpTest
     /**
      * @return the suite of tests being tested
      */
-    public static Test suite()
-    {
+    public static Test suite() {
         return new TestSuite( MathOpTest.class );
     }
 
