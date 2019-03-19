@@ -35,8 +35,7 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     /**
      * @return the suite of tests being tested
      */
-    public static Test suite()
-    {
+    public static Test suite() {
         return new TestSuite( ValuePrioritySetInsertMessageTest.class );
     }
     
@@ -281,7 +280,7 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     	
     	Iterator<Message> iterator = set.iterator(); 
     	    	
-		Message[] array = buildArray(o5, o2, o4, o6);    	
+    	Message[] array = buildArray(o5, o2, o4, o6);    	
     	
     	assert(equals(array, iterator));
     }
