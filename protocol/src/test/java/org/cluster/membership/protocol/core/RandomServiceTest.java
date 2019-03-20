@@ -16,9 +16,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
-public class RandomServiceTest 
-    extends ClusterNodeEntryTest
-{
+public class RandomServiceTest extends ClusterNodeEntryTest {
 	
 	private DList nodes = new DList();
 	private ValuePrioritySet<ValuePriorityEntry<Node, Long>> suspectingNodesTimeout;
@@ -45,18 +43,15 @@ public class RandomServiceTest
      *
      * @param testName name of the test case
      */
-    public RandomServiceTest( String testName ) throws Exception
-    {
-        super( testName );
-        
+    public RandomServiceTest( String testName ) throws Exception {
+        super( testName );        
         init();
     }
 
     /**
      * @return the suite of tests being tested
      */
-    public static Test suite()
-    {
+    public static Test suite() {
         return new TestSuite( RandomServiceTest.class );
     }
 

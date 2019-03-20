@@ -11,26 +11,21 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
-public class DateTimeTest 
-    extends TestCase
-{
+public class DateTimeTest extends TestCase {
 		
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public DateTimeTest( String testName )
-    {
-        super( testName );
-        
+    public DateTimeTest( String testName ) {
+        super( testName );        
     }
 
     /**
      * @return the suite of tests being tested
      */
-    public static Test suite()
-    {
+    public static Test suite() {
         return new TestSuite( DateTimeTest.class );
     }
 
@@ -46,7 +41,7 @@ public class DateTimeTest
 		long nowUTC = nowMadrid - offset;
 		
 		long nowHavana = havanaTZ.getOffset(nowUTC) + nowUTC;
-		assert(nowHavana == nowMadrid - (hour*6));
+		assert(nowHavana == nowMadrid - (hour*6) || nowHavana == nowMadrid - (hour*5));
     }
     
     public void testLocalTimeConversion() {
@@ -61,7 +56,7 @@ public class DateTimeTest
 		
 		long nowHavana = DateTime.localTime(nowMadrid, madridTZ, havanaTZ);
 		
-		assert(nowHavana == nowMadrid - (hour*6));
+		assert(nowHavana == nowMadrid - (hour*6) || nowHavana == nowMadrid - (hour*5));
 		
     }
     
