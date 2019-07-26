@@ -82,7 +82,7 @@ public class ResponseHandler {
 			Message message = mr.getMessage();
 			
 			switch (message.getType()) {
-				case ADD_TO_CLUSTER: break; 
+				case ADD_TO_CLUSTER: break;
 				case KEEP_ALIVE: break;
 				case PROBE:  clusterView.removeFailing(message.getNode()); break;				
 				case REMOVE_FROM_CLUSTER:  break;

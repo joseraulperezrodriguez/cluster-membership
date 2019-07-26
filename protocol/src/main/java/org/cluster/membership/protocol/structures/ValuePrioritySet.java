@@ -44,7 +44,7 @@ public class ValuePrioritySet<T> implements Serializable {
 
 			if(present != null && !updatePriority) return false;
 
-			if(present == null) {	
+			if(present == null) {
 				hashed.put(el, el);
 				ordered.add(el);
 			} else if(priorityComparator.compare(el, present) < 0) {

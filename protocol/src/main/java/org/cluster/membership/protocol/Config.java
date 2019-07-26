@@ -72,11 +72,8 @@ public class Config {
 			
 			
 		} catch (Exception e) {
-			ClusterNodeEntry.mutex.release();
 			throw e;
 		}
-		ClusterNodeEntry.mutex.release();
-		
 
 	}
 	
@@ -105,7 +102,7 @@ public class Config {
 	public DList getSeeds() { return seeds; }
 	public String getMode() { return mode; }
 
-	public static boolean isValid(Properties properties, ApplicationArguments args) {
+	public static boolean isValid(Properties properties, ApplicationArguments args) throws Exception {
 		long ITERATION_INTERVAL_MS = Long.parseLong(properties.getProperty(Literals.ITERATION_INTERVAL_MS));
 		long CONNECTION_TIME_OUT_MS = Long.parseLong(properties.getProperty(Literals.CONNECTION_TIME_OUT_MS));
 		long FAILING_NODE_EXPIRATION_TIME_MS = Long.parseLong(properties.getProperty(Literals.FAILING_NODE_EXPIRATION_TIME_MS));
@@ -115,10 +112,10 @@ public class Config {
 		
 		Node node = Parsing.readThisPeer(properties, appHome);
 		
-		return (ITERATION_INTERVAL_MS > 500 && ITERATION_INTERVAL_MS < 1000*60) &&
-				(CONNECTION_TIME_OUT_MS > 100 && CONNECTION_TIME_OUT_MS < 1000*60) &&
-				(FAILING_NODE_EXPIRATION_TIME_MS > 1000*60*60 && FAILING_NODE_EXPIRATION_TIME_MS < 1000*60*60*24*3) &&
-				(MAX_RUMORS_LOG_SIZE < 10*1000*1000) && node != null;
+		return (ITERATION_INTERVAL_MS >= 500 && ITERATION_INTERVAL_MS <= 1000*60) &&
+				(CONNECTION_TIME_OUT_MS >= 100 && CONNECTION_TIME_OUT_MS <= 1000*60) &&
+				(FAILING_NODE_EXPIRATION_TIME_MS >= 1000*60*60 && FAILING_NODE_EXPIRATION_TIME_MS <= 1000*60*60*24*3) &&
+				(MAX_RUMORS_LOG_SIZE <= 10*1000*1000) && node != null;
 	}
 	
 	public static Properties read(ApplicationArguments args) throws Exception {
@@ -157,7 +154,7 @@ public class Config {
 			return appHome;
 		}
 		
-		public static Node readThisPeer(Properties properties, String appHome) {
+		public static Node readThisPeer(Properties properties, String appHome) throws Exception {
 			try {				
 				//Properties p = prop(configFolder + File.separator  + appConfigFile);
 				boolean noId = false;
@@ -184,12 +181,11 @@ public class Config {
 				}				
 				return node;
 			} catch(Exception e) {
-				e.printStackTrace();
-				return null;
+				throw e;
 			}			
 		}
 						
-		private static int containsOptions(ApplicationArguments args, String... options) {		
+		private static int containsOptions(ApplicationArguments args, String... options) {
 			int count = 0;
 			
 			for(String o : options) if(args.containsOption(o)) count++;

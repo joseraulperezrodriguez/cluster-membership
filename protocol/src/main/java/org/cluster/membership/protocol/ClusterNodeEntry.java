@@ -3,7 +3,6 @@ package org.cluster.membership.protocol;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Semaphore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,11 +39,7 @@ public class ClusterNodeEntry implements ApplicationRunner {
 	public static Properties properties;
 	public static ApplicationArguments appArguments;
 	
-	public static final Semaphore mutex = new Semaphore(1);
-	
-    public static void main( String[] args ) throws Exception {
-    	
-    	mutex.acquire();
+	public static void main( String[] args ) throws Exception {
     	
     	String argsString = ""; for(String s : args) argsString += s + " ";
     	logger.info("started program with args: " + argsString);
@@ -77,9 +72,6 @@ public class ClusterNodeEntry implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
     	logger.info("node started in peer: " + config.getThisPeer());
     	
-    	//Config.read(args);    	
-    	//assert(Config.isValid());
-    	
     	membershipServer.listen();
     	
     	clusterView.init();
@@ -88,8 +80,8 @@ public class ClusterNodeEntry implements ApplicationRunner {
     		for(Node nd: config.getSeeds().list()) {
     			logger.info("trying to subscribe against node: " + nd);
     			ClusterData view = restClient.subscribe(nd, config.getThisPeer());
-    			if(view == null) continue;     			
-    			logger.info("subscribed successfuly against node: " + nd + " with view " + view);    			
+    			if(view == null) continue;
+    			logger.info("subscribed successfuly against node: " + nd + " with view " + view);
     			clusterView.updateMyView(new SynchroObject(view));
     			return;
     		}

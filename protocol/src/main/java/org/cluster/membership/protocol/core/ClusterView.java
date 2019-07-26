@@ -179,19 +179,17 @@ public class ClusterView implements Serializable {
 	 * *******************************
 	 * *******************************/
 
-	public List<Message> getPendingRumors() {	
-		List<Message> ans = new ArrayList<Message>();
-		
+	/**
+	 * This method calls remove the message with pending iterations<=1 and add to result all the message with pending iterations>=1
+	*/
+	public List<Message> getPendingRumors() {
+		List<Message> ans = new ArrayList<Message>();		
 		Message current = null;
 		while((current = rumorsToSend.last()) != null && current.getIterations() <= 1) {
-			current = rumorsToSend.pollLast();
-			if(current.getIterations() == 0) continue;
-			ans.add(current.sended());
+			if(current.getIterations() <= 1) current = rumorsToSend.pollLast();
+			if(current.getIterations() >= 1) ans.add(current.sended());
 		}
-		
-		Iterator<Message> iterator = rumorsToSend.iterator();
-		while(iterator.hasNext()) ans.add(iterator.next().sended());
-		return ans;		
+		return ans;
 	}
 
 	public void keepAlive(Message keepAlive) {		
@@ -281,15 +279,15 @@ public class ClusterView implements Serializable {
 				Long expirationTime = (Long)m.getData();
 				if(expirationTime > DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone())) 
 					suspectingNodesTimeout.add(new ValuePriorityEntry<Node, Long>(m.getNode(), expirationTime), true);
-				else removingNodes.add(m.getNode());				
-			} 
+				else removingNodes.add(m.getNode());
+			}
 			else if(m.getType().equals(MessageType.KEEP_ALIVE)) {
 				ValuePriorityEntry<Node, Long> entry = ValuePriorityEntry.<Node, Long>getKeyTemplate(m.getNode());
 
 				failed.remove(entry);
 				suspectingNodesTimeout.remove(entry);
 				removingNodes.remove(m.getNode());
-			} 
+			}
 		}
 		for(Node n: removingNodes) {
 			ValuePriorityEntry<Node, Long> nd = ValuePriorityEntry.<Node, Long>getKeyTemplate(n);
@@ -308,13 +306,9 @@ public class ClusterView implements Serializable {
 
 	public ValuePriorityEntry<Node, Long> pollFailed() { return failed.pollLast(); }
 
-	public boolean isSuspectedDead(Node nd) { 
-		return suspectingNodesTimeout.contains(ValuePriorityEntry.<Node, Long>getKeyTemplate(nd), true); 
-	}
+	public boolean isSuspectedDead(Node nd) {  return suspectingNodesTimeout.contains(ValuePriorityEntry.<Node, Long>getKeyTemplate(nd), true); }
 
-	public boolean isFailing(Node nd) { 
-		return failed.contains(ValuePriorityEntry.<Node, Long>getKeyTemplate(nd), true); 
-	}
+	public boolean isFailing(Node nd) { return failed.contains(ValuePriorityEntry.<Node, Long>getKeyTemplate(nd), true); }
 
 	public boolean isRumor(Message m) { return rumorsToSend.contains(m, true); }
 
