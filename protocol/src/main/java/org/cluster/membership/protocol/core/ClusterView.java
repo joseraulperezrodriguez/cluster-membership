@@ -186,10 +186,13 @@ public class ClusterView implements Serializable {
 		List<Message> ans = new ArrayList<Message>();		
 		Message current = null;
 		while((current = rumorsToSend.last()) != null && current.getIterations() <= 1) {
-			if(current.getIterations() <= 1) current = rumorsToSend.pollLast();
-			if(current.getIterations() >= 1) ans.add(current.sended());
+			current = rumorsToSend.pollLast();
+			if(current.getIterations() == 1) ans.add(current.sended());
 		}
-		return ans;
+
+		Iterator<Message> iterator = rumorsToSend.iterator();
+		while(iterator.hasNext()) ans.add(iterator.next().sended());
+		return ans;				
 	}
 
 	public void keepAlive(Message keepAlive) {		
