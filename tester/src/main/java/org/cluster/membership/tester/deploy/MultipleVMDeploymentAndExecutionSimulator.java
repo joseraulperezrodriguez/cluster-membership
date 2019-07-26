@@ -60,7 +60,7 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 
 		Node commandLineParam = getCreatedNodes().size() > 0 ? getRandomNode() : null;		
 		String args = commandLineParam != null ? EnvUtils.generateNodeCommandLineArguments(commandLineParam,1) : "";		
-		String command = "java -jar -Xmx1G " + getAppConfig().programPath(id) + " " + args.trim() + " --mode=DEBUG --kill=" + killToken;
+		String command = "java -jar -Xmx666m " + getAppConfig().programPath(id) + " " + args.trim() + " --mode=DEBUG --kill=" + killToken;
 		
 		ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
 		processBuilder.directory(getAppConfig().cd(id));
