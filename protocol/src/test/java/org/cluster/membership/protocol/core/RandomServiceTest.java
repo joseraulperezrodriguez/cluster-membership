@@ -6,6 +6,7 @@ import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.ClusterNodeEntryTest;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.model.Message;
+import org.cluster.membership.protocol.structures.Comparators;
 import org.cluster.membership.protocol.structures.DList;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
 import org.cluster.membership.protocol.structures.ValuePrioritySet;
@@ -58,13 +59,13 @@ public class RandomServiceTest extends ClusterNodeEntryTest {
     
     private void init() {
     	
-    	this.suspectingNodesTimeout = new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-				ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    	this.suspectingNodesTimeout = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+				Comparators.<Node, Long>ascPriorityComparator());
 		this.rumorsToSend = new ValuePrioritySet<>(Message.getIterationsDescComparator(), 
 				Message.getIteratorPriorityAscComparator());		
 		this.nodes = new DList();
-		this.failed = new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-				ValuePriorityEntry.<Node, Long>ascPriorityComparator());		
+		this.failed = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+				Comparators.<Node, Long>ascPriorityComparator());		
 		this.receivedRumors = new ValuePrioritySet<Message>(Message.getGeneratedTimeAscComparator(),
 				Message.getGeneratedTimePriorityAscComparator());
 		

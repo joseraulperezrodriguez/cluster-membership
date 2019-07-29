@@ -20,7 +20,7 @@ public class ValuePriorityEntry<K extends Comparable<K>,V extends Comparable<V>>
 	public ValuePriorityEntry(K key, V value) {		
 		this.key = key;
 		this.value = value;
-		this.comparator = ValuePriorityEntry.<K,V>ascComparator();
+		this.comparator = Comparators.<K,V>ascComparator();
 	}
 	
 	public ValuePriorityEntry() {}
@@ -68,55 +68,5 @@ public class ValuePriorityEntry<K extends Comparable<K>,V extends Comparable<V>>
 	public String toString() {
 		return this.key + " -> " + this.value;
 	}
-	
-	private static <K extends Comparable<K>,V extends Comparable<V>> int compare(ValuePriorityEntry<K,V> first, ValuePriorityEntry<K,V> second) {
-		int keyComparison = first.key.compareTo(second.key);		
-		if(keyComparison == 0) return 0;
-		
-		int valueComparison = (first.value != null && second.value != null) ? first.value.compareTo(second.value) : 0;
-		if(valueComparison < 0) return -1;
-		else if(valueComparison > 0) return 1;
-		else return 0;		
-	}
-	
-	private static <K extends Comparable<K>,V extends Comparable<V>> int priorityCompare(ValuePriorityEntry<K,V> first, ValuePriorityEntry<K,V> second) {		
-		int valueComparison = (first.value != null && second.value != null) ? first.value.compareTo(second.value) : 0;
-		if(valueComparison < 0) return -1;
-		else if(valueComparison > 0) return 1;
-		else return 0;		
-	}
-	
-	public static <K extends Comparable<K>,V extends Comparable<V>> SerializableComparator<ValuePriorityEntry<K,V>> ascComparator () {						
-		return (a,b) -> {
-			int comp = ValuePriorityEntry.<K,V>compare(a, b);
-			return (comp == 0 ? a.key.compareTo(b.key) : comp);
-		};
-	};
-	
-	public static <K extends Comparable<K>,V extends Comparable<V>> SerializableComparator<ValuePriorityEntry<K,V>> ascPriorityComparator () {						
-		return (a,b) -> { 
-			int comp = ValuePriorityEntry.<K,V>priorityCompare(a, b);
-			return (comp == 0 ? a.key.compareTo(b.key) : comp);		
-		};
-	};
-	
-	public static <K extends Comparable<K>,V extends Comparable<V>> SerializableComparator<ValuePriorityEntry<K,V>> descComparator () {						
-		return (a,b) -> {
-			int comp = ValuePriorityEntry.<K,V>compare(b, a);
-			return (comp == 0 ? a.key.compareTo(b.key) : comp);
-		};
-	};
-	
-	public static <K extends Comparable<K>,V extends Comparable<V>> SerializableComparator<ValuePriorityEntry<K,V>> descPriorityComparator () {						
-		return (a,b) -> {
-			int comp = ValuePriorityEntry.<K,V>priorityCompare(b, a);
-			return (comp == 0 ? a.key.compareTo(b.key) : comp);
-		};
-	};
-	
-	public static <K extends Comparable<K>,V extends Comparable<V>> ValuePriorityEntry<K,V> getKeyTemplate(K k) {
-		return new ValuePriorityEntry<K,V>(k,null);
-	}
-	
 	
 }

@@ -44,10 +44,10 @@ public class MembershipDirectClientHandler extends MembershipClientHandler {
 	}
 	
 	public void checkDirectReceived(Object msg) {
-		ResponseDescription response = (ResponseDescription)msg;		
+		ResponseDescription response = (ResponseDescription)msg;
 		
 		if(response.getReponses().size() != 1 || !isIndirectMessage(response.getReponses().get(0).getMessage()))
-			directReceived = true; 
+			directReceived = true;
 		else 
 			indirectMessages.remove(response.getReponses().get(0).getMessage());
 		

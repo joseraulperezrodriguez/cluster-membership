@@ -64,7 +64,7 @@ public abstract class MembershipClientHandler extends ChannelInboundHandlerAdapt
 		increaseMessageReaded();
 		getResponseHandler().receive(response, this);
 		if(getMessagesReaded() == totalExpectedMessages) 
-			ctx.close();		
+			ctx.close();
 				
 	}
 

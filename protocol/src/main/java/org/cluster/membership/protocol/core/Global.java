@@ -8,12 +8,12 @@ import org.springframework.stereotype.Component;
 public class Global {
 			
 	public static void shutdown(ConfigurableApplicationContext application, int seconds) {
-		new Thread(new Runnable() {			
+		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try {
 					Thread.sleep(seconds * 1000);
-					SpringApplication.exit(application, () -> 0);	
+					SpringApplication.exit(application, () -> 0);
 				} catch(Exception e) {
 					SpringApplication.exit(application, () -> 0);
 				}

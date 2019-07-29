@@ -39,11 +39,11 @@ public class RequestMessageHandler {
 					new MembershipIndirectClientHandler(clusterView.getFrameMessageCount(), config.getThisPeer(), m.getNode(),m, responseHandler,ctx),
 					config);
 			return null;
-		}		
+		}
 		
 	}
 		
-	public void handlerSuspectDead(Message m) {			
+	public void handlerSuspectDead(Message m) {
 		/*TimeZone remoteTimeZone = m.getGeneratedTimeZone();
 		long remoteTime = (Long)m.getData();
 		TimeZone localTimeZone = Config.THIS_PEER.getTimeZone();		

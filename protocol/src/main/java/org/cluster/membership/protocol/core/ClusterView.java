@@ -19,6 +19,7 @@ import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.FrameMessageCount;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.SynchroObject;
+import org.cluster.membership.protocol.structures.Comparators;
 import org.cluster.membership.protocol.structures.DList;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
 import org.cluster.membership.protocol.structures.ValuePrioritySet;
@@ -74,12 +75,12 @@ public class ClusterView implements Serializable {
 		frameMessCount = new FrameMessageCount(nowUTC,nowUTC,0);		
 		this.config = config;
 		this.nodes = new DList();
-		this.suspectingNodesTimeout = new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-				ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+		this.suspectingNodesTimeout = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+				Comparators.<Node, Long>ascPriorityComparator());
 		this.rumorsToSend = new ValuePrioritySet<>(Message.getIterationsDescComparator(), 
 				Message.getIteratorPriorityAscComparator());		
-		this.failed = new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-				ValuePriorityEntry.<Node, Long>ascPriorityComparator());		
+		this.failed = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+				Comparators.<Node, Long>ascPriorityComparator());		
 		this.receivedRumors = new ValuePrioritySet<Message>(Message.getGeneratedTimeAscComparator(),
 				Message.getGeneratedTimePriorityAscComparator());
 	}
@@ -196,7 +197,7 @@ public class ClusterView implements Serializable {
 	}
 
 	public void keepAlive(Message keepAlive) {		
-		suspectingNodesTimeout.remove(ValuePriorityEntry.<Node, Long>getKeyTemplate(keepAlive.getNode()));
+		suspectingNodesTimeout.remove(Comparators.<Node, Long>getKeyTemplate(keepAlive.getNode()));
 		addRumorsToSend(keepAlive); 
 		logger.info("keep alive message: " + keepAlive);
 	}
@@ -210,7 +211,7 @@ public class ClusterView implements Serializable {
 	public void removeFromCluster(Message ms) { 
 		nodes.remove(ms.getNode());
 
-		ValuePriorityEntry<Node, Long> value = ValuePriorityEntry.<Node, Long>getKeyTemplate(ms.getNode());
+		ValuePriorityEntry<Node, Long> value = Comparators.<Node, Long>getKeyTemplate(ms.getNode());
 
 		suspectingNodesTimeout.remove(value);
 		failed.remove(value);
@@ -220,7 +221,7 @@ public class ClusterView implements Serializable {
 	}
 
 	public void removeFailing(Node nd) { 
-		ValuePriorityEntry<Node, Long> value = ValuePriorityEntry.<Node, Long>getKeyTemplate(nd);		
+		ValuePriorityEntry<Node, Long> value = Comparators.<Node, Long>getKeyTemplate(nd);		
 		failed.remove(value); 
 	}
 
@@ -264,8 +265,8 @@ public class ClusterView implements Serializable {
 		this.nodes = clusterView.getNodes();
 		this.rumorsToSend = new ValuePrioritySet<>(Message.getIterationsDescComparator(), 
 				Message.getIteratorPriorityAscComparator(), clusterView.getRumorsToSend());
-		this.suspectingNodesTimeout = new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-				ValuePriorityEntry.<Node, Long>ascPriorityComparator(), clusterView.getSuspectingNodesTimeout());
+		this.suspectingNodesTimeout = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+				Comparators.<Node, Long>ascPriorityComparator(), clusterView.getSuspectingNodesTimeout());
 		
 		this.nodes.add(config.getThisPeer());
 		
@@ -285,7 +286,7 @@ public class ClusterView implements Serializable {
 				else removingNodes.add(m.getNode());
 			}
 			else if(m.getType().equals(MessageType.KEEP_ALIVE)) {
-				ValuePriorityEntry<Node, Long> entry = ValuePriorityEntry.<Node, Long>getKeyTemplate(m.getNode());
+				ValuePriorityEntry<Node, Long> entry = Comparators.<Node, Long>getKeyTemplate(m.getNode());
 
 				failed.remove(entry);
 				suspectingNodesTimeout.remove(entry);
@@ -293,7 +294,7 @@ public class ClusterView implements Serializable {
 			}
 		}
 		for(Node n: removingNodes) {
-			ValuePriorityEntry<Node, Long> nd = ValuePriorityEntry.<Node, Long>getKeyTemplate(n);
+			ValuePriorityEntry<Node, Long> nd = Comparators.<Node, Long>getKeyTemplate(n);
 			nodes.remove(n);
 			failed.remove(nd);
 			suspectingNodesTimeout.remove(nd);			
@@ -309,9 +310,9 @@ public class ClusterView implements Serializable {
 
 	public ValuePriorityEntry<Node, Long> pollFailed() { return failed.pollLast(); }
 
-	public boolean isSuspectedDead(Node nd) {  return suspectingNodesTimeout.contains(ValuePriorityEntry.<Node, Long>getKeyTemplate(nd), true); }
+	public boolean isSuspectedDead(Node nd) {  return suspectingNodesTimeout.contains(Comparators.<Node, Long>getKeyTemplate(nd), true); }
 
-	public boolean isFailing(Node nd) { return failed.contains(ValuePriorityEntry.<Node, Long>getKeyTemplate(nd), true); }
+	public boolean isFailing(Node nd) { return failed.contains(Comparators.<Node, Long>getKeyTemplate(nd), true); }
 
 	public boolean isRumor(Message m) { return rumorsToSend.contains(m, true); }
 

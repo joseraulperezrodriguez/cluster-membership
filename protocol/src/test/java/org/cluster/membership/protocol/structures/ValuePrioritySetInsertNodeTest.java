@@ -55,8 +55,8 @@ public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
     
     public void testInsertion1() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -80,8 +80,8 @@ public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
     
     public void testInsertion2() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(b, 4l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -99,8 +99,8 @@ public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
     
     public void testInsertion3() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(b, 4l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(a, 3l);
@@ -129,8 +129,8 @@ public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
     
     public void testInsertion4() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(b, 4l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(a, 3l);
@@ -159,8 +159,8 @@ public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
     
     public void testInsertion5() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(b, 4l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(a, 4l);
@@ -189,8 +189,8 @@ public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
     
     public void testInsertion6() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(b, 4l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(a, 1l);
@@ -220,8 +220,8 @@ public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
     
     public void testInsertion7() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(b, 4l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(a, 1l);
@@ -248,8 +248,8 @@ public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
     
     public void testInsertion8() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(b, 11l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(a, 8l);    	
@@ -286,8 +286,8 @@ public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
     
     public void testInsertion9() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(b, 11l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(a, 8l);    	
@@ -324,8 +324,8 @@ public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
     
     public void testInsertion10() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>descPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>descPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(b, 11l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(a, 8l);    	
@@ -362,8 +362,8 @@ public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
     
     public void testInsertion11() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>descPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>descPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(b, 11l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(a, 8l);    	

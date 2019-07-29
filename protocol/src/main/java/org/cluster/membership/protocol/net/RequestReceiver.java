@@ -84,7 +84,7 @@ public class RequestReceiver {
 				case REMOVE_FROM_CLUSTER: {
 					messageHandler.handlerRemoveFromCluster(m);
 					break;
-				} 
+				}
 			}
 			
 		}

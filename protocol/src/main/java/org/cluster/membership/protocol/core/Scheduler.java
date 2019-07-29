@@ -44,6 +44,8 @@ public class Scheduler {
 		Node node = randomService.getRandom(clusterView);
 
 		TimeZone currentTimeZone = config.getThisPeer().getTimeZone();
+		
+		ValuePriorityEntry<Node, Long> firstFailed = clusterView.pollFailed();
 
 		/**Send the pending rumors to a random node*/
 		if(node != null) {
@@ -52,7 +54,6 @@ public class Scheduler {
 			List<Message> messages = clusterView.getPendingRumors();
 
 			if(messages.size() == 0) messages.add(new Message(MessageType.PROBE, node, 0, currentTimeZone));
-			ValuePriorityEntry<Node, Long> firstFailed = clusterView.pollFailed();
 			if(firstFailed != null) {
 				messages.add(new Message(MessageType.PROBE, firstFailed.getKey(),0, currentTimeZone));
 				clusterView.addFailed(new ValuePriorityEntry<Node, Long>(firstFailed.getKey(), 
@@ -62,8 +63,8 @@ public class Scheduler {
 			MembershipClientHandler handler = new MembershipDirectClientHandler(clusterView.getFrameMessageCount(), responseReceiver, config.getThisPeer(), node, messages);		
 			MembershipClient.connect(node, handler, config);
 		} else {
-			ValuePriorityEntry<Node, Long> firstFailed = clusterView.pollFailed();
 			if(firstFailed == null) return;
+			
 			long expirTime = DateTime.utcTime(now, config.getThisPeer().getTimeZone()) + config.getFailingNodeExpirationTimeMs();
 			int iterations = MathOp.log2n(clusterView.getClusterSize());
 			Message sm  = new Message(MessageType.SUSPECT_DEAD, firstFailed.getKey(), 
