@@ -72,7 +72,7 @@ public class ClusterView implements Serializable {
 	public ClusterView(Config config) {
 		super();
 		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
-		frameMessCount = new FrameMessageCount(nowUTC,nowUTC,0);		
+		frameMessCount = new FrameMessageCount(nowUTC,nowUTC,0);
 		this.config = config;
 		this.nodes = new DList();
 		this.suspectingNodesTimeout = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
@@ -102,7 +102,7 @@ public class ClusterView implements Serializable {
 		while(iteratorFailing.hasNext()) failingNodes.add(iteratorFailing.next().getKey().getId());
 		
 		StateInfo si = new StateInfo(nodesId, suspectingNodes, failingNodes);
-		return si;		
+		return si;
 	}
 	
 	public void init() { 		//nodes.addSortedNodes(Config.SEEDS);
@@ -184,7 +184,7 @@ public class ClusterView implements Serializable {
 	 * This method calls remove the message with pending iterations<=1 and add to result all the message with pending iterations>=1
 	*/
 	public List<Message> getPendingRumors() {
-		List<Message> ans = new ArrayList<Message>();		
+		List<Message> ans = new ArrayList<Message>();
 		Message current = null;
 		while((current = rumorsToSend.last()) != null && current.getIterations() <= 1) {
 			current = rumorsToSend.pollLast();
@@ -193,10 +193,10 @@ public class ClusterView implements Serializable {
 
 		Iterator<Message> iterator = rumorsToSend.iterator();
 		while(iterator.hasNext()) ans.add(iterator.next().sended());
-		return ans;				
+		return ans;
 	}
 
-	public void keepAlive(Message keepAlive) {		
+	public void keepAlive(Message keepAlive) {
 		suspectingNodesTimeout.remove(Comparators.<Node, Long>getKeyTemplate(keepAlive.getNode()));
 		addRumorsToSend(keepAlive); 
 		logger.info("keep alive message: " + keepAlive);
@@ -325,7 +325,7 @@ public class ClusterView implements Serializable {
 	public Node getNodeAt(int index) throws IndexOutOfBoundsException { return nodes.get(index); }
 
 	/**Prepare the ClusterView object, for sending it to a node joining the cluster*/
-	public ClusterData myView(Node otherPeer) {		
+	public ClusterData myView(Node otherPeer) {
 		ClusterData clusterData = new ClusterData(nodes, rumorsToSend.getSet(), suspectingNodesTimeout.getSet());
 		return clusterData;
 	}

@@ -65,11 +65,12 @@ public class Scheduler {
 		} else {
 			if(firstFailed == null) return;
 			
-			long expirTime = DateTime.utcTime(now, config.getThisPeer().getTimeZone()) + config.getFailingNodeExpirationTimeMs();
+			long nowUTC = DateTime.utcTime(now, config.getThisPeer().getTimeZone());
+			long expTime = nowUTC + MathOp.expTime(config.getIterationIntervalMs(), clusterView.getClusterSize(), config.getCyclesForWaitKeepAlive());
 			int iterations = MathOp.log2n(clusterView.getClusterSize());
 			Message sm  = new Message(MessageType.SUSPECT_DEAD, firstFailed.getKey(), 
-					iterations, currentTimeZone, expirTime);
-			clusterView.suspect(expirTime, sm);
+					iterations, currentTimeZone, expTime);
+			clusterView.suspect(expTime, sm);
 		}
 
 

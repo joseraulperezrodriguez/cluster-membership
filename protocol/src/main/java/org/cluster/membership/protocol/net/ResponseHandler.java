@@ -39,7 +39,7 @@ public class ResponseHandler {
 	}
 		
 	public void restoreMessages(List<Message> messages) {
-		String messageRestored = "";		
+		String messageRestored = "";
 		for(Message m: messages) {
 			if(!m.getCategory().equals(MessageCategory.CLUSTER)) continue;
 			messageRestored += m + "\n";
@@ -56,10 +56,10 @@ public class ResponseHandler {
 		int iterations = MathOp.log2n(clusterView.getClusterSize());
 		String messageSusp = "";
 		for(Message m : indirectMessages) {
-			long expirTime = nowUTC + config.getFailingNodeExpirationTimeMs();
+			long expTime = nowUTC + MathOp.expTime(config.getIterationIntervalMs(), clusterView.getClusterSize(), config.getCyclesForWaitKeepAlive());
 			Message sm  = new Message(MessageType.SUSPECT_DEAD, m.getNode(), 
-					iterations, config.getThisPeer().getTimeZone(), expirTime);
-			clusterView.suspect(expirTime, sm);
+					iterations, config.getThisPeer().getTimeZone(), expTime);
+			clusterView.suspect(expTime, sm);
 		}
 		logger.info("Supecting messages: \n" + messageSusp);
 	}
@@ -84,8 +84,8 @@ public class ResponseHandler {
 			switch (message.getType()) {
 				case ADD_TO_CLUSTER: break;
 				case KEEP_ALIVE: break;
-				case PROBE:  clusterView.removeFailing(message.getNode()); break;				
-				case REMOVE_FROM_CLUSTER:  break;
+				case PROBE: clusterView.removeFailing(message.getNode()); break;				
+				case REMOVE_FROM_CLUSTER: break;
 				case SUSPECT_DEAD: break;  
 				case UNSUBSCRIPTION: handleUnsubscription(); break;
 			}
