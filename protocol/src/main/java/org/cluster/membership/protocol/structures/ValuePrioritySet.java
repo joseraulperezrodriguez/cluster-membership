@@ -123,12 +123,12 @@ public class ValuePrioritySet<T> implements Serializable {
 	}
 
 	public T last() {
-		if(hashed.isEmpty()) return null;		
+		if(hashed.isEmpty()) return null;
 		return ordered.last();
 	}
 
 	public T first() {
-		if(hashed.isEmpty()) return null;		
+		if(hashed.isEmpty()) return null;
 		return ordered.first();
 	}
 

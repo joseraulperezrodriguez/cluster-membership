@@ -33,13 +33,13 @@ import org.springframework.stereotype.Component;
 public class ClusterView implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private static Logger logger = Logger.getLogger(ClusterView.class.getName());
 
 	private Config config;
-	
+
 	private FrameMessageCount frameMessCount;
-	
+
 	/**All nodes available until now in the cluster, including the failing ones and marked for dead*/
 	private DList nodes;
 
@@ -86,85 +86,85 @@ public class ClusterView implements Serializable {
 	}
 
 	public List<Node> nodes() { return nodes.list(); }
-	
+
 	public FrameMessageCount getFrameMessageCount() { return frameMessCount; }
-	
+
 	public StateInfo getStateInfo() {
 		Set<String> nodesId = new HashSet<String>();
 		for(Node n : nodes.list()) nodesId.add(n.getId());		
-		
+
 		Iterator<ValuePriorityEntry<Node, Long>> iteratorSuspecting = suspectingNodesTimeout.iterator();		
 		Set<String> suspectingNodes = new HashSet<String>();		
 		while(iteratorSuspecting.hasNext()) suspectingNodes.add(iteratorSuspecting.next().getKey().getId());
-		
+
 		Iterator<ValuePriorityEntry<Node, Long>> iteratorFailing = failed.iterator();		
 		Set<String> failingNodes = new HashSet<String>();		
 		while(iteratorFailing.hasNext()) failingNodes.add(iteratorFailing.next().getKey().getId());
-		
+
 		StateInfo si = new StateInfo(nodesId, suspectingNodes, failingNodes);
 		return si;
 	}
-	
+
 	public void init() { 		//nodes.addSortedNodes(Config.SEEDS);
 		nodes.add(config.getThisPeer());
 		logger.info("initialized node, added this peer to node list");
 	}
-	
+
 	public void unsubscribe() {
 		if(getClusterSize() > 1) {
 			Message uns = new Message(MessageType.UNSUBSCRIPTION, config.getThisPeer(), 1, config.getThisPeer().getTimeZone());
 			rumorsToSend.add(uns, true);
 		} else Global.shutdown(ClusterNodeEntry.applicationContexts.get(config.getThisPeer()), 5);		
 	}
-	
+
 	public void subscribe(Node node) {
 		logger.info("subscribe received from node: " + node);
 		Message add = new Message(MessageType.ADD_TO_CLUSTER, node, MathOp.log2n(getClusterSize()), config.getThisPeer().getTimeZone());
 		addToCluster(add);
 	}
-	
+
 	public SynchroObject getSyncObject(Node node, FrameMessageCount frameMessCount) {
-		
+
 		if(isSuspectedDead(node)) {
 			Message keepAliveMessage = new Message(MessageType.KEEP_ALIVE, node, MathOp.log2n(getClusterSize()), config.getThisPeer().getTimeZone());
 			keepAlive(keepAliveMessage);
 		}
-		
+
 		if(isFailing(node)) removeFailing(node);
-		
+
 		SynchroObject result = getUpdatedView(frameMessCount, node);
 		return result;		
 	}
 
-	public Long lastRumorTime() {
+	/*public Long lastRumorTime() {
 		Message last = receivedRumors.last();
 		return ((last == null) ? DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone()) : last.getGeneratedTime()); 
-	}
-		
+	}*/
+
 	public void updateFrameMessageCount() {
 		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
 		long expectedIterations = (long)MathOp.log2n(getClusterSize());		
 		long timeFrame = expectedIterations * config.getIterationIntervalMs() * config.getReadIddleIterationsFactor();		
 		long startFrame = nowUTC - timeFrame;
 		long endFrame = startFrame + (expectedIterations * config.getIterationIntervalMs() * (config.getReadIddleIterationsFactor() - 1));
-		
+
 		TreeSet<Message> tail = receivedRumors.tailSet(Message.getMinTimeTemplate(startFrame, config.getThisPeer().getTimeZone()));
 		int countTail = tail.tailSet(Message.getMinTimeTemplate(endFrame + 1, config.getThisPeer().getTimeZone())).size();
-		
+
 		frameMessCount = new FrameMessageCount(startFrame, endFrame, tail.size() - countTail);
 	}
 
 	private SynchroObject getUpdatedView(FrameMessageCount frameMessCount, Node node) {
 		Message first = receivedRumors.first();
-		
+
 		if(first != null && first.getGeneratedTime() > frameMessCount.getStartTime()) {
 			return new SynchroObject(myView(node));
 		} else {
-			
+
 			TreeSet<Message> frame = receivedRumors.between(
 					Message.getMinTimeTemplate(frameMessCount.getStartTime(), config.getThisPeer().getTimeZone()),
 					Message.getMaxTimeTemplate(frameMessCount.getEndTime(), config.getThisPeer().getTimeZone()));			
-			
+
 			ArrayList<Message> missingMessages = new ArrayList<>();
 			if(frame.size() > frameMessCount.getCount()) {
 				Iterator<Message> iterator = frame.iterator();
@@ -174,7 +174,20 @@ public class ClusterView implements Serializable {
 			return new SynchroObject(missingMessages);
 		}
 	}
-	
+
+	public void removeExpired() {
+		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
+
+		ValuePriorityEntry<Node, Long> entry = null;
+		while(suspectingNodesTimeout.size() > 0 && (entry = suspectingNodesTimeout.first()).getValue() >= nowUTC) { 
+			nodes.remove(entry.getKey());
+			suspectingNodesTimeout.remove(entry);
+			failed.remove(entry);
+			suspectingNodesTimeout.pollFirst();
+			logger.info("Removed node: " + entry.getKey() + " due to suspect time expiration: " + entry.getValue());
+		}
+	}
+
 	/**START the synchronization part
 	 * *******************************
 	 * *******************************
@@ -182,7 +195,7 @@ public class ClusterView implements Serializable {
 
 	/**
 	 * This method calls remove the message with pending iterations<=1 and add to result all the message with pending iterations>=1
-	*/
+	 */
 	public List<Message> getPendingRumors() {
 		List<Message> ans = new ArrayList<Message>();
 		Message current = null;
@@ -216,7 +229,7 @@ public class ClusterView implements Serializable {
 		suspectingNodesTimeout.remove(value);
 		failed.remove(value);
 		addRumor(ms);
-		
+
 		logger.info("remove from cluster message: " + ms);
 	}
 
@@ -231,7 +244,7 @@ public class ClusterView implements Serializable {
 		suspectingNodesTimeout.add(value, true);
 		failed.remove(value);
 		addRumor(sm);
-		
+
 		logger.info("add suspecting message: " + sm);
 	}
 
@@ -250,13 +263,13 @@ public class ClusterView implements Serializable {
 		if(this.receivedRumors.size() > config.getMaxRumorsLogSize()) this.receivedRumors.pollFirst();
 		logger.info("added rumor: " + m);
 	}
-	
+
 	public void updateMyView(SynchroObject syncObjectWrapper) {
 		assert(syncObjectWrapper.getClusterData() != null ^ syncObjectWrapper.getMessages() != null);
-		
+
 		if(syncObjectWrapper.getClusterData() != null) updateMyViewFully(syncObjectWrapper.getClusterData());
 		else synchronizeMyView(syncObjectWrapper.getMessages());
-		
+
 	}
 
 	private void updateMyViewFully(ClusterData clusterView) {
@@ -267,9 +280,9 @@ public class ClusterView implements Serializable {
 				Message.getIteratorPriorityAscComparator(), clusterView.getRumorsToSend());
 		this.suspectingNodesTimeout = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
 				Comparators.<Node, Long>ascPriorityComparator(), clusterView.getSuspectingNodesTimeout());
-		
+
 		this.nodes.add(config.getThisPeer());
-		
+
 		logger.info("update my own view: " + clusterView);
 	}
 
@@ -300,7 +313,7 @@ public class ClusterView implements Serializable {
 			suspectingNodesTimeout.remove(nd);			
 		}
 		logger.info("synchronize my own view: " + missingMessages.size() + " messages missing");
-		
+
 	}
 	/**END the synchronization part
 	 * *******************************
@@ -329,10 +342,10 @@ public class ClusterView implements Serializable {
 		ClusterData clusterData = new ClusterData(nodes, rumorsToSend.getSet(), suspectingNodesTimeout.getSet());
 		return clusterData;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "nodes: " + nodes.size() + " suspecting: " + suspectingNodesTimeout.size();
 	}
-	
+
 }
