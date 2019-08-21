@@ -20,13 +20,13 @@ public class MembershipIndirectClientHandler extends MembershipClientHandler {
 	@Override
 	public void handleError() {
 		if(this.getMessagesReaded() == 0) 
-			this.getResponseHandler().addToFailed(getTo());		
+			this.getResponseHandler().addToFailed(getTo());
 	}
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) {
 		super.channelRead(ctx, msg);
-		directContext.writeAndFlush(msg);		
+		directContext.writeAndFlush(msg);
 	}
 
 	@Override

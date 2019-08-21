@@ -44,12 +44,6 @@ public class RequestMessageHandler {
 	}
 		
 	public void handlerSuspectDead(Message m) {
-		/*TimeZone remoteTimeZone = m.getGeneratedTimeZone();
-		long remoteTime = (Long)m.getData();
-		TimeZone localTimeZone = Config.THIS_PEER.getTimeZone();		
-		long localTime = DateTime.localTime(remoteTime, remoteTimeZone, localTimeZone);
-		clusterView.suspect(localTime, m);*/
-		
 		long time = (Long)m.getData();
 		clusterView.suspect(time, m);
 	}

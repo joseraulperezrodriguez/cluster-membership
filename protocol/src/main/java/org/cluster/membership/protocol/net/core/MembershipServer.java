@@ -80,7 +80,7 @@ public class MembershipServer extends Thread {
             // Bind and start to accept incoming connections.
             b.bind(config.getThisPeer().getProtocolPort()).sync().channel().closeFuture().sync();
         }
-        catch (InterruptedException e) {    
+        catch (InterruptedException e) {
         	e.printStackTrace();
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();

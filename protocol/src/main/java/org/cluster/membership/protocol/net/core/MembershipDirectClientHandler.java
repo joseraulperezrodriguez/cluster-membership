@@ -62,14 +62,14 @@ public class MembershipDirectClientHandler extends MembershipClientHandler {
 			getResponseHandler().restoreMessages(getMessages());
 		}
 		
-		getResponseHandler().suspectAll(indirectMessages);					
+		getResponseHandler().suspectAll(indirectMessages);
 		
 	}
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg) {		
-		super.channelRead(ctx, msg);
+	public void channelRead(ChannelHandlerContext ctx, Object msg) {
 		checkDirectReceived(msg);
+		super.channelRead(ctx, msg);
 	}
 
 }

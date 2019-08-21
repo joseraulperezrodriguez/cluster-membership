@@ -78,9 +78,9 @@ public class ClusterView implements Serializable {
 		this.suspectingNodesTimeout = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
 				Comparators.<Node, Long>ascPriorityComparator());
 		this.rumorsToSend = new ValuePrioritySet<>(Message.getIterationsDescComparator(), 
-				Message.getIteratorPriorityAscComparator());		
+				Message.getIteratorPriorityAscComparator());
 		this.failed = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-				Comparators.<Node, Long>ascPriorityComparator());		
+				Comparators.<Node, Long>ascPriorityComparator());
 		this.receivedRumors = new ValuePrioritySet<Message>(Message.getGeneratedTimeAscComparator(),
 				Message.getGeneratedTimePriorityAscComparator());
 	}
@@ -136,11 +136,6 @@ public class ClusterView implements Serializable {
 		return result;		
 	}
 
-	/*public Long lastRumorTime() {
-		Message last = receivedRumors.last();
-		return ((last == null) ? DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone()) : last.getGeneratedTime()); 
-	}*/
-
 	public void updateFrameMessageCount() {
 		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
 		long expectedIterations = (long)MathOp.log2n(getClusterSize());		
@@ -175,7 +170,7 @@ public class ClusterView implements Serializable {
 		}
 	}
 
-	public void removeExpired() {
+	public synchronized void removeExpired() {
 		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
 
 		ValuePriorityEntry<Node, Long> entry = null;
@@ -257,14 +252,14 @@ public class ClusterView implements Serializable {
 		if(m.getIterations() > 0) rumorsToSend.add(m, true);
 	}
 
-	public void addRumor(Message m) { 
+	public synchronized void addRumor(Message m) { 
 		addRumorsToSend(m);
 		this.receivedRumors.add(m, true);
 		if(this.receivedRumors.size() > config.getMaxRumorsLogSize()) this.receivedRumors.pollFirst();
 		logger.info("added rumor: " + m);
 	}
 
-	public void updateMyView(SynchroObject syncObjectWrapper) {
+	public synchronized void updateMyView(SynchroObject syncObjectWrapper) {
 		assert(syncObjectWrapper.getClusterData() != null ^ syncObjectWrapper.getMessages() != null);
 
 		if(syncObjectWrapper.getClusterData() != null) updateMyViewFully(syncObjectWrapper.getClusterData());
@@ -327,7 +322,7 @@ public class ClusterView implements Serializable {
 
 	public boolean isFailing(Node nd) { return failed.contains(Comparators.<Node, Long>getKeyTemplate(nd), true); }
 
-	public boolean isRumor(Message m) { return rumorsToSend.contains(m, true); }
+	public boolean containsRumor(Message m) { return rumorsToSend.contains(m, true); }
 
 	public int getClusterSize() { return nodes.size(); }
 

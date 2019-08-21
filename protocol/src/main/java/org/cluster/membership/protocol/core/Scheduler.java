@@ -62,7 +62,7 @@ public class Scheduler {
 
 			MembershipClientHandler handler = new MembershipDirectClientHandler(clusterView.getFrameMessageCount(), responseReceiver, config.getThisPeer(), node, messages);		
 			MembershipClient.connect(node, handler, config);
-		} else if(firstFailed != null){		
+		} else if(firstFailed != null){
 			long nowUTC = DateTime.utcTime(now, config.getThisPeer().getTimeZone());
 			long expTime = nowUTC + MathOp.expTime(config.getIterationIntervalMs(), clusterView.getClusterSize(), config.getCyclesForWaitKeepAlive());
 			int iterations = MathOp.log2n(clusterView.getClusterSize());

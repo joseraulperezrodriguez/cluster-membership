@@ -16,7 +16,7 @@ public class Comparators {
 		int valueComparison = (first.getValue() != null && second.getValue() != null) ? first.getValue().compareTo(second.getValue()) : 0;
 		if(valueComparison < 0) return -1;
 		else if(valueComparison > 0) return 1;
-		else return 0;		
+		else return 0;
 	}
 	
 	public static <K extends Comparable<K>,V extends Comparable<V>> SerializableComparator<ValuePriorityEntry<K,V>> ascComparator () {
