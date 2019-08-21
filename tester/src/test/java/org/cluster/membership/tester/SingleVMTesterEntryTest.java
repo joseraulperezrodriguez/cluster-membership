@@ -43,7 +43,7 @@ public class SingleVMTesterEntryTest extends TestCase {
     /**
      * Rigourous Test :-)
      */
-    public void testApp() throws Exception {
+    /*public void testApp() throws Exception {
         String homePath = System.getProperty("user.dir") + File.separator + "target";
         LocalEnvConfig config = new LocalEnvConfig(homePath, true);
     	IEvaluator evaluator = new BasicEvaluator();    	
@@ -76,5 +76,5 @@ public class SingleVMTesterEntryTest extends TestCase {
     public void testArg(Double success, String message) {
     	assertEquals(message, 1, success, 0.5);
     	//assertTrue( true );
-    }
+    }*/
 }
