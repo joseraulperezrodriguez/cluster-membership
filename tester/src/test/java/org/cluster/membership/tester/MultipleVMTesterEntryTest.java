@@ -44,7 +44,7 @@ public class MultipleVMTesterEntryTest extends TestCase {
     /**
      * Rigourous Test :-)
      */
-    /*public void testApp() throws Exception {
+    public void testApp() throws Exception {
         String homePath = System.getProperty("user.dir") + File.separator + "target";
         String programPath = System.getProperty("multiple.vm.program.path");
         if(programPath == null) return;
@@ -81,6 +81,6 @@ public class MultipleVMTesterEntryTest extends TestCase {
     
     public void testArg(Double success, String message) {
     	assertEquals(message, 1, success, 0.5);
-    }*/
+    }
     
 }
