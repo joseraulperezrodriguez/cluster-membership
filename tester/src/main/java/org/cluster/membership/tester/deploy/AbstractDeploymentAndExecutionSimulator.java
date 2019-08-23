@@ -86,7 +86,7 @@ public abstract class AbstractDeploymentAndExecutionSimulator<T extends Abstract
 		JsonNode node = objectMapper.readTree(file);
 
 		JsonNode config = node.get("config");
-		readConfig(config);		
+		readConfig(config);
 		
 		int interval = Integer.parseInt(appConfig.getProp(Literals.ITERATION_INTERVAL_MS));
 
@@ -96,7 +96,6 @@ public abstract class AbstractDeploymentAndExecutionSimulator<T extends Abstract
 		while(iterator.hasNext()) {
 			JsonNode value = iterator.next();
 			action(value, config);
-			
 			int waitTime = MathOp.waitTime(createdNodes.size(), interval);
 			Thread.sleep(waitTime);
 			snapshot();
@@ -115,8 +114,14 @@ public abstract class AbstractDeploymentAndExecutionSimulator<T extends Abstract
 			lastView.addNode(createdNode.getId());
 			break;			
 		}
-		case "pause":  pause(data); break;
-		case "unsubscribe":  unsubscribe(data); break;
+		case "pause": {
+			pause(data); 
+			break;
+		}
+		case "unsubscribe": {
+			unsubscribe(data); 
+			break;		
+		}
 		}
 
 	}

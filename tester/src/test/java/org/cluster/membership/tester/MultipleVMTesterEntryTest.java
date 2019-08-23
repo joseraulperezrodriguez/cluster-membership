@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.cluster.membership.common.model.util.Tuple2;
 import org.cluster.membership.tester.config.MultipleVMEnvConfig;
 import org.cluster.membership.tester.core.BasicEvaluator;
 import org.cluster.membership.tester.core.IEvaluator;
@@ -47,27 +48,35 @@ public class MultipleVMTesterEntryTest extends TestCase {
     public void testApp() throws Exception {
         String homePath = System.getProperty("user.dir") + File.separator + "target";
         String programPath = System.getProperty("multiple.vm.program.path");
-        if(programPath == null) return;
-        MultipleVMEnvConfig config = new MultipleVMEnvConfig(homePath, programPath);
-    	IEvaluator evaluator = new BasicEvaluator();    	
-    	//runner = new MultipleVMRunner(config, evaluator);    	
-
+        String mvMemoryMbString = System.getProperty("multiple.vm.memory.mb");
+                        
+        if(programPath == null) {
+        	logger.log(Level.WARNING, "Multiple VM test is not running, set property: multiple.vm.program.path");
+        	return;
+        }
+        
+        int memoryMb = (mvMemoryMbString == null ? 512 : Integer.parseInt(mvMemoryMbString.trim()));
+        
+        logger.log(Level.INFO, "Multiple VM test running using file: " + programPath);
+        logger.log(Level.INFO, "Multiple VM test running using: " + memoryMb + " mb of memory");
+        
+        MultipleVMEnvConfig config = new MultipleVMEnvConfig(homePath, programPath, memoryMb);
+    	IEvaluator evaluator = new BasicEvaluator();
     	
     	File cases = new File(config.getCasesPath());
 		
 		File[] sortedByName = cases.listFiles();
 		Arrays.sort(sortedByName, (a, b) -> a.getName().compareTo(b.getName()));
-		List<Double> ans = new ArrayList<Double>();
+		List<Tuple2<String, Double>> ans = new ArrayList<Tuple2<String, Double>>();
+		
 		for(File f: sortedByName) {
-			MultipleVMDeploymentAndExecutionSimulator deployment = new MultipleVMDeploymentAndExecutionSimulator(config);			
+			MultipleVMDeploymentAndExecutionSimulator deployment = new MultipleVMDeploymentAndExecutionSimulator(config);
 			try {
-				//boolean success = new MultipleVMDeploymentSimulator(getAppConfig()).deploy(f);
 				Snapshot snapshot = deployment.deploy(f);
-				Double success = evaluator.evaluate(snapshot);
-				
+				Double rate = evaluator.evaluate(snapshot);
+				ans.add(new Tuple2<String, Double>(f.getName(), rate));
 				String message = "FAILED test for file " + f.getName();
-				testArg(success, message);
-				ans.add(success);
+				testArg(rate, message);				
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "FAILED test for file " + f.getName());
 				logger.log(Level.SEVERE, "error trace below:");
@@ -75,7 +84,7 @@ public class MultipleVMTesterEntryTest extends TestCase {
 			}
 			deployment.undeploy();
 		}
-		for(Double dbl:ans)System.out.println("success: " + dbl);
+		for(Tuple2<String, Double> rt : ans) logger.log(Level.INFO,"rate: " + rt.getB()	+ "/1 for file: " + rt.getA());
         assertTrue( true );
     }
     

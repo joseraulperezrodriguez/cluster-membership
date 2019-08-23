@@ -8,15 +8,17 @@ public class MultipleVMEnvConfig extends LocalEnvConfig {
 
 	private String programName;	
 	private String programPath;
+	private int memoryMb;
 	
-	public MultipleVMEnvConfig(String homePath, String programPath) throws Exception {
+	public MultipleVMEnvConfig(String homePath, String programPath, int memoryMb) throws Exception {
 		super(homePath, false);
-		super.prepareEnvironment();
 		this.programPath = programPath;
+		this.memoryMb = memoryMb;
 		this.prepareEnvironment();
 	}
 	
 	public void prepareEnvironment() throws Exception {
+		super.prepareEnvironment();
 		File sourceProgram = new File(programPath);
 		File templateProgram = new File(templateContainer + File.separator + sourceProgram.getName());
 		templateProgram.setExecutable(true);
@@ -35,6 +37,8 @@ public class MultipleVMEnvConfig extends LocalEnvConfig {
 		return instancesContainer + File.separator + id + File.separator + programName;
 	}
 
-
+    public int getMemoryMb() {
+    	return this.memoryMb;
+    }
 
 }

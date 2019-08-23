@@ -3,6 +3,8 @@ package org.cluster.membership.tester.util;
 import java.io.File;
 import java.util.Set;
 
+import org.cluster.membership.protocol.ClusterNodeEntry;
+
 public class Utils {
 	
 	public static boolean equals(Set<String> s1, Set<String> s2) {
@@ -21,6 +23,10 @@ public class Utils {
 		File folder = new File(path);
 		if(!folder.exists())folder.mkdir();
 		return folder;
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(ClusterNodeEntry.class.getCanonicalName());
 	}
 
 }

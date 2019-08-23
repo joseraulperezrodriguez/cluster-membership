@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.cluster.membership.common.model.util.Tuple2;
 import org.cluster.membership.tester.config.LocalEnvConfig;
 import org.cluster.membership.tester.core.BasicEvaluator;
 import org.cluster.membership.tester.core.IEvaluator;
@@ -52,16 +53,17 @@ public class SingleVMTesterEntryTest extends TestCase {
 		
 		File[] sortedByName = cases.listFiles();
 		Arrays.sort(sortedByName, (a, b) -> a.getName().compareTo(b.getName()));
-		List<Double> ans = new ArrayList<Double>();
+		
+		List<Tuple2<String, Double>> ans = new ArrayList<Tuple2<String, Double>>();
+		
 		for(File f: sortedByName) {
 			SingleVMDeploymentAndExecutionSimulator deployment = new SingleVMDeploymentAndExecutionSimulator(config);			
 			try {
-				//boolean success = new MultipleVMDeploymentSimulator(getAppConfig()).deploy(f);
 				Snapshot snapshot = deployment.deploy(f);
-				Double success = evaluator.evaluate(snapshot);
-				ans.add(success);
+				Double rate = evaluator.evaluate(snapshot);
+				ans.add(new Tuple2<String, Double>(f.getName(), rate));
 				String message = "FAILED test for file " + f.getName();
-				testArg(success, message);
+				testArg(rate, message);
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "FAILED test for file " + f.getName());
 				logger.log(Level.SEVERE, "error trace below:");
@@ -69,7 +71,7 @@ public class SingleVMTesterEntryTest extends TestCase {
 			}
 			deployment.undeploy();
 		}
-		for(Double dbl:ans)System.out.println("success: " + dbl);
+		for(Tuple2<String, Double> rt : ans) logger.log(Level.INFO,"rate: " + rt.getB()	+ "/1 for file: " + rt.getA());
         assertTrue( true );
     }
     
