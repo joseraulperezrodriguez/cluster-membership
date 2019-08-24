@@ -23,6 +23,7 @@ import junit.framework.TestSuite;
  */
 public class MultipleVMTesterEntryTest extends TestCase {
     
+	private final int defaultMemory = 64;
 
 	private Logger logger = Logger.getLogger(MultipleVMTesterEntryTest.class.getName());	
 	
@@ -55,7 +56,7 @@ public class MultipleVMTesterEntryTest extends TestCase {
         	return;
         }
         
-        int memoryMb = (mvMemoryMbString == null ? 512 : Integer.parseInt(mvMemoryMbString.trim()));
+        int memoryMb = (mvMemoryMbString == null ? defaultMemory : Integer.parseInt(mvMemoryMbString.trim()));
         
         logger.log(Level.INFO, "Multiple VM test running using file: " + programPath);
         logger.log(Level.INFO, "Multiple VM test running using: " + memoryMb + " mb of memory");
