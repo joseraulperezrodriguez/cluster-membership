@@ -41,8 +41,6 @@ public abstract class MembershipClientHandler extends ChannelInboundHandlerAdapt
 		this.from = from;
 		this.to = to;
 		this.messages = messages;
-		this.messagesReaded = 0; 
-		this.totalExpectedMessages = 0;
 	}
 	
 	public abstract void handleError();
@@ -66,7 +64,7 @@ public abstract class MembershipClientHandler extends ChannelInboundHandlerAdapt
 		increaseMessageReaded();
 		getResponseHandler().receive(response, this);
 		if(getMessagesReaded() == totalExpectedMessages) 
-			ctx.close();		
+			ctx.close();
 				
 	}
 

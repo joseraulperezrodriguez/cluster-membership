@@ -20,9 +20,8 @@ public class MembershipServerHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		RequestDescription request = (RequestDescription)msg;
-		ResponseDescription response = messageReceiver.receive(request, ctx);						
+		ResponseDescription response = messageReceiver.receive(request, ctx);
 		ctx.writeAndFlush(response);
-	
 	}
 
 }

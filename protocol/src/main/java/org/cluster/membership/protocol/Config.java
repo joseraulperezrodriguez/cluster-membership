@@ -30,8 +30,8 @@ public class Config {
 	/**The time out for connection to other nodes*/
 	private long connectionTimeOutMs;
 		
-	/**The time to wait for a node sends a keep alive signal, to avoid removing from cluster*/
-	private long failingNodeExpirationTimeMs;//one day
+	/**The number of cycles the cluster has to wait for a node sends a keep alive signal, to avoid removing from cluster*/
+	private int cyclesForWaitKeepAlive;//one day
 				
 	/**The max  number of iterations to select a random node*/
 	private int maxExpectedNodeLog2Size;
@@ -60,7 +60,7 @@ public class Config {
 			iterationIntervalMs = Long.parseLong(properties.getProperty(Literals.ITERATION_INTERVAL_MS));
 			readIddleIterationsFactor = Integer.parseInt(properties.getProperty(Literals.READ_IDDLE_ITERATIONS_FACTOR));
 			connectionTimeOutMs = Long.parseLong(properties.getProperty(Literals.CONNECTION_TIME_OUT_MS));
-			failingNodeExpirationTimeMs = Long.parseLong(properties.getProperty(Literals.FAILING_NODE_EXPIRATION_TIME_MS));//one day
+			cyclesForWaitKeepAlive = Integer.parseInt(properties.getProperty(Literals.CYCLES_FOR_WAIT_KEEP_ALIVE));//one day
 			maxExpectedNodeLog2Size = Integer.parseInt(properties.getProperty(Literals.MAX_EXPECTED_NODE_LOG_2_SIZE));
 			maxRumorsLogSize = Integer.parseInt(properties.getProperty(Literals.MAX_RUMORS_LOG_SIZE));
 			maxObjectSize = Integer.parseInt(properties.getProperty(Literals.MAX_OBJECT_SIZE));
@@ -72,11 +72,8 @@ public class Config {
 			
 			
 		} catch (Exception e) {
-			ClusterNodeEntry.mutex.release();
 			throw e;
 		}
-		ClusterNodeEntry.mutex.release();
-		
 
 	}
 	
@@ -84,7 +81,7 @@ public class Config {
 		this.iterationIntervalMs = 3000l;
 		this.connectionTimeOutMs = 1000l;
 		this.readIddleIterationsFactor = 3;
-		this.failingNodeExpirationTimeMs = 86400000l;
+		this.cyclesForWaitKeepAlive = 3;
 		this.maxExpectedNodeLog2Size = 32;
 		this.maxRumorsLogSize = 1000000;
 		this.maxObjectSize = 2147483647;
@@ -97,7 +94,7 @@ public class Config {
 	public long getIterationIntervalMs() { return iterationIntervalMs; }
 	public int getReadIddleIterationsFactor() { return readIddleIterationsFactor; }
 	public long getConnectionTimeOutMs() { return connectionTimeOutMs; }
-	public long getFailingNodeExpirationTimeMs() { return failingNodeExpirationTimeMs; }
+	public int getCyclesForWaitKeepAlive() { return cyclesForWaitKeepAlive; }
 	public int getMaxExpectedNodeLog2Size() { return maxExpectedNodeLog2Size; }
 	public int getMaxRumorsLogSize() { return maxRumorsLogSize; }
 	public int getMaxObjectSize() { return maxObjectSize; }
@@ -105,20 +102,20 @@ public class Config {
 	public DList getSeeds() { return seeds; }
 	public String getMode() { return mode; }
 
-	public static boolean isValid(Properties properties, ApplicationArguments args) {
+	public static boolean isValid(Properties properties, ApplicationArguments args) throws Exception {
 		long ITERATION_INTERVAL_MS = Long.parseLong(properties.getProperty(Literals.ITERATION_INTERVAL_MS));
 		long CONNECTION_TIME_OUT_MS = Long.parseLong(properties.getProperty(Literals.CONNECTION_TIME_OUT_MS));
-		long FAILING_NODE_EXPIRATION_TIME_MS = Long.parseLong(properties.getProperty(Literals.FAILING_NODE_EXPIRATION_TIME_MS));
+		long CYCLES_FOR_WAIT_KEEP_ALIVE = Long.parseLong(properties.getProperty(Literals.CYCLES_FOR_WAIT_KEEP_ALIVE));
 		long MAX_RUMORS_LOG_SIZE = Long.parseLong(properties.getProperty(Literals.MAX_RUMORS_LOG_SIZE));
 		
 		String appHome = Parsing.getHome(args);
 		
 		Node node = Parsing.readThisPeer(properties, appHome);
 		
-		return (ITERATION_INTERVAL_MS > 500 && ITERATION_INTERVAL_MS < 1000*60) &&
-				(CONNECTION_TIME_OUT_MS > 100 && CONNECTION_TIME_OUT_MS < 1000*60) &&
-				(FAILING_NODE_EXPIRATION_TIME_MS > 1000*60*60 && FAILING_NODE_EXPIRATION_TIME_MS < 1000*60*60*24*3) &&
-				(MAX_RUMORS_LOG_SIZE < 10*1000*1000) && node != null;
+		return (ITERATION_INTERVAL_MS >= 500 && ITERATION_INTERVAL_MS <= 1000*60) &&
+				(CONNECTION_TIME_OUT_MS >= 100 && CONNECTION_TIME_OUT_MS <= 1000*60) &&
+				(CYCLES_FOR_WAIT_KEEP_ALIVE >= 1) &&
+				(MAX_RUMORS_LOG_SIZE <= 10*1000*1000) && node != null;
 	}
 	
 	public static Properties read(ApplicationArguments args) throws Exception {
@@ -157,7 +154,7 @@ public class Config {
 			return appHome;
 		}
 		
-		public static Node readThisPeer(Properties properties, String appHome) {
+		public static Node readThisPeer(Properties properties, String appHome) throws Exception {
 			try {				
 				//Properties p = prop(configFolder + File.separator  + appConfigFile);
 				boolean noId = false;
@@ -184,12 +181,11 @@ public class Config {
 				}				
 				return node;
 			} catch(Exception e) {
-				e.printStackTrace();
-				return null;
+				throw e;
 			}			
 		}
 						
-		private static int containsOptions(ApplicationArguments args, String... options) {		
+		private static int containsOptions(ApplicationArguments args, String... options) {
 			int count = 0;
 			
 			for(String o : options) if(args.containsOption(o)) count++;

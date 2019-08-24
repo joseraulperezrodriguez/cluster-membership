@@ -51,10 +51,8 @@ public class RequestReceiver {
 		for(Message m : messages) {
 			MessageType mt = m.getType();
 		
-			/**If message is SUSPECT_DEAD we insert again to allow the minimal time will
-			 * be prioritized, in this way we ensure all the nodes have the same 
-			 * expiration time for a node*/
-			if(clusterView.isRumor(m) && !mt.equals(MessageType.SUSPECT_DEAD)) { 
+            /**If this node has already registered m as a rumor, then avoid to reinserted, except the SUSPECT_DEAD messages, as you can see later*/
+			if(clusterView.containsRumor(m) && !mt.equals(MessageType.SUSPECT_DEAD)) { 
 				logger.info("Avoiding handling " + m + " message");
 				continue;			
 			}
@@ -68,7 +66,10 @@ public class RequestReceiver {
 					MessageResponse<Boolean> mr = messageHandler.handlerProbe(m, ctx);
 					if(mr != null) mResponses.add(mr);
 					break;
-				} 
+				}
+				/**If message is SUSPECT_DEAD we insert again to allow the minimal time will
+				 * be prioritized, in this way we ensure all the nodes have the same 
+				 * expiration time for a node*/
 				case SUSPECT_DEAD: {
 					messageHandler.handlerSuspectDead(m);
 					break;
@@ -84,7 +85,7 @@ public class RequestReceiver {
 				case REMOVE_FROM_CLUSTER: {
 					messageHandler.handlerRemoveFromCluster(m);
 					break;
-				} 
+				}
 			}
 			
 		}

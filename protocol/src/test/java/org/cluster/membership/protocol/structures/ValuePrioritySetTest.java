@@ -56,8 +56,8 @@ public class ValuePrioritySetTest extends TestCase {
     
     public void testContains1() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -80,8 +80,8 @@ public class ValuePrioritySetTest extends TestCase {
     
     public void testContains2() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -112,8 +112,8 @@ public class ValuePrioritySetTest extends TestCase {
     @SuppressWarnings("unchecked")
 	public void testRemove() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -159,8 +159,8 @@ public class ValuePrioritySetTest extends TestCase {
     
     public void testTailSet() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -192,8 +192,8 @@ public class ValuePrioritySetTest extends TestCase {
     
     public void testPollFirst() {
        	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -226,8 +226,8 @@ public class ValuePrioritySetTest extends TestCase {
     
     public void testLast() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(ValuePriorityEntry.<Node, Long>ascComparator(),
-    					ValuePriorityEntry.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
+    					Comparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);

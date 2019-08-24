@@ -44,8 +44,8 @@ public class RandomService {
 			if(clusterView.isFailing(nd) || 
 			   clusterView.isSuspectedDead(nd) ||
 			   nd.equals(config.getThisPeer())) continue;
-						
-			return nd;			
+
+			return nd;
 		}
 		
 		return null;		

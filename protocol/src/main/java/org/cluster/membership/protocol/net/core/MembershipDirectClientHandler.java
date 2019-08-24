@@ -44,10 +44,10 @@ public class MembershipDirectClientHandler extends MembershipClientHandler {
 	}
 	
 	public void checkDirectReceived(Object msg) {
-		ResponseDescription response = (ResponseDescription)msg;		
+		ResponseDescription response = (ResponseDescription)msg;
 		
 		if(response.getReponses().size() != 1 || !isIndirectMessage(response.getReponses().get(0).getMessage()))
-			directReceived = true; 
+			directReceived = true;
 		else 
 			indirectMessages.remove(response.getReponses().get(0).getMessage());
 		
@@ -62,14 +62,14 @@ public class MembershipDirectClientHandler extends MembershipClientHandler {
 			getResponseHandler().restoreMessages(getMessages());
 		}
 		
-		getResponseHandler().suspectAll(indirectMessages);					
+		getResponseHandler().suspectAll(indirectMessages);
 		
 	}
 
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg) {		
-		super.channelRead(ctx, msg);
+	public void channelRead(ChannelHandlerContext ctx, Object msg) {
 		checkDirectReceived(msg);
+		super.channelRead(ctx, msg);
 	}
 
 }

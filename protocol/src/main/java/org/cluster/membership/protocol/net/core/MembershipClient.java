@@ -49,6 +49,7 @@ public class MembershipClient {
 
             // Start the connection attempt.
             b.connect(to.getAddress(), to.getProtocolPort()).sync().channel().closeFuture().sync();
+            
         }
         catch(Exception e) {
         	e.printStackTrace();

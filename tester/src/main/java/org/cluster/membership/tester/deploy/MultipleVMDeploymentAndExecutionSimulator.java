@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.common.model.util.EnvUtils;
 import org.cluster.membership.common.model.util.Tuple2;
+import org.cluster.membership.protocol.ClusterNodeEntry;
 import org.cluster.membership.tester.config.MultipleVMEnvConfig;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -34,7 +35,8 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 		return runningProcess;
 	}
 
-	protected Node createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {		
+	protected Node createAndLaunchNode(JsonNode data, JsonNode config) throws Exception {
+		
 		String id = data.get("id").asText();
 		String address = data.get("address").asText();
 		
@@ -44,8 +46,6 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 		int protocolPort = ports.getB();
 		int servicePort = ports.getA();
 		
-		//int nodePort = data.get("protocol.port").asInt();
-		//int servicePort = data.get("server.port").asInt();
 		String timeZone = data.get("time.zone").asText();
 
 		Node node = new Node(id, address, protocolPort, servicePort, timeZone);
@@ -60,7 +60,8 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 
 		Node commandLineParam = getCreatedNodes().size() > 0 ? getRandomNode() : null;		
 		String args = commandLineParam != null ? EnvUtils.generateNodeCommandLineArguments(commandLineParam,1) : "";		
-		String command = "java -jar -Xmx1G " + getAppConfig().programPath(id) + " " + args.trim() + " --mode=DEBUG --kill=" + killToken;
+		String command = "java -Xmx" + getAppConfig().getMemoryMb() + "m -cp " + getAppConfig().programPath(id) + " " + 
+				ClusterNodeEntry.class.getCanonicalName() + " " + args.trim() + " --mode=DEBUG --kill=" + killToken;
 		
 		ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
 		processBuilder.directory(getAppConfig().cd(id));
@@ -69,7 +70,7 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 				
 		Process p = processBuilder.start();
 
-		EnvUtils.waitUntilStarted(address, servicePort, protocolPort);		
+		EnvUtils.waitUntilStarted(address, servicePort, protocolPort);
 		getCreatedNodes().put(id, node);
 		runningProcess.add(p);
 		

@@ -12,7 +12,11 @@ public class MathOp {
 	public static int waitTime(int size, int interval) {
 		int iterations = MathOp.log2n(size) + 1;
 		int time = iterations * interval;
-		return time;
+		return (int)(time * 1.25);
+	}
+	
+	public static long expTime(long interval, int size, int iterations) {
+		return log2n(size) * (long)interval * (long)iterations;
 	}
 	
 }

@@ -17,7 +17,7 @@
 		<spring.boot.version>2.0.1.RELEASE</spring.boot.version>
 		<protocol.version>0.0.1</protocol.version>
 		<maven.compiler.source>${jdk.version}</maven.compiler.source>
-		<maven.compiler.target>${jdk.version}</maven.compiler.target>
+		<maven.compiler.target>${jdk.version}</maven.compiler.target>		
 	</properties>
 
 
