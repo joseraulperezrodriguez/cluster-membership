@@ -6,7 +6,6 @@ import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
-import org.cluster.membership.common.model.util.DateTime;
 import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.ClusterNodeEntry;
 import org.cluster.membership.protocol.Config;
@@ -19,6 +18,7 @@ import org.cluster.membership.protocol.model.MessageResponse;
 import org.cluster.membership.protocol.model.ResponseDescription;
 import org.cluster.membership.protocol.net.core.MembershipClientHandler;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
+import org.cluster.membership.protocol.time.ServerTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -35,7 +35,7 @@ public class ResponseHandler {
 	
 	public void addToFailed(Node node) {
 		clusterView.addFailed(new ValuePriorityEntry<Node, Long>(node, 
-				DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone())));
+				ServerTime.getTime()));
 	}
 		
 	public void restoreMessages(List<Message> messages) {
@@ -51,14 +51,14 @@ public class ResponseHandler {
 	}
 
 	public void suspectAll(TreeSet<Message> indirectMessages) {
-		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
+		long nowUTC = ServerTime.getTime();
 		
 		int iterations = MathOp.log2n(clusterView.getClusterSize());
 		String messageSusp = "";
 		for(Message m : indirectMessages) {
 			long expTime = nowUTC + MathOp.expTime(config.getIterationIntervalMs(), clusterView.getClusterSize(), config.getCyclesForWaitKeepAlive());
 			Message sm  = new Message(MessageType.SUSPECT_DEAD, m.getNode(), 
-					iterations, config.getThisPeer().getTimeZone(), expTime);
+					iterations, expTime);
 			clusterView.suspect(expTime, sm);
 		}
 		logger.info("Supecting messages: \n" + messageSusp);

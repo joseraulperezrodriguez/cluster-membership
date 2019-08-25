@@ -4,10 +4,10 @@ import java.io.Serializable;
 import java.util.TimeZone;
 
 import org.cluster.membership.common.model.Node;
-import org.cluster.membership.common.model.util.DateTime;
 import org.cluster.membership.protocol.core.MessageCategory;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.structures.SerializableComparator;
+import org.cluster.membership.protocol.time.ServerTime;
 
 public class Message implements Comparable<Message>, Serializable {
 	
@@ -26,16 +26,16 @@ public class Message implements Comparable<Message>, Serializable {
 	
 	private long generatedTime;
 	
-	public Message(MessageType type, Node node, int iterations, TimeZone timeZone) {
+	public Message(MessageType type, Node node, int iterations) {
 		assert(node != null);
 		this.type = type;
 		this.node = node;
 		this.iterations = iterations;
-		this.generatedTime = DateTime.utcTime(System.currentTimeMillis(), timeZone);
+		this.generatedTime = ServerTime.getTime();
 	}
 	
-	public Message(MessageType type, Node node, int iterations, TimeZone timeZone, Object data) {
-		this(type, node, iterations, timeZone);
+	public Message(MessageType type, Node node, int iterations, Object data) {
+		this(type, node, iterations);
 		this.data = data;		
 	}
 	

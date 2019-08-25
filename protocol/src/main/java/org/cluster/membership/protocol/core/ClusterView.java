@@ -11,7 +11,6 @@ import java.util.logging.Logger;
 
 import org.cluster.membership.common.debug.StateInfo;
 import org.cluster.membership.common.model.Node;
-import org.cluster.membership.common.model.util.DateTime;
 import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.ClusterNodeEntry;
 import org.cluster.membership.protocol.Config;
@@ -23,6 +22,7 @@ import org.cluster.membership.protocol.structures.Comparators;
 import org.cluster.membership.protocol.structures.DList;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
 import org.cluster.membership.protocol.structures.ValuePrioritySet;
+import org.cluster.membership.protocol.time.ServerTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -54,7 +54,7 @@ public class ClusterView implements Serializable {
 	private ValuePrioritySet<Message> rumorsToSend;
 
 	private ValuePrioritySet<Message> receivedRumors;
-
+	
 	public ClusterView(DList nodes, 
 			ValuePrioritySet<ValuePriorityEntry<Node, Long>> suspectingNodesTimeout,
 			ValuePrioritySet<ValuePriorityEntry<Node, Long>> failed, 
@@ -71,7 +71,7 @@ public class ClusterView implements Serializable {
 	@Autowired
 	public ClusterView(Config config) {
 		super();
-		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
+		long nowUTC = ServerTime.getTime();
 		frameMessCount = new FrameMessageCount(nowUTC,nowUTC,0);
 		this.config = config;
 		this.nodes = new DList();
@@ -137,7 +137,8 @@ public class ClusterView implements Serializable {
 	}
 
 	public void updateFrameMessageCount() {
-		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
+		long nowUTC = ServerTime.getTime();
+		
 		long expectedIterations = (long)MathOp.log2n(getClusterSize());		
 		long timeFrame = expectedIterations * config.getIterationIntervalMs() * config.getReadIddleIterationsFactor();		
 		long startFrame = nowUTC - timeFrame;
@@ -171,8 +172,8 @@ public class ClusterView implements Serializable {
 	}
 
 	public synchronized void removeExpired() {
-		long nowUTC = DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone());
-
+		long nowUTC = ServerTime.getTime();
+				
 		ValuePriorityEntry<Node, Long> entry = null;
 		while(suspectingNodesTimeout.size() > 0 && (entry = suspectingNodesTimeout.first()).getValue() >= nowUTC) { 
 			nodes.remove(entry.getKey());
@@ -289,7 +290,7 @@ public class ClusterView implements Serializable {
 			else if(m.getType().equals(MessageType.REMOVE_FROM_CLUSTER)) nodes.remove(m.getNode());
 			else if(m.getType().equals(MessageType.SUSPECT_DEAD)) {
 				Long expirationTime = (Long)m.getData();
-				if(expirationTime > DateTime.utcTime(System.currentTimeMillis(), config.getThisPeer().getTimeZone())) 
+				if(expirationTime > ServerTime.getTime())
 					suspectingNodesTimeout.add(new ValuePriorityEntry<Node, Long>(m.getNode(), expirationTime), true);
 				else removingNodes.add(m.getNode());
 			}
