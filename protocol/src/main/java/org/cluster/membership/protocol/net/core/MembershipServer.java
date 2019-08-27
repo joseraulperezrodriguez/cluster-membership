@@ -57,8 +57,8 @@ public class MembershipServer extends Thread {
     					new MembershipServerHandler(requestReceiver));
 
         	
-        	bossGroup = new NioEventLoopGroup(1);
-            workerGroup = new NioEventLoopGroup();
+        	bossGroup = new NioEventLoopGroup(3);
+            workerGroup = new NioEventLoopGroup(3);
 
             ServerBootstrap b = new ServerBootstrap();
             b.group(bossGroup, workerGroup)
