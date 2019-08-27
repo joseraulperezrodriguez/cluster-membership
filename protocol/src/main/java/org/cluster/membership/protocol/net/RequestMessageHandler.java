@@ -29,7 +29,7 @@ public class RequestMessageHandler {
 	private MembershipClient client; 
 	
 	public void handlerUnsubscription(Message m) {
-		Message rem = new Message(MessageType.REMOVE_FROM_CLUSTER, m.getNode(), MathOp.log2n(clusterView.getClusterSize()), config.getThisPeer().getTimeZone());
+		Message rem = new Message(MessageType.REMOVE_FROM_CLUSTER, m.getNode(), MathOp.log2n(clusterView.getClusterSize()));
 		clusterView.removeFromCluster(rem);
 	}
 	

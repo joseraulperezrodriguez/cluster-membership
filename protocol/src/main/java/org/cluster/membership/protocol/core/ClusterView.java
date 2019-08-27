@@ -112,21 +112,21 @@ public class ClusterView implements Serializable {
 
 	public void unsubscribe() {
 		if(getClusterSize() > 1) {
-			Message uns = new Message(MessageType.UNSUBSCRIPTION, config.getThisPeer(), 1, config.getThisPeer().getTimeZone());
+			Message uns = new Message(MessageType.UNSUBSCRIPTION, config.getThisPeer(), 1);
 			rumorsToSend.add(uns, true);
 		} else Global.shutdown(ClusterNodeEntry.applicationContexts.get(config.getThisPeer()), 5);		
 	}
 
 	public void subscribe(Node node) {
 		logger.info("subscribe received from node: " + node);
-		Message add = new Message(MessageType.ADD_TO_CLUSTER, node, MathOp.log2n(getClusterSize()), config.getThisPeer().getTimeZone());
+		Message add = new Message(MessageType.ADD_TO_CLUSTER, node, MathOp.log2n(getClusterSize()));
 		addToCluster(add);
 	}
 
 	public SynchroObject getSyncObject(Node node, FrameMessageCount frameMessCount) {
 
 		if(isSuspectedDead(node)) {
-			Message keepAliveMessage = new Message(MessageType.KEEP_ALIVE, node, MathOp.log2n(getClusterSize()), config.getThisPeer().getTimeZone());
+			Message keepAliveMessage = new Message(MessageType.KEEP_ALIVE, node, MathOp.log2n(getClusterSize()));
 			keepAlive(keepAliveMessage);
 		}
 
@@ -144,8 +144,8 @@ public class ClusterView implements Serializable {
 		long startFrame = nowUTC - timeFrame;
 		long endFrame = startFrame + (expectedIterations * config.getIterationIntervalMs() * (config.getReadIddleIterationsFactor() - 1));
 
-		TreeSet<Message> tail = receivedRumors.tailSet(Message.getMinTimeTemplate(startFrame, config.getThisPeer().getTimeZone()));
-		int countTail = tail.tailSet(Message.getMinTimeTemplate(endFrame + 1, config.getThisPeer().getTimeZone())).size();
+		TreeSet<Message> tail = receivedRumors.tailSet(Message.getMinTimeTemplate(startFrame));
+		int countTail = tail.tailSet(Message.getMinTimeTemplate(endFrame + 1)).size();
 
 		frameMessCount = new FrameMessageCount(startFrame, endFrame, tail.size() - countTail);
 	}
@@ -158,8 +158,8 @@ public class ClusterView implements Serializable {
 		} else {
 
 			TreeSet<Message> frame = receivedRumors.between(
-					Message.getMinTimeTemplate(frameMessCount.getStartTime(), config.getThisPeer().getTimeZone()),
-					Message.getMaxTimeTemplate(frameMessCount.getEndTime(), config.getThisPeer().getTimeZone()));			
+					Message.getMinTimeTemplate(frameMessCount.getStartTime()),
+					Message.getMaxTimeTemplate(frameMessCount.getEndTime()));
 
 			ArrayList<Message> missingMessages = new ArrayList<>();
 			if(frame.size() > frameMessCount.getCount()) {

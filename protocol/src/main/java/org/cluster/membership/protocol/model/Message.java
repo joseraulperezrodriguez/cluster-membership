@@ -126,16 +126,16 @@ public class Message implements Comparable<Message>, Serializable {
 	
 	/**Set the MessageType to the lowest possible value and Node to a minimal id value to make sure no real node is lower than it
 	 * */
-	public static Message getMinTimeTemplate(long time, TimeZone timeZone) {
-		Message m  = new Message(MessageType.getMinPriority(), Node.getLowerNode(), 1, timeZone);
+	public static Message getMinTimeTemplate(long time) {
+		Message m  = new Message(MessageType.getMinPriority(), Node.getLowerNode(), 1);
 		m.generatedTime = time;
 		return m;
 	}
 	
 	/**Set the MessageType to the greatest possible value and Node to a maximal id value to make sure no real node is greater than it
 	 * */
-	public static Message getMaxTimeTemplate(long time, TimeZone timeZone) {
-		Message m  = new Message(MessageType.getMaxPriority(), Node.getLowerNode(), 1, timeZone);
+	public static Message getMaxTimeTemplate(long time) {
+		Message m  = new Message(MessageType.getMaxPriority(), Node.getLowerNode(), 1);
 		m.generatedTime = time;
 		return m;
 	}

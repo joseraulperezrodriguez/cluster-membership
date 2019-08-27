@@ -17,7 +17,6 @@ public class Literals {
 	public static final String NODE_ADDRESS = "address";
 	public static final String NODE_PROTOCOL_PORT = "protocol.port";
 	public static final String NODE_SERVER_PORT = "server.port";
-	public static final String NODE_TIME_ZONE = "time.zone";
 	
 	public static final String APP_HOME = "app.home";
 	public static final String APP_PROP_FILE = "app.properties";

@@ -6,7 +6,6 @@ import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.common.model.util.MathOp;
-import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.Message;
@@ -30,9 +29,6 @@ public class RequestReceiver {
 	@Autowired
 	private ClusterView clusterView;
 	
-	@Autowired
-	private Config config;
-	
 	public ResponseDescription receive(RequestDescription requestDescription, ChannelHandlerContext ctx) {
 		Node from = requestDescription.getNode();		
 		List<Message> messages = requestDescription.getData();
@@ -42,7 +38,7 @@ public class RequestReceiver {
 		if(clusterView.isFailing(from)) clusterView.removeFailing(from);
 		
 		if(clusterView.isSuspectedDead(from)) {
-			Message keepAlive = new Message(MessageType.KEEP_ALIVE, from, MathOp.log2n(clusterView.getClusterSize()), config.getThisPeer().getTimeZone());
+			Message keepAlive = new Message(MessageType.KEEP_ALIVE, from, MathOp.log2n(clusterView.getClusterSize()));
 			clusterView.keepAlive(keepAlive);
 		}
 		

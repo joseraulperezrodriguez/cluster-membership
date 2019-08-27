@@ -46,9 +46,7 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 		int protocolPort = ports.getB();
 		int servicePort = ports.getA();
 		
-		String timeZone = data.get("time.zone").asText();
-
-		Node node = new Node(id, address, protocolPort, servicePort, timeZone);
+		Node node = new Node(id, address, protocolPort, servicePort);
 		
 		getAppConfig().newInstance(id);
 
@@ -56,7 +54,6 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 		getAppConfig().updateConfigInstance(id, "address", address);
 		getAppConfig().updateConfigInstance(id, "protocol.port", String.valueOf(protocolPort));
 		getAppConfig().updateConfigInstance(id, "server.port", String.valueOf(servicePort));
-		getAppConfig().updateConfigInstance(id, "time.zone", timeZone);
 
 		Node commandLineParam = getCreatedNodes().size() > 0 ? getRandomNode() : null;		
 		String args = commandLineParam != null ? EnvUtils.generateNodeCommandLineArguments(commandLineParam,1) : "";		

@@ -55,8 +55,7 @@ public class EnvUtils {
 		return " --" + Literals.NODE_ID + "." + idx + "=" + node.getId() +
 				" --" + Literals.NODE_ADDRESS + "." + idx + "=" + node.getAddress() +
 				" --" + Literals.NODE_PROTOCOL_PORT + "." + idx + "=" + node.getProtocolPort() +
-				" --" + Literals.NODE_SERVER_PORT + "." + idx + "=" + node.getServicePort() +
-				" --" + Literals.NODE_TIME_ZONE + "." + idx + "=" + node.getTimeZone().getID();
+				" --" + Literals.NODE_SERVER_PORT + "." + idx + "=" + node.getServicePort();
 	}
 
 	

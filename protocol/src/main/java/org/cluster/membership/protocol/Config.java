@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Properties;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -185,10 +184,8 @@ public class Config {
 				String cAddress = properties.getProperty(Literals.NODE_ADDRESS).trim();
 				Integer cProtocolPort = Integer.parseInt(properties.getProperty(Literals.NODE_PROTOCOL_PORT).trim());
 				Integer cServicePort = Integer.parseInt(properties.getProperty(Literals.NODE_SERVER_PORT).trim());
-				String cTimeZone = properties.getProperty(Literals.NODE_TIME_ZONE).trim();
 				
-				
-				Node node = new Node(cId, cAddress, cProtocolPort, cServicePort, TimeZone.getTimeZone(cTimeZone));
+				Node node = new Node(cId, cAddress, cProtocolPort, cServicePort);
 				
 				if(noId) {
 					OutputStream outFile = new FileOutputStream(appHome + File.separator + configFolder + 						
@@ -227,8 +224,7 @@ public class Config {
 				int contains = containsOptions(args, Literals.NODE_ID + "." + count, 
 						Literals.NODE_ADDRESS + "." + count,
 						Literals.NODE_PROTOCOL_PORT + "." + count,
-						Literals.NODE_SERVER_PORT + "." + count,
-						Literals.NODE_TIME_ZONE + "." + count
+						Literals.NODE_SERVER_PORT + "." + count
 						);
 				
 				if(contains == 0) break;
@@ -241,9 +237,8 @@ public class Config {
 					String cAddress = args.getOptionValues(Literals.NODE_ADDRESS + "." + count).get(0);
 					int cProtocolPort = Integer.parseInt(args.getOptionValues(Literals.NODE_PROTOCOL_PORT + "." + count).get(0));
 					int cServicePort = Integer.parseInt(args.getOptionValues(Literals.NODE_SERVER_PORT + "." + count).get(0));
-					String cTimeZone = args.getOptionValues(Literals.NODE_TIME_ZONE + "." + count).get(0);
-					
-					Node n = new Node(cId, cAddress, cProtocolPort, cServicePort, TimeZone.getTimeZone(cTimeZone));
+
+					Node n = new Node(cId, cAddress, cProtocolPort, cServicePort);
 					seeds.add(n);
 
 				} catch(Exception e) {

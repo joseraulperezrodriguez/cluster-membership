@@ -34,9 +34,7 @@ public class SingleVMDeploymentAndExecutionSimulator extends AbstractDeploymentA
 		int protocolPort = ports.getB();
 		int servicePort = ports.getA();
 		
-		String timeZone = data.get(Literals.NODE_TIME_ZONE).asText();
-
-		Node node = new Node(id, address, protocolPort, servicePort, timeZone);
+		Node node = new Node(id, address, protocolPort, servicePort);
 		
 		getAppConfig().newInstance(id);
 
@@ -44,7 +42,6 @@ public class SingleVMDeploymentAndExecutionSimulator extends AbstractDeploymentA
 		getAppConfig().updateConfigInstance(id, Literals.NODE_ADDRESS, address);
 		getAppConfig().updateConfigInstance(id, Literals.NODE_PROTOCOL_PORT, String.valueOf(protocolPort));
 		getAppConfig().updateConfigInstance(id, Literals.NODE_SERVER_PORT, String.valueOf(servicePort));
-		getAppConfig().updateConfigInstance(id, Literals.NODE_TIME_ZONE, timeZone);
 
 		String instanceHome = getAppConfig().getInstancesContainer() + File.separator + node.getId();
 		
