@@ -9,6 +9,9 @@ public class Literals {
 	public static final String MAX_EXPECTED_NODE_LOG_2_SIZE = "max.expected.node.log.2";
 	public static final String MAX_RUMORS_LOG_SIZE = "max.rumor.log.size";
 	public static final String MAX_OBJECT_SIZE = "max.object.size";
+	public static final String CLIENT_THREADS = "client.threads";
+	public static final String SERVER_THREADS = "server.threads";
+	
 	
 	public static final String NODE_ID = "id";
 	public static final String NODE_ADDRESS = "address";

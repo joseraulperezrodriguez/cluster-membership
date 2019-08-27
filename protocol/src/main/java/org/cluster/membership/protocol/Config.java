@@ -43,6 +43,12 @@ public class Config {
 	/**The max number of bytes allowed to transfer between client and server*/
 	private int maxObjectSize;
 	
+	/**The number of threads ready to send requests*/
+	private int clientThreads;
+	
+	/**The number of threads ready to receive requests*/
+	private int serverThreads;
+
 	
 	private Node thisPeer;
 	
@@ -64,6 +70,9 @@ public class Config {
 			maxExpectedNodeLog2Size = Integer.parseInt(properties.getProperty(Literals.MAX_EXPECTED_NODE_LOG_2_SIZE));
 			maxRumorsLogSize = Integer.parseInt(properties.getProperty(Literals.MAX_RUMORS_LOG_SIZE));
 			maxObjectSize = Integer.parseInt(properties.getProperty(Literals.MAX_OBJECT_SIZE));
+			clientThreads = Integer.parseInt(properties.getProperty(Literals.CLIENT_THREADS));
+			serverThreads = Integer.parseInt(properties.getProperty(Literals.SERVER_THREADS));
+			
 			thisPeer = Parsing.readThisPeer(properties, appHome);
 			
 			seeds = Parsing.readSeedNodes(args);
@@ -85,6 +94,8 @@ public class Config {
 		this.maxExpectedNodeLog2Size = 32;
 		this.maxRumorsLogSize = 1000000;
 		this.maxObjectSize = 2147483647;
+		this.clientThreads = 3;
+		this.serverThreads = 3;
 		
 		this.thisPeer = thisPeer;
 		this.seeds = new DList();
@@ -98,6 +109,9 @@ public class Config {
 	public int getMaxExpectedNodeLog2Size() { return maxExpectedNodeLog2Size; }
 	public int getMaxRumorsLogSize() { return maxRumorsLogSize; }
 	public int getMaxObjectSize() { return maxObjectSize; }
+	public int getClientThreads() { return clientThreads; }
+	public int getServerThreads() { return serverThreads; }
+	
 	public Node getThisPeer() { return thisPeer; }
 	public DList getSeeds() { return seeds; }
 	public String getMode() { return mode; }
@@ -107,6 +121,8 @@ public class Config {
 		long CONNECTION_TIME_OUT_MS = Long.parseLong(properties.getProperty(Literals.CONNECTION_TIME_OUT_MS));
 		long CYCLES_FOR_WAIT_KEEP_ALIVE = Long.parseLong(properties.getProperty(Literals.CYCLES_FOR_WAIT_KEEP_ALIVE));
 		long MAX_RUMORS_LOG_SIZE = Long.parseLong(properties.getProperty(Literals.MAX_RUMORS_LOG_SIZE));
+		int CLIENT_THREADS = Integer.parseInt(properties.getProperty(Literals.CLIENT_THREADS));
+		int SERVER_THREADS = Integer.parseInt(properties.getProperty(Literals.SERVER_THREADS));
 		
 		String appHome = Parsing.getHome(args);
 		
@@ -115,7 +131,8 @@ public class Config {
 		return (ITERATION_INTERVAL_MS >= 500 && ITERATION_INTERVAL_MS <= 1000*60) &&
 				(CONNECTION_TIME_OUT_MS >= 100 && CONNECTION_TIME_OUT_MS <= 1000*60) &&
 				(CYCLES_FOR_WAIT_KEEP_ALIVE >= 1) &&
-				(MAX_RUMORS_LOG_SIZE <= 10*1000*1000) && node != null;
+				(MAX_RUMORS_LOG_SIZE <= 10*1000*1000) && 
+				(CLIENT_THREADS > 0 && SERVER_THREADS > 0) && node != null;
 	}
 	
 	public static Properties read(ApplicationArguments args) throws Exception {

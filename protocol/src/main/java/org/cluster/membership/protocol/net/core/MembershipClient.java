@@ -34,11 +34,12 @@ public class MembershipClient {
 
 	private EventLoopGroup group;
 	
-    @Autowired	
 	private Config config;
 	
-	public MembershipClient() {
-		group = new NioEventLoopGroup(3);
+    @Autowired
+	public MembershipClient(Config config) {
+    	this.config = config;
+		group = new NioEventLoopGroup(config.getClientThreads());
 	}
 	
 	@FunctionalInterface
