@@ -1,7 +1,6 @@
 package org.cluster.membership.protocol.structures;
 
 import java.util.Iterator;
-import java.util.TimeZone;
 import java.util.TreeSet;
 
 import org.cluster.membership.common.model.Node;
@@ -16,11 +15,11 @@ import junit.framework.TestSuite;
 public class ValuePrioritySetTest extends TestCase {
 	
 	
-	private final Node a = new Node("A", "A 1", 7001, 6001, TimeZone.getDefault());
-	private final Node b = new Node("B", "B 1", 7001, 6001, TimeZone.getDefault());
-	private final Node c = new Node("C", "C 1", 7001, 6001, TimeZone.getDefault());
-	private final Node d = new Node("D", "D 1", 7001, 6001, TimeZone.getDefault());
-	private final Node e = new Node("E", "E 1", 7001, 6001, TimeZone.getDefault());	
+	private final Node a = new Node("A", "A 1", 7001, 6001);
+	private final Node b = new Node("B", "B 1", 7001, 6001);
+	private final Node c = new Node("C", "C 1", 7001, 6001);
+	private final Node d = new Node("D", "D 1", 7001, 6001);
+	private final Node e = new Node("E", "E 1", 7001, 6001);	
 	
     /**
      * Create the test case

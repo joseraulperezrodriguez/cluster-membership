@@ -1,7 +1,5 @@
 package org.cluster.membership.protocol;
 
-import java.util.TimeZone;
-
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.common.model.util.EnvUtils;
 import org.springframework.boot.ApplicationArguments;
@@ -24,7 +22,7 @@ public class ClusterNodeEntryTest extends TestCase {
         super( testName );
         
         //String home = System.getProperty("user.dir");        
-        Node node = new Node("A", "localhost", 6001, 7001, TimeZone.getDefault());
+        Node node = new Node("A", "localhost", 6001, 7001);
         
         String argsS = EnvUtils.generateNodeCommandLineArguments(node, 0) + " --mode=DEBUG"; 
         			

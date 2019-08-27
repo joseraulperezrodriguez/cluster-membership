@@ -14,8 +14,8 @@ import junit.framework.TestSuite;
  */
 public class MessageTest extends ClusterNodeEntryTest {
 	
-	private Node a = new Node("A", "A 1", 7001, 6001, TimeZone.getDefault());
-	private Node b = new Node("B", "B 1", 7001, 6001, TimeZone.getDefault());
+	private Node a = new Node("A", "A 1", 7001, 6001);
+	private Node b = new Node("B", "B 1", 7001, 6001);
 	
     /**
      * Create the test case

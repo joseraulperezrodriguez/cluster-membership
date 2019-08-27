@@ -46,12 +46,6 @@ public class SingleVMTesterEntryTest extends TestCase {
      */
     public void testApp() throws Exception {
         String homePath = System.getProperty("user.dir") + File.separator + "target";
-        String enabled = System.getProperty("single.vm.test.enabled");
-        
-        if(enabled == null || enabled.equals("false")) {
-        	logger.log(Level.WARNING, "Single VM test is not running, set property: single.vm.test.enabled");
-        	return;
-        }
         
         LocalEnvConfig config = new LocalEnvConfig(homePath, true);
     	IEvaluator evaluator = new BasicEvaluator();

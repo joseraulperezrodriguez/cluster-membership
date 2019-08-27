@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Properties;
-import java.util.TimeZone;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -43,6 +42,12 @@ public class Config {
 	/**The max number of bytes allowed to transfer between client and server*/
 	private int maxObjectSize;
 	
+	/**The number of threads ready to send requests*/
+	private int clientThreads;
+	
+	/**The number of threads ready to receive requests*/
+	private int serverThreads;
+
 	
 	private Node thisPeer;
 	
@@ -64,6 +69,9 @@ public class Config {
 			maxExpectedNodeLog2Size = Integer.parseInt(properties.getProperty(Literals.MAX_EXPECTED_NODE_LOG_2_SIZE));
 			maxRumorsLogSize = Integer.parseInt(properties.getProperty(Literals.MAX_RUMORS_LOG_SIZE));
 			maxObjectSize = Integer.parseInt(properties.getProperty(Literals.MAX_OBJECT_SIZE));
+			clientThreads = Integer.parseInt(properties.getProperty(Literals.CLIENT_THREADS));
+			serverThreads = Integer.parseInt(properties.getProperty(Literals.SERVER_THREADS));
+			
 			thisPeer = Parsing.readThisPeer(properties, appHome);
 			
 			seeds = Parsing.readSeedNodes(args);
@@ -85,6 +93,8 @@ public class Config {
 		this.maxExpectedNodeLog2Size = 32;
 		this.maxRumorsLogSize = 1000000;
 		this.maxObjectSize = 2147483647;
+		this.clientThreads = 3;
+		this.serverThreads = 3;
 		
 		this.thisPeer = thisPeer;
 		this.seeds = new DList();
@@ -98,6 +108,9 @@ public class Config {
 	public int getMaxExpectedNodeLog2Size() { return maxExpectedNodeLog2Size; }
 	public int getMaxRumorsLogSize() { return maxRumorsLogSize; }
 	public int getMaxObjectSize() { return maxObjectSize; }
+	public int getClientThreads() { return clientThreads; }
+	public int getServerThreads() { return serverThreads; }
+	
 	public Node getThisPeer() { return thisPeer; }
 	public DList getSeeds() { return seeds; }
 	public String getMode() { return mode; }
@@ -107,6 +120,8 @@ public class Config {
 		long CONNECTION_TIME_OUT_MS = Long.parseLong(properties.getProperty(Literals.CONNECTION_TIME_OUT_MS));
 		long CYCLES_FOR_WAIT_KEEP_ALIVE = Long.parseLong(properties.getProperty(Literals.CYCLES_FOR_WAIT_KEEP_ALIVE));
 		long MAX_RUMORS_LOG_SIZE = Long.parseLong(properties.getProperty(Literals.MAX_RUMORS_LOG_SIZE));
+		int CLIENT_THREADS = Integer.parseInt(properties.getProperty(Literals.CLIENT_THREADS));
+		int SERVER_THREADS = Integer.parseInt(properties.getProperty(Literals.SERVER_THREADS));
 		
 		String appHome = Parsing.getHome(args);
 		
@@ -115,7 +130,8 @@ public class Config {
 		return (ITERATION_INTERVAL_MS >= 500 && ITERATION_INTERVAL_MS <= 1000*60) &&
 				(CONNECTION_TIME_OUT_MS >= 100 && CONNECTION_TIME_OUT_MS <= 1000*60) &&
 				(CYCLES_FOR_WAIT_KEEP_ALIVE >= 1) &&
-				(MAX_RUMORS_LOG_SIZE <= 10*1000*1000) && node != null;
+				(MAX_RUMORS_LOG_SIZE <= 10*1000*1000) && 
+				(CLIENT_THREADS > 0 && SERVER_THREADS > 0) && node != null;
 	}
 	
 	public static Properties read(ApplicationArguments args) throws Exception {
@@ -168,10 +184,8 @@ public class Config {
 				String cAddress = properties.getProperty(Literals.NODE_ADDRESS).trim();
 				Integer cProtocolPort = Integer.parseInt(properties.getProperty(Literals.NODE_PROTOCOL_PORT).trim());
 				Integer cServicePort = Integer.parseInt(properties.getProperty(Literals.NODE_SERVER_PORT).trim());
-				String cTimeZone = properties.getProperty(Literals.NODE_TIME_ZONE).trim();
 				
-				
-				Node node = new Node(cId, cAddress, cProtocolPort, cServicePort, TimeZone.getTimeZone(cTimeZone));
+				Node node = new Node(cId, cAddress, cProtocolPort, cServicePort);
 				
 				if(noId) {
 					OutputStream outFile = new FileOutputStream(appHome + File.separator + configFolder + 						
@@ -210,8 +224,7 @@ public class Config {
 				int contains = containsOptions(args, Literals.NODE_ID + "." + count, 
 						Literals.NODE_ADDRESS + "." + count,
 						Literals.NODE_PROTOCOL_PORT + "." + count,
-						Literals.NODE_SERVER_PORT + "." + count,
-						Literals.NODE_TIME_ZONE + "." + count
+						Literals.NODE_SERVER_PORT + "." + count
 						);
 				
 				if(contains == 0) break;
@@ -224,9 +237,8 @@ public class Config {
 					String cAddress = args.getOptionValues(Literals.NODE_ADDRESS + "." + count).get(0);
 					int cProtocolPort = Integer.parseInt(args.getOptionValues(Literals.NODE_PROTOCOL_PORT + "." + count).get(0));
 					int cServicePort = Integer.parseInt(args.getOptionValues(Literals.NODE_SERVER_PORT + "." + count).get(0));
-					String cTimeZone = args.getOptionValues(Literals.NODE_TIME_ZONE + "." + count).get(0);
-					
-					Node n = new Node(cId, cAddress, cProtocolPort, cServicePort, TimeZone.getTimeZone(cTimeZone));
+
+					Node n = new Node(cId, cAddress, cProtocolPort, cServicePort);
 					seeds.add(n);
 
 				} catch(Exception e) {

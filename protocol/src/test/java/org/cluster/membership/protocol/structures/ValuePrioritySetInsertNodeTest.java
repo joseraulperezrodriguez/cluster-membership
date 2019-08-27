@@ -1,7 +1,6 @@
 package org.cluster.membership.protocol.structures;
 
 import java.util.Iterator;
-import java.util.TimeZone;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.ClusterNodeEntryTest;
@@ -15,11 +14,11 @@ import junit.framework.TestSuite;
 public class ValuePrioritySetInsertNodeTest extends ClusterNodeEntryTest {
 	
 	
-	private final Node a = new Node("A", "A 1", 7001, 6001, TimeZone.getDefault());
-	private final Node b = new Node("B", "B 1", 7001, 6001, TimeZone.getDefault());
-	private final Node c = new Node("C", "C 1", 7001, 6001, TimeZone.getDefault());
-	private final Node d = new Node("D", "D 1", 7001, 6001, TimeZone.getDefault());
-	private final Node e = new Node("E", "E 1", 7001, 6001, TimeZone.getDefault());	
+	private final Node a = new Node("A", "A 1", 7001, 6001);
+	private final Node b = new Node("B", "B 1", 7001, 6001);
+	private final Node c = new Node("C", "C 1", 7001, 6001);
+	private final Node d = new Node("D", "D 1", 7001, 6001);
+	private final Node e = new Node("E", "E 1", 7001, 6001);	
 	
     /**
      * Create the test case

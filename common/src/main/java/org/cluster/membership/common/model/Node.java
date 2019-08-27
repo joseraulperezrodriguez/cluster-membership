@@ -1,7 +1,6 @@
 package org.cluster.membership.common.model;
 
 import java.io.Serializable;
-import java.util.TimeZone;
 
 public class Node implements Comparable<Node>, Serializable {
 	
@@ -15,35 +14,16 @@ public class Node implements Comparable<Node>, Serializable {
 	private int protocolPort;
 	private int servicePort;
 	
-	private TimeZone timeZone;
-	
-	public Node(String id, String address, int protocolPort, int servicePort, TimeZone timeZone) {
+	public Node(String id, String address, int protocolPort, int servicePort) {
 		super();
 		this.id = id;
 		this.address = address;
 		this.protocolPort = protocolPort;
 		this.servicePort = servicePort;
-		this.timeZone = timeZone;				
 	}
-	
-	public Node(String id, String address, int protocolPort, int servicePort, String timeZone) {
-		super();
-		this.id = id;
-		this.address = address;
-		this.protocolPort = protocolPort;
-		this.servicePort = servicePort;
-		this.timeZone = TimeZone.getTimeZone(timeZone);				
-	}
-	
+		
 	public Node() {}
 	
-	
-	public TimeZone getTimeZone() {
-		return timeZone;
-	}
-	public void setTimeZone(TimeZone timeZone) {
-		this.timeZone = timeZone;
-	}
 	public String getId() {
 		return id;
 	}
@@ -91,15 +71,15 @@ public class Node implements Comparable<Node>, Serializable {
 		
 	@Override
 	public String toString() {
-		return id + " " + address + " " + protocolPort + " " + servicePort + " " + timeZone.getID();
+		return id + " " + address + " " + protocolPort + " " + servicePort;
 	}
 	
 	public static Node getLowerNode() {
-		return new Node(" "," ",0,0,TimeZone.getDefault());
+		return new Node(" "," ",0,0);
 	}
 	
 	public static Node getGreaterNode() {
-		return new Node(String.valueOf('z' + 1),"",0,0,TimeZone.getDefault());
+		return new Node(String.valueOf('z' + 1),"",0,0);
 	}
 	
 }
