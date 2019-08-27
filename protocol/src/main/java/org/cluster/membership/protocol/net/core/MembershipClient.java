@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.Config;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -23,24 +25,31 @@ import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.timeout.ReadTimeoutHandler;
 import io.netty.util.concurrent.GenericFutureListener;
 
+@Component
 public class MembershipClient {
 
-	private static ObjectEncoder objectEncoder = new ObjectEncoder();
+	private ObjectEncoder objectEncoder = new ObjectEncoder();
 
-	private static Logger logger = Logger.getLogger(MembershipClient.class.getName());
+	private Logger logger = Logger.getLogger(MembershipClient.class.getName());
 
+	private EventLoopGroup group;
+	
+    @Autowired	
+	private Config config;
+	
+	public MembershipClient() {
+		group = new NioEventLoopGroup(3);
+	}
+	
 	@FunctionalInterface
 	private interface HandleError {
 		void handle(Throwable error);
 	}
 
-	public static void connect(Node to, MembershipClientHandler handler, Config config) {
-
-		EventLoopGroup group = new NioEventLoopGroup();
+	public void connect(Node to, MembershipClientHandler handler) {
 
 		Consumer<Throwable> errorHandler = error -> {
 			error.printStackTrace();
-			group.shutdownGracefully();
 			logger.severe("exception sending connection to " + to);
 			handler.getResponseHandler().addToFailed(to);
 			handler.getResponseHandler().restoreMessages(handler.getMessages());
@@ -73,7 +82,6 @@ public class MembershipClient {
 					else 
 						future.channel().closeFuture().addListener(closeFuture -> {
 							if(!closeFuture.isSuccess()) errorHandler.accept(closeFuture.cause());
-							else group.shutdownGracefully();
 						});
 				}
 			});

@@ -25,6 +25,9 @@ public class RequestMessageHandler {
 	@Autowired
 	private Config config;
 	
+	@Autowired
+	private MembershipClient client; 
+	
 	public void handlerUnsubscription(Message m) {
 		Message rem = new Message(MessageType.REMOVE_FROM_CLUSTER, m.getNode(), MathOp.log2n(clusterView.getClusterSize()), config.getThisPeer().getTimeZone());
 		clusterView.removeFromCluster(rem);
@@ -35,9 +38,8 @@ public class RequestMessageHandler {
 			MessageResponse<Boolean> response = new MessageResponse<Boolean>(true, m);
 			return response;
 		} else {
-			MembershipClient.connect(m.getNode(), 
-					new MembershipIndirectClientHandler(clusterView.getFrameMessageCount(), config.getThisPeer(), m.getNode(),m, responseHandler,ctx),
-					config);
+			client.connect(m.getNode(), 
+					new MembershipIndirectClientHandler(clusterView.getFrameMessageCount(), config.getThisPeer(), m.getNode(),m, responseHandler,ctx));
 			return null;
 		}
 		

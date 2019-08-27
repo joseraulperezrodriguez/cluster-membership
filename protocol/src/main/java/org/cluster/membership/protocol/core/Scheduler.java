@@ -33,6 +33,9 @@ public class Scheduler {
 	
 	@Autowired
 	private Config config;
+	
+	@Autowired
+	private MembershipClient client;
 		
 	@Scheduled(fixedRateString = "${iteration.interval.ms}")
 	public synchronized void  performIteration() {
@@ -55,7 +58,7 @@ public class Scheduler {
 			}
 
 			MembershipClientHandler handler = new MembershipDirectClientHandler(clusterView.getFrameMessageCount(), responseReceiver, config.getThisPeer(), node, messages);		
-			MembershipClient.connect(node, handler, config);
+			client.connect(node, handler);
 		} else if(firstFailed != null){
 			long nowUTC = ServerTime.getTime();
 			long expTime = nowUTC + MathOp.expTime(config.getIterationIntervalMs(), clusterView.getClusterSize(), config.getCyclesForWaitKeepAlive());
