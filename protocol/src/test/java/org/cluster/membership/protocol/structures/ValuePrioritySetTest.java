@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.protocol.util.ValuePriorityEntryComparators;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -55,8 +56,8 @@ public class ValuePrioritySetTest extends TestCase {
     
     public void testContains1() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-    					Comparators.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(ValuePriorityEntryComparators.<Node, Long>ascComparator(),
+    					ValuePriorityEntryComparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -79,8 +80,8 @@ public class ValuePrioritySetTest extends TestCase {
     
     public void testContains2() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-    					Comparators.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(ValuePriorityEntryComparators.<Node, Long>ascComparator(),
+    					ValuePriorityEntryComparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -111,8 +112,8 @@ public class ValuePrioritySetTest extends TestCase {
     @SuppressWarnings("unchecked")
 	public void testRemove() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-    					Comparators.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(ValuePriorityEntryComparators.<Node, Long>ascComparator(),
+    					ValuePriorityEntryComparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -158,8 +159,8 @@ public class ValuePrioritySetTest extends TestCase {
     
     public void testTailSet() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-    					Comparators.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(ValuePriorityEntryComparators.<Node, Long>ascComparator(),
+    					ValuePriorityEntryComparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -191,8 +192,8 @@ public class ValuePrioritySetTest extends TestCase {
     
     public void testPollFirst() {
        	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-    					Comparators.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(ValuePriorityEntryComparators.<Node, Long>ascComparator(),
+    					ValuePriorityEntryComparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);
@@ -225,8 +226,8 @@ public class ValuePrioritySetTest extends TestCase {
     
     public void testLast() {
     	ValuePrioritySet<ValuePriorityEntry<Node, Long>> set =
-    			new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-    					Comparators.<Node, Long>ascPriorityComparator());
+    			new ValuePrioritySet<>(ValuePriorityEntryComparators.<Node, Long>ascComparator(),
+    					ValuePriorityEntryComparators.<Node, Long>ascPriorityComparator());
     	
     	ValuePriorityEntry<Node, Long> o1 = new ValuePriorityEntry<Node, Long>(d, 2l);
     	ValuePriorityEntry<Node, Long> o2 = new ValuePriorityEntry<Node, Long>(b, 3l);

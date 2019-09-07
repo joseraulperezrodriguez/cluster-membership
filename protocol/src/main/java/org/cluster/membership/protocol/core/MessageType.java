@@ -11,7 +11,7 @@ public enum MessageType implements Serializable {
 	
 	/**a node A sends a message to node B to check if its alive
 	 * */
-	PROBE(6, MessageCategory.PROBE),		
+	PROBE(6, MessageCategory.PROBE),
 	
 	/**a gossip message about a node that is suspected dead, the message includes the time failing probe it
 	 * */
@@ -28,7 +28,7 @@ public enum MessageType implements Serializable {
 	ADD_TO_CLUSTER(5, MessageCategory.RUMOR),
 	
 	
-	/**a gossip message for including a node in the cluster
+	/**a gossip message for remove a node from the cluster
 	 * */
 	REMOVE_FROM_CLUSTER(1, MessageCategory.RUMOR);
 	

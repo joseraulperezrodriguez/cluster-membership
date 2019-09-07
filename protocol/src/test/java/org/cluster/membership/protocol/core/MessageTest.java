@@ -5,6 +5,7 @@ import java.util.TimeZone;
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.ClusterNodeEntryTest;
 import org.cluster.membership.protocol.model.Message;
+import org.cluster.membership.protocol.util.MessageComparators;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -60,7 +61,7 @@ public class MessageTest extends ClusterNodeEntryTest {
     	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3, TimeZone.getDefault());
     	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 1, TimeZone.getDefault());
     	
-    	assert(Message.getIterationsAscComparator().compare(m2, m1) < 0);
+    	assert(MessageComparators.getIterationsAscComparator().compare(m2, m1) < 0);
     	
     }
     

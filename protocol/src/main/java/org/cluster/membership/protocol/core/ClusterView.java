@@ -18,11 +18,12 @@ import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.FrameMessageCount;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.SynchroObject;
-import org.cluster.membership.protocol.structures.Comparators;
+import org.cluster.membership.protocol.structures.ValuePrioritySet;
 import org.cluster.membership.protocol.structures.DList;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
-import org.cluster.membership.protocol.structures.ValuePrioritySet;
 import org.cluster.membership.protocol.time.ServerTime;
+import org.cluster.membership.protocol.util.MessageComparators;
+import org.cluster.membership.protocol.util.ValuePriorityEntryComparators;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +51,6 @@ public class ClusterView implements Serializable {
 	private ValuePrioritySet<ValuePriorityEntry<Node, Long>> failed;
 
 	/**Gossip messages that have not completed all the iterations*/
-	//private ValuePriorityEntrySet<Message, Integer> rumorsToSend;
 	private ValuePrioritySet<Message> rumorsToSend;
 
 	private ValuePrioritySet<Message> receivedRumors;
@@ -75,14 +75,14 @@ public class ClusterView implements Serializable {
 		frameMessCount = new FrameMessageCount(nowUTC,nowUTC,0);
 		this.config = config;
 		this.nodes = new DList();
-		this.suspectingNodesTimeout = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-				Comparators.<Node, Long>ascPriorityComparator());
-		this.rumorsToSend = new ValuePrioritySet<>(Message.getIterationsDescComparator(), 
-				Message.getIteratorPriorityAscComparator());
-		this.failed = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-				Comparators.<Node, Long>ascPriorityComparator());
-		this.receivedRumors = new ValuePrioritySet<Message>(Message.getGeneratedTimeAscComparator(),
-				Message.getGeneratedTimePriorityAscComparator());
+		this.suspectingNodesTimeout = new ValuePrioritySet<>(ValuePriorityEntryComparators.<Node, Long>ascComparator(),
+				ValuePriorityEntryComparators.<Node, Long>ascPriorityComparator());
+		this.rumorsToSend = new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(), 
+				MessageComparators.getIteratorPriorityAscComparator());
+		this.failed = new ValuePrioritySet<>(ValuePriorityEntryComparators.<Node, Long>ascComparator(),
+				ValuePriorityEntryComparators.<Node, Long>ascPriorityComparator());
+		this.receivedRumors = new ValuePrioritySet<Message>(MessageComparators.getGeneratedTimeAscComparator(),
+				MessageComparators.getGeneratedTimePriorityAscComparator());
 	}
 
 	public List<Node> nodes() { return nodes.list(); }
@@ -105,7 +105,7 @@ public class ClusterView implements Serializable {
 		return si;
 	}
 
-	public void init() { 		//nodes.addSortedNodes(Config.SEEDS);
+	public void init() {
 		nodes.add(config.getThisPeer());
 		logger.info("initialized node, added this peer to node list");
 	}
@@ -144,8 +144,8 @@ public class ClusterView implements Serializable {
 		long startFrame = nowUTC - timeFrame;
 		long endFrame = startFrame + (expectedIterations * config.getIterationIntervalMs() * (config.getReadIddleIterationsFactor() - 1));
 
-		TreeSet<Message> tail = receivedRumors.tailSet(Message.getMinTimeTemplate(startFrame));
-		int countTail = tail.tailSet(Message.getMinTimeTemplate(endFrame + 1)).size();
+		TreeSet<Message> tail = receivedRumors.tailSet(MessageComparators.getMinTimeTemplate(startFrame));
+		int countTail = tail.tailSet(MessageComparators.getMinTimeTemplate(endFrame + 1)).size();
 
 		frameMessCount = new FrameMessageCount(startFrame, endFrame, tail.size() - countTail);
 	}
@@ -158,8 +158,8 @@ public class ClusterView implements Serializable {
 		} else {
 
 			TreeSet<Message> frame = receivedRumors.between(
-					Message.getMinTimeTemplate(frameMessCount.getStartTime()),
-					Message.getMaxTimeTemplate(frameMessCount.getEndTime()));
+					MessageComparators.getMinTimeTemplate(frameMessCount.getStartTime()),
+					MessageComparators.getMaxTimeTemplate(frameMessCount.getEndTime()));
 
 			ArrayList<Message> missingMessages = new ArrayList<>();
 			if(frame.size() > frameMessCount.getCount()) {
@@ -206,7 +206,7 @@ public class ClusterView implements Serializable {
 	}
 
 	public void keepAlive(Message keepAlive) {
-		suspectingNodesTimeout.remove(Comparators.<Node, Long>getKeyTemplate(keepAlive.getNode()));
+		suspectingNodesTimeout.remove(ValuePriorityEntryComparators.<Node, Long>getKeyTemplate(keepAlive.getNode()));
 		addRumorsToSend(keepAlive); 
 		logger.info("keep alive message: " + keepAlive);
 	}
@@ -220,7 +220,7 @@ public class ClusterView implements Serializable {
 	public void removeFromCluster(Message ms) { 
 		nodes.remove(ms.getNode());
 
-		ValuePriorityEntry<Node, Long> value = Comparators.<Node, Long>getKeyTemplate(ms.getNode());
+		ValuePriorityEntry<Node, Long> value = ValuePriorityEntryComparators.<Node, Long>getKeyTemplate(ms.getNode());
 
 		suspectingNodesTimeout.remove(value);
 		failed.remove(value);
@@ -230,7 +230,7 @@ public class ClusterView implements Serializable {
 	}
 
 	public void removeFailing(Node nd) { 
-		ValuePriorityEntry<Node, Long> value = Comparators.<Node, Long>getKeyTemplate(nd);		
+		ValuePriorityEntry<Node, Long> value = ValuePriorityEntryComparators.<Node, Long>getKeyTemplate(nd);		
 		failed.remove(value); 
 	}
 
@@ -272,10 +272,10 @@ public class ClusterView implements Serializable {
 		this.failed.clear();
 		this.receivedRumors.clear();
 		this.nodes = clusterView.getNodes();
-		this.rumorsToSend = new ValuePrioritySet<>(Message.getIterationsDescComparator(), 
-				Message.getIteratorPriorityAscComparator(), clusterView.getRumorsToSend());
-		this.suspectingNodesTimeout = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-				Comparators.<Node, Long>ascPriorityComparator(), clusterView.getSuspectingNodesTimeout());
+		this.rumorsToSend = new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(), 
+				MessageComparators.getIteratorPriorityAscComparator(), clusterView.getRumorsToSend());
+		this.suspectingNodesTimeout = new ValuePrioritySet<>(ValuePriorityEntryComparators.<Node, Long>ascComparator(),
+				ValuePriorityEntryComparators.<Node, Long>ascPriorityComparator(), clusterView.getSuspectingNodesTimeout());
 
 		this.nodes.add(config.getThisPeer());
 
@@ -295,7 +295,7 @@ public class ClusterView implements Serializable {
 				else removingNodes.add(m.getNode());
 			}
 			else if(m.getType().equals(MessageType.KEEP_ALIVE)) {
-				ValuePriorityEntry<Node, Long> entry = Comparators.<Node, Long>getKeyTemplate(m.getNode());
+				ValuePriorityEntry<Node, Long> entry = ValuePriorityEntryComparators.<Node, Long>getKeyTemplate(m.getNode());
 
 				failed.remove(entry);
 				suspectingNodesTimeout.remove(entry);
@@ -303,7 +303,7 @@ public class ClusterView implements Serializable {
 			}
 		}
 		for(Node n: removingNodes) {
-			ValuePriorityEntry<Node, Long> nd = Comparators.<Node, Long>getKeyTemplate(n);
+			ValuePriorityEntry<Node, Long> nd = ValuePriorityEntryComparators.<Node, Long>getKeyTemplate(n);
 			nodes.remove(n);
 			failed.remove(nd);
 			suspectingNodesTimeout.remove(nd);			
@@ -319,9 +319,9 @@ public class ClusterView implements Serializable {
 
 	public ValuePriorityEntry<Node, Long> pollFailed() { return failed.pollLast(); }
 
-	public boolean isSuspectedDead(Node nd) {  return suspectingNodesTimeout.contains(Comparators.<Node, Long>getKeyTemplate(nd), true); }
+	public boolean isSuspectedDead(Node nd) {  return suspectingNodesTimeout.contains(ValuePriorityEntryComparators.<Node, Long>getKeyTemplate(nd), true); }
 
-	public boolean isFailing(Node nd) { return failed.contains(Comparators.<Node, Long>getKeyTemplate(nd), true); }
+	public boolean isFailing(Node nd) { return failed.contains(ValuePriorityEntryComparators.<Node, Long>getKeyTemplate(nd), true); }
 
 	public boolean containsRumor(Message m) { return rumorsToSend.contains(m, true); }
 

@@ -63,8 +63,7 @@ public class Scheduler {
 			long nowUTC = ServerTime.getTime();
 			long expTime = nowUTC + MathOp.expTime(config.getIterationIntervalMs(), clusterView.getClusterSize(), config.getCyclesForWaitKeepAlive());
 			int iterations = MathOp.log2n(clusterView.getClusterSize());
-			Message sm  = new Message(MessageType.SUSPECT_DEAD, firstFailed.getKey(), 
-					iterations, expTime);
+			Message sm  = new Message(MessageType.SUSPECT_DEAD, firstFailed.getKey(), iterations, expTime);
 			clusterView.suspect(expTime, sm);
 		}
 		clusterView.removeExpired();
