@@ -4,10 +4,11 @@ import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.ClusterNodeEntryTest;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.structures.Comparators;
+import org.cluster.membership.protocol.structures.ValuePrioritySet;
+import org.cluster.membership.protocol.util.MessageComparators;
+import org.cluster.membership.protocol.util.ValuePriorityEntryComparators;
 import org.cluster.membership.protocol.structures.DList;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
-import org.cluster.membership.protocol.structures.ValuePrioritySet;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -57,15 +58,15 @@ public class RandomServiceTest extends ClusterNodeEntryTest {
     
     private void init() {
     	
-    	this.suspectingNodesTimeout = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-				Comparators.<Node, Long>ascPriorityComparator());
-		this.rumorsToSend = new ValuePrioritySet<>(Message.getIterationsDescComparator(), 
-				Message.getIteratorPriorityAscComparator());		
+    	this.suspectingNodesTimeout = new ValuePrioritySet<>(ValuePriorityEntryComparators.<Node, Long>ascComparator(),
+				ValuePriorityEntryComparators.<Node, Long>ascPriorityComparator());
+		this.rumorsToSend = new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(), 
+				MessageComparators.getIteratorPriorityAscComparator());		
 		this.nodes = new DList();
-		this.failed = new ValuePrioritySet<>(Comparators.<Node, Long>ascComparator(),
-				Comparators.<Node, Long>ascPriorityComparator());		
-		this.receivedRumors = new ValuePrioritySet<Message>(Message.getGeneratedTimeAscComparator(),
-				Message.getGeneratedTimePriorityAscComparator());
+		this.failed = new ValuePrioritySet<>(ValuePriorityEntryComparators.<Node, Long>ascComparator(),
+				ValuePriorityEntryComparators.<Node, Long>ascPriorityComparator());		
+		this.receivedRumors = new ValuePrioritySet<Message>(MessageComparators.getGeneratedTimeAscComparator(),
+				MessageComparators.getGeneratedTimePriorityAscComparator());
 		
 		this.clusterView = new ClusterView(nodes, suspectingNodesTimeout, failed, rumorsToSend, receivedRumors);
 		

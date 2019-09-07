@@ -1,6 +1,9 @@
-package org.cluster.membership.protocol.structures;
+package org.cluster.membership.protocol.util;
 
-public class Comparators {
+import org.cluster.membership.protocol.structures.SerializableComparator;
+import org.cluster.membership.protocol.structures.ValuePriorityEntry;
+
+public class ValuePriorityEntryComparators {
 
 	private static <K extends Comparable<K>,V extends Comparable<V>> int compare(ValuePriorityEntry<K,V> first, ValuePriorityEntry<K,V> second) {
 		int keyComparison = first.getKey().compareTo(second.getKey());		

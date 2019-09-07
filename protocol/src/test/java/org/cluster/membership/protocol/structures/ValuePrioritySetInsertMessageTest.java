@@ -6,6 +6,7 @@ import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.ClusterNodeEntryTest;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.Message;
+import org.cluster.membership.protocol.util.MessageComparators;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -55,8 +56,8 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     
     public void testInsertion1() {
     	ValuePrioritySet<Message> set =
-    			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
-    					Message.getIteratorPriorityAscComparator());
+    			new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(),
+    					MessageComparators.getIteratorPriorityAscComparator());
     	
     	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 2);
     	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3);
@@ -81,8 +82,8 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     
     public void testInsertion2() {
     	ValuePrioritySet<Message> set =
-    			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
-    					Message.getIteratorPriorityAscComparator());
+    			new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(),
+    					MessageComparators.getIteratorPriorityAscComparator());
     	
     	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 2);
     	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3);
@@ -107,8 +108,8 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     
     public void testInsertion3() {
     	ValuePrioritySet<Message> set =
-    			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
-    					Message.getIteratorPriorityAscComparator());
+    			new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(),
+    					MessageComparators.getIteratorPriorityAscComparator());
     	
     	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 4);
     	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3);
@@ -133,8 +134,8 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     
     public void testInsertion4() {
     	ValuePrioritySet<Message> set =
-    			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
-    					Message.getIteratorPriorityAscComparator());
+    			new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(),
+    					MessageComparators.getIteratorPriorityAscComparator());
     	
     	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 1);
     	Message o2 = new Message(MessageType.ADD_TO_CLUSTER, d, 2);
@@ -151,8 +152,8 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     
     public void testInsertion5() {
     	ValuePrioritySet<Message> set =
-    			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
-    					Message.getIteratorPriorityAscComparator());
+    			new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(),
+    					MessageComparators.getIteratorPriorityAscComparator());
     	
     	Message o1 = new Message(MessageType.ADD_TO_CLUSTER, d, 4);
     	Message o2 = new Message(MessageType.KEEP_ALIVE, b, 3);
@@ -182,8 +183,8 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     
     public void testInsertion6() {
     	ValuePrioritySet<Message> set =
-    			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
-    					Message.getIteratorPriorityAscComparator());
+    			new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(),
+    					MessageComparators.getIteratorPriorityAscComparator());
     	
     	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, d, 2);
     	Message o6 = new Message(MessageType.ADD_TO_CLUSTER, a, 2);
@@ -206,8 +207,8 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     
     public void testInsertion7() {
     	ValuePrioritySet<Message> set =
-    			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
-    					Message.getIteratorPriorityAscComparator());
+    			new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(),
+    					MessageComparators.getIteratorPriorityAscComparator());
     	
     	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, a, 2);
     	Message o6 = new Message(MessageType.PROBE, a, 2);
@@ -230,8 +231,8 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     
     public void testInsertion8() {
     	ValuePrioritySet<Message> set =
-    			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
-    					Message.getIteratorPriorityAscComparator());
+    			new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(),
+    					MessageComparators.getIteratorPriorityAscComparator());
     	
     	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, a, 2);
     	Message o6 = new Message(MessageType.PROBE, a, 2);
@@ -258,8 +259,8 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     
     public void testInsertion9() {
     	ValuePrioritySet<Message> set =
-    			new ValuePrioritySet<>(Message.getIterationsDescComparator(),
-    					Message.getIteratorPriorityAscComparator());
+    			new ValuePrioritySet<>(MessageComparators.getIterationsDescComparator(),
+    					MessageComparators.getIteratorPriorityAscComparator());
     	
     	Message o4 = new Message(MessageType.ADD_TO_CLUSTER, a, 2);
     	Message o6 = new Message(MessageType.PROBE, a, 2);

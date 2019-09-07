@@ -3,6 +3,8 @@ package org.cluster.membership.protocol.structures;
 import java.io.Serializable;
 import java.util.Comparator;
 
+import org.cluster.membership.protocol.util.ValuePriorityEntryComparators;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class ValuePriorityEntry<K extends Comparable<K>,V extends Comparable<V>> implements Comparable<ValuePriorityEntry<K,V>>, Serializable {
@@ -20,7 +22,7 @@ public class ValuePriorityEntry<K extends Comparable<K>,V extends Comparable<V>>
 	public ValuePriorityEntry(K key, V value) {		
 		this.key = key;
 		this.value = value;
-		this.comparator = Comparators.<K,V>ascComparator();
+		this.comparator = ValuePriorityEntryComparators.<K,V>ascComparator();
 	}
 	
 	public ValuePriorityEntry() {}
