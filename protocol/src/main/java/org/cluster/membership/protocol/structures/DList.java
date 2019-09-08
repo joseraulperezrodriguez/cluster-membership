@@ -61,6 +61,7 @@ public class DList implements Serializable {
 
 	public void remove(Node node) {
 		synchronized(this) { 
+			if(nodes.size() == 0) return;
 			Tuple2<Integer, Integer> bs = bs(node);	
 			if(bs.getA() != bs.getB() || !this.get(bs.getA()).getId().equals(node.getId())) 
 				return;
@@ -116,7 +117,7 @@ public class DList implements Serializable {
 
 			if(comp < 0) last = middle;
 			else if(comp > 0) first = middle;
-			else return new Tuple2<>(middle, middle);			
+			else return new Tuple2<>(middle, middle);
 		}
 
 		if(node.compareTo(nodes.get(first)) <= 0) return new Tuple2<>(first, first);
