@@ -62,8 +62,8 @@ public class DList implements Serializable {
 	public void remove(Node node) {
 		synchronized(this) { 
 			Tuple2<Integer, Integer> bs = bs(node);	
-			if(bs.getA() != bs.getB() || bs.getA() >= nodes.size() || 
-					!this.get(bs.getA()).getId().equals(node.getId())) return;
+			if(bs.getA() != bs.getB() || !this.get(bs.getA()).getId().equals(node.getId())) 
+				return;
 			nodes.remove((int)bs.getA());
 			hashed.remove(node);
 		}
