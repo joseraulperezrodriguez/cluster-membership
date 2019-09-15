@@ -1,9 +1,9 @@
-package org.cluster.membership.protocol.net.core;
+package org.cluster.membership.protocol.net;
 
 import org.cluster.membership.common.model.util.Literals;
 import org.cluster.membership.protocol.Config;
-import org.cluster.membership.protocol.net.RequestReceiver;
 import org.cluster.membership.protocol.net.channel.handler.MembershipServerHandler;
+import org.cluster.membership.protocol.net.core.RequestReceiver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

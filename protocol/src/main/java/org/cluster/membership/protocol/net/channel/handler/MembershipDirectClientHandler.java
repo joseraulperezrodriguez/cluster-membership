@@ -11,7 +11,7 @@ import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.FrameMessageCount;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.ResponseDescription;
-import org.cluster.membership.protocol.net.ResponseHandler;
+import org.cluster.membership.protocol.net.core.ResponseHandler;
 
 import io.netty.channel.ChannelHandlerContext;
 

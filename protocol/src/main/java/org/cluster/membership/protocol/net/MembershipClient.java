@@ -1,4 +1,4 @@
-package org.cluster.membership.protocol.net.core;
+package org.cluster.membership.protocol.net;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;

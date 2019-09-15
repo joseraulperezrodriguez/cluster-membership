@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.model.FrameMessageCount;
 import org.cluster.membership.protocol.model.Message;
-import org.cluster.membership.protocol.net.ResponseHandler;
+import org.cluster.membership.protocol.net.core.ResponseHandler;
 
 import io.netty.channel.ChannelHandlerContext;
 
