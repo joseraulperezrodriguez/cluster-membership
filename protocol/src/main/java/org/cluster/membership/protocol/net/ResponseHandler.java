@@ -16,7 +16,7 @@ import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.MessageResponse;
 import org.cluster.membership.protocol.model.ResponseDescription;
-import org.cluster.membership.protocol.net.core.MembershipClientHandler;
+import org.cluster.membership.protocol.net.channel.handler.MembershipClientHandler;
 import org.cluster.membership.protocol.structures.ValuePriorityEntry;
 import org.cluster.membership.protocol.time.ServerTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +46,7 @@ public class ResponseHandler {
 			m.setIterations(m.getIterations()+1);
 			clusterView.addRumor(m);
 		}
-		logger.info("Restoring messages: \n" + messageRestored);
-		
+		logger.info("Restoring messages: \n" + messageRestored);	
 	}
 
 	public void suspectAll(TreeSet<Message> indirectMessages) {
@@ -95,7 +94,7 @@ public class ResponseHandler {
 	}
 		
 	private void handleUnsubscription() {
-		Global.shutdown(ClusterNodeEntry.applicationContexts.get(config.getThisPeer()), 5);
+		Global.shutdown(ClusterNodeEntry.applicationContexts.get(config.getThisPeer()), (int)(config.getConnectionTimeOutMs() / 1000));
 	}
 	
 }

@@ -98,7 +98,7 @@ public class Config {
 		
 		this.thisPeer = thisPeer;
 		this.seeds = new DList();
-		this.mode = Literals.APP_DEBUG_MODE;
+		this.mode = Literals.APP_TEST_MODE;
 	}
 	
 	public long getIterationIntervalMs() { return iterationIntervalMs; }
@@ -212,9 +212,9 @@ public class Config {
 		private static String getMode(ApplicationArguments args) throws Exception {
 			if(args.containsOption(Literals.APP_MODE)) {
 				String mode = args.getOptionValues(Literals.APP_MODE).get(0);
-				if(!mode.equals(Literals.APP_DEBUG_MODE) && !mode.equals(Literals.APP_RELEASE_MODE)) throw new Exception("Invalid mode argument");				
+				if(!mode.equals(Literals.APP_TEST_MODE) && !mode.equals(Literals.APP_RUNNING_MODE)) throw new Exception("Invalid mode argument");				
 				return mode;
-			} else return Literals.APP_RELEASE_MODE;
+			} else return Literals.APP_RUNNING_MODE;
 		}
 		
 		private static DList readSeedNodes(ApplicationArguments args) throws Exception {

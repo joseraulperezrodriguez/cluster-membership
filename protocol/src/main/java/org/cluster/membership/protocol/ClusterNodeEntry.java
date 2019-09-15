@@ -12,8 +12,8 @@ import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.SynchroObject;
-import org.cluster.membership.protocol.net.RestClient;
 import org.cluster.membership.protocol.net.core.MembershipServer;
+import org.cluster.membership.protocol.services.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -33,8 +33,7 @@ public class ClusterNodeEntry implements ApplicationRunner {
 	
 	private static Logger logger = Logger.getLogger(ClusterNodeEntry.class.getName());
 	
-	public static Map<Node, ConfigurableApplicationContext> applicationContexts
-	 = new HashMap<Node, ConfigurableApplicationContext>();
+	public static Map<Node, ConfigurableApplicationContext> applicationContexts = new HashMap<Node, ConfigurableApplicationContext>();
 	
 	public static Properties properties;
 	public static ApplicationArguments appArguments;

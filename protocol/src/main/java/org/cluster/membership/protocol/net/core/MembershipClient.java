@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.Config;
+import org.cluster.membership.protocol.net.channel.handler.MembershipClientHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

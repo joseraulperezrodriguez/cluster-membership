@@ -1,4 +1,7 @@
-package org.cluster.membership.protocol.net.core;
+package org.cluster.membership.protocol.net.channel.handler;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.model.FrameMessageCount;
@@ -8,9 +11,10 @@ import org.cluster.membership.protocol.net.ResponseHandler;
 import io.netty.channel.ChannelHandlerContext;
 
 public class MembershipIndirectClientHandler extends MembershipClientHandler {
-
-	private ChannelHandlerContext directContext;
 	
+	private Logger logger = Logger.getLogger(MembershipDirectClientHandler.class.getName());
+
+	private ChannelHandlerContext directContext;	
 
 	public MembershipIndirectClientHandler(FrameMessageCount frameMessageCount, Node from, Node to, Message message, ResponseHandler responseHandler, ChannelHandlerContext directContext) {
 		super(frameMessageCount, responseHandler, from, to, message);		
@@ -19,6 +23,8 @@ public class MembershipIndirectClientHandler extends MembershipClientHandler {
 
 	@Override
 	public void handleError() {
+		logger.log(Level.INFO, "Handling error message from node " + getTo());
+		
 		if(this.getMessagesReaded() == 0) 
 			this.getResponseHandler().addToFailed(getTo());
 	}

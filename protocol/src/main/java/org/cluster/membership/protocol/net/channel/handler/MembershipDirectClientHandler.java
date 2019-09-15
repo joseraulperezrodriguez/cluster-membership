@@ -1,8 +1,10 @@
-package org.cluster.membership.protocol.net.core;
+package org.cluster.membership.protocol.net.channel.handler;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.core.MessageType;
@@ -15,7 +17,7 @@ import io.netty.channel.ChannelHandlerContext;
 
 public class MembershipDirectClientHandler extends MembershipClientHandler {
 	
-	//private Logger logger = Logger.getLogger(MembershipDirectClientHandler.class.getName());
+	private Logger logger = Logger.getLogger(MembershipDirectClientHandler.class.getName());
 	
 	private TreeSet<Message> indirectMessages;
 	private boolean directReceived;
@@ -56,6 +58,8 @@ public class MembershipDirectClientHandler extends MembershipClientHandler {
 	@Override
 	public void handleError() {
 		if(getTotalExpectedMessages() == getMessagesReaded()) return;
+		
+		logger.log(Level.INFO, "Handling error message from node " + getTo());
 		
 		if(!directReceived) {
 			getResponseHandler().addToFailed(getTo());

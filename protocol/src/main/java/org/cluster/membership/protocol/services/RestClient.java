@@ -1,4 +1,4 @@
-package org.cluster.membership.protocol.net;
+package org.cluster.membership.protocol.services;
 
 import java.net.URI;
 
