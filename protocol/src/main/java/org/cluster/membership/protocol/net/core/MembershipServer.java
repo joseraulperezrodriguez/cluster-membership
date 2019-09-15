@@ -3,6 +3,7 @@ package org.cluster.membership.protocol.net.core;
 import org.cluster.membership.common.model.util.Literals;
 import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.net.RequestReceiver;
+import org.cluster.membership.protocol.net.channel.handler.MembershipServerHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,17 +44,16 @@ public class MembershipServer extends Thread {
 	}
 	
 	public void pause(long millis) {
-		if(this.membershipServerHandler == null || 
-				!(membershipServerHandler instanceof MembershipServerHandlerDebug)) return;
+		if(this.membershipServerHandler == null || !(membershipServerHandler instanceof MembershipServerHandler.Debug)) return;
 		
-		MembershipServerHandlerDebug debugHandler = (MembershipServerHandlerDebug)membershipServerHandler;
+		MembershipServerHandler.Debug debugHandler = (MembershipServerHandler.Debug)membershipServerHandler;
 		debugHandler.pause(millis);
 	}
 	
 	public void run() {
         try {
     		this.membershipServerHandler = (
-    				config.getMode().equals(Literals.APP_DEBUG_MODE) ? new MembershipServerHandlerDebug(requestReceiver) : 
+    				config.getMode().equals(Literals.APP_TEST_MODE) ? new MembershipServerHandler.Debug(requestReceiver) : 
     					new MembershipServerHandler(requestReceiver));
 
         	
@@ -67,7 +67,7 @@ public class MembershipServer extends Thread {
              .childHandler(new ChannelInitializer<SocketChannel>() {
                 @Override
                 public void initChannel(SocketChannel ch) throws Exception {
-                    ChannelPipeline p = ch.pipeline();                 
+                    ChannelPipeline p = ch.pipeline();
                     p.addLast(new JdkZlibEncoder(),
                   		  	  new JdkZlibDecoder());
                     p.addLast(

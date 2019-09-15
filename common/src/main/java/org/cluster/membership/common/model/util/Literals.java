@@ -21,8 +21,8 @@ public class Literals {
 	public static final String APP_HOME = "app.home";
 	public static final String APP_PROP_FILE = "app.properties";
 	public static final String APP_MODE = "mode";
-	public static final String APP_RELEASE_MODE = "RELEASE";
-	public static final String APP_DEBUG_MODE = "DEBUG";
+	public static final String APP_RUNNING_MODE = "RUNNING";
+	public static final String APP_TEST_MODE = "TEST";
 	
 	
 	

@@ -1,4 +1,4 @@
-package org.cluster.membership.protocol.net.core;
+package org.cluster.membership.protocol.net.channel.handler;
 
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.model.FrameMessageCount;

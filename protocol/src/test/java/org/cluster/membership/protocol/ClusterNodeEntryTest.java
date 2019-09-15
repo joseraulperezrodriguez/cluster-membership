@@ -24,7 +24,7 @@ public class ClusterNodeEntryTest extends TestCase {
         //String home = System.getProperty("user.dir");        
         Node node = new Node("A", "localhost", 6001, 7001);
         
-        String argsS = EnvUtils.generateNodeCommandLineArguments(node, 0) + " --mode=DEBUG"; 
+        String argsS = EnvUtils.generateNodeCommandLineArguments(node, 0) + " --mode=TEST"; 
         			
         ApplicationArguments defaultAA = new DefaultApplicationArguments(argsS.split("\\s+")); 
         Config.read(defaultAA);

@@ -1,4 +1,4 @@
-package org.cluster.membership.protocol.net.core;
+package org.cluster.membership.protocol.net.channel.handler;
 
 import java.util.Arrays;
 import java.util.List;

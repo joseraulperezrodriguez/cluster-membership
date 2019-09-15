@@ -47,7 +47,7 @@ public class SingleVMDeploymentAndExecutionSimulator extends AbstractDeploymentA
 		
 		Node commandLineParam = getCreatedNodes().size() > 0 ? getRandomNode() : null;		
 		String args = (commandLineParam != null ? EnvUtils.generateNodeCommandLineArguments(commandLineParam,1) : "") +
-			 " --" + Literals.APP_MODE + "=" + Literals.APP_DEBUG_MODE + 
+			 " --" + Literals.APP_MODE + "=" + Literals.APP_TEST_MODE + 
 			 " --" + Literals.APP_HOME + "=" + instanceHome;	
 		String[] argsA = args.split("\\s+");
 		

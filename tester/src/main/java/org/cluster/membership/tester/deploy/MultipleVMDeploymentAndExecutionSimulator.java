@@ -58,7 +58,7 @@ public class MultipleVMDeploymentAndExecutionSimulator extends AbstractDeploymen
 		Node commandLineParam = getCreatedNodes().size() > 0 ? getRandomNode() : null;		
 		String args = commandLineParam != null ? EnvUtils.generateNodeCommandLineArguments(commandLineParam,1) : "";		
 		String command = "java -Xmx" + getAppConfig().getMemoryMb() + "m -cp " + getAppConfig().programPath(id) + " " + 
-				ClusterNodeEntry.class.getCanonicalName() + " " + args.trim() + " --mode=DEBUG --kill=" + killToken;
+				ClusterNodeEntry.class.getCanonicalName() + " " + args.trim() + " --mode=TEST --kill=" + killToken;
 		
 		ProcessBuilder processBuilder = new ProcessBuilder(command.split("\\s+"));
 		processBuilder.directory(getAppConfig().cd(id));

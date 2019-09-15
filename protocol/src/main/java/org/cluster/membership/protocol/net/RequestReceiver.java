@@ -14,8 +14,8 @@ import org.cluster.membership.protocol.model.MessageResponse;
 import org.cluster.membership.protocol.model.RequestDescription;
 import org.cluster.membership.protocol.model.ResponseDescription;
 import org.cluster.membership.protocol.model.SynchroObject;
+import org.cluster.membership.protocol.net.channel.handler.MembershipIndirectClientHandler;
 import org.cluster.membership.protocol.net.core.MembershipClient;
-import org.cluster.membership.protocol.net.core.MembershipIndirectClientHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -92,33 +92,30 @@ public class RequestReceiver {
 					break;
 				}
 			}
-			
 		}
 		
 		clusterView.updateFrameMessageCount();
 		
-		SynchroObject syncData = clusterView.getSyncObject(requestDescription.getNode(), 
-				requestDescription.getFrameMessCount());
+		SynchroObject syncData = clusterView.getSyncObject(requestDescription.getNode(), requestDescription.getFrameMessCount());
 		
 		return new ResponseDescription(syncData, mResponses);
 		
 	}
-	
+
 	public void handlerUnsubscription(Message m) {
 		Message rem = new Message(MessageType.REMOVE_FROM_CLUSTER, m.getNode(), MathOp.log2n(clusterView.getClusterSize()));
 		clusterView.removeFromCluster(rem);
 	}
-	
+
 	public MessageResponse<Boolean> handlerProbe(Message m, ChannelHandlerContext ctx) {
 		if(m.getNode().equals(config.getThisPeer())) {
 			MessageResponse<Boolean> response = new MessageResponse<Boolean>(true, m);
 			return response;
 		} else {
-			client.connect(m.getNode(), 
+			client.connect(m.getNode(),
 					new MembershipIndirectClientHandler(clusterView.getFrameMessageCount(), config.getThisPeer(), m.getNode(),m, responseHandler,ctx));
 			return null;
 		}
-		
 	}
 
 	public void handlerSuspectDead(Message m) {
