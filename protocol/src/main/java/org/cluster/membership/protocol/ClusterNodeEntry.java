@@ -33,8 +33,7 @@ public class ClusterNodeEntry implements ApplicationRunner {
 	
 	private static Logger logger = Logger.getLogger(ClusterNodeEntry.class.getName());
 	
-	public static Map<Node, ConfigurableApplicationContext> applicationContexts
-	 = new HashMap<Node, ConfigurableApplicationContext>();
+	public static Map<Node, ConfigurableApplicationContext> applicationContexts = new HashMap<Node, ConfigurableApplicationContext>();
 	
 	public static Properties properties;
 	public static ApplicationArguments appArguments;
