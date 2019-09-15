@@ -43,7 +43,7 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     	int i = 0;
     	while(iterator.hasNext()) {
     		Message val = iterator.next();
-    		if(!array[i].equals(val) || array[i].getIterations() != val.getIterations()) return false;
+    		if(!array[i].equals(val) || array[i].remainingIterations() != val.remainingIterations()) return false;
     		i++;
     	}
     			
@@ -147,7 +147,7 @@ public class ValuePrioritySetInsertMessageTest extends ClusterNodeEntryTest {
     	
     	assert(set.size() == 1);
 
-    	assert(set.last().getIterations() == 1);
+    	assert(set.last().remainingIterations() == 1);
     }
     
     public void testInsertion5() {

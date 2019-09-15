@@ -195,13 +195,13 @@ public class ClusterView implements Serializable {
 	public List<Message> getPendingRumors() {
 		List<Message> ans = new ArrayList<Message>();
 		Message current = null;
-		while((current = rumorsToSend.last()) != null && current.getIterations() <= 1) {
+		while((current = rumorsToSend.last()) != null && current.remainingIterations() <= 1) {
 			current = rumorsToSend.pollLast();
-			if(current.getIterations() == 1) ans.add(current.sended());
+			if(current.remainingIterations() == 1) ans.add(current.sent());
 		}
 
 		Iterator<Message> iterator = rumorsToSend.iterator();
-		while(iterator.hasNext()) ans.add(iterator.next().sended());
+		while(iterator.hasNext()) ans.add(iterator.next().sent());
 		return ans;
 	}
 
@@ -250,7 +250,7 @@ public class ClusterView implements Serializable {
 	}
 
 	private void addRumorsToSend(Message m) {
-		if(m.getIterations() > 0) rumorsToSend.add(m, true);
+		if(m.hasNextIteration()) rumorsToSend.add(m, true);
 	}
 
 	public synchronized void addRumor(Message m) { 
@@ -268,7 +268,7 @@ public class ClusterView implements Serializable {
 
 	}
 
-	private void updateMyViewFully(ClusterData clusterView) {
+	private synchronized void updateMyViewFully(ClusterData clusterView) {
 		this.failed.clear();
 		this.receivedRumors.clear();
 		this.nodes = clusterView.getNodes();
@@ -287,10 +287,15 @@ public class ClusterView implements Serializable {
 		for(Message m : missingMessages) {
 			receivedRumors.add(m, true);
 			if(m.getType().equals(MessageType.ADD_TO_CLUSTER)) nodes.add(m.getNode());
-			else if(m.getType().equals(MessageType.REMOVE_FROM_CLUSTER)) nodes.remove(m.getNode());
+			else if(m.getType().equals(MessageType.REMOVE_FROM_CLUSTER)) {
+				nodes.remove(m.getNode());
+				ValuePriorityEntry<Node, Long> value = ValuePriorityEntryComparators.<Node, Long>getKeyTemplate(m.getNode());
+				suspectingNodesTimeout.remove(value);
+				failed.remove(value);
+			}
 			else if(m.getType().equals(MessageType.SUSPECT_DEAD)) {
 				Long expirationTime = (Long)m.getData();
-				if(expirationTime > ServerTime.getTime())
+				if(expirationTime >= ServerTime.getTime())
 					suspectingNodesTimeout.add(new ValuePriorityEntry<Node, Long>(m.getNode(), expirationTime), true);
 				else removingNodes.add(m.getNode());
 			}

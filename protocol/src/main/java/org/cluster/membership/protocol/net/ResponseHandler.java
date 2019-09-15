@@ -43,7 +43,7 @@ public class ResponseHandler {
 		for(Message m: messages) {
 			if(!m.getCategory().equals(MessageCategory.CLUSTER)) continue;
 			messageRestored += m + "\n";
-			m.setIterations(m.getIterations()+1);
+			m.rollbackPreviousIteration();
 			clusterView.addRumor(m);
 		}
 		logger.info("Restoring messages: \n" + messageRestored);	

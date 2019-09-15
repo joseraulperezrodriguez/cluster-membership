@@ -54,6 +54,7 @@ public class RequestReceiver {
 		logger.info("Messages received from " + from);
 		
 		for(Message m : messages) {
+			Message adjustedM = m.adjustIteration(clusterView.getClusterSize());
 			MessageType mt = m.getType();
 		
             /**If this node has already registered m as a rumor, then avoid to reinserted, except the SUSPECT_DEAD messages, as you can see later*/
@@ -64,11 +65,11 @@ public class RequestReceiver {
 			
 			switch (mt) {
 				case UNSUBSCRIPTION: {
-					handlerUnsubscription(m);
+					handlerUnsubscription(adjustedM);
 					break;
 				}
 				case PROBE: {
-					MessageResponse<Boolean> mr = handlerProbe(m, ctx);
+					MessageResponse<Boolean> mr = handlerProbe(adjustedM, ctx);
 					if(mr != null) mResponses.add(mr);
 					break;
 				}
@@ -76,19 +77,19 @@ public class RequestReceiver {
 				 * be prioritized, in this way we ensure all the nodes have the same 
 				 * expiration time for a node*/
 				case SUSPECT_DEAD: {
-					handlerSuspectDead(m);
+					handlerSuspectDead(adjustedM);
 					break;
 				}
 				case KEEP_ALIVE: {
-					handlerKeepAlive(m);
+					handlerKeepAlive(adjustedM);
 					break;
 				}
 				case ADD_TO_CLUSTER: {
-					handlerAddToCluster(m);
+					handlerAddToCluster(adjustedM);
 					break;
 				}
 				case REMOVE_FROM_CLUSTER: {
-					handlerRemoveFromCluster(m);
+					handlerRemoveFromCluster(adjustedM);
 					break;
 				}
 			}

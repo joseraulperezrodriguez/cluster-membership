@@ -18,7 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Scheduler {
+public class IterationScheduler {
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
 

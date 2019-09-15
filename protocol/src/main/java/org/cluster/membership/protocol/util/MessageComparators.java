@@ -27,16 +27,15 @@ public class MessageComparators {
 	 * */
 	public static Message getMaxTimeTemplate(long time) {
 		Message m  = new Message(MessageType.getMaxPriority(), Node.getLowerNode(), 1);
-		//m.generatedTime = time;
 		return m;
 	}
 	
 	private static int compareIteration(Message a, Message b) {
 		int comp = a.compareTo(b);
 		if(comp == 0) return 0;
-
-		if(a.getIterations() < b.getIterations()) return -1; 
-		else if(a.getIterations() > b.getIterations()) return +1;			
+		
+		if(a.remainingIterations() < b.remainingIterations()) return -1;
+		else if(a.remainingIterations() > b.remainingIterations()) return +1;
 		return 0;
 		
 	}
@@ -51,10 +50,10 @@ public class MessageComparators {
 		
 	}
 	
-	private static int comparePriorityIteration(Message a, Message b) {
-		if(a.getIterations() < b.getIterations()) return -1; 
-		else if(a.getIterations() > b.getIterations()) return +1;			
-		return 0;		
+	private static int comparePriorityIteration(Message a, Message b) {		
+		if(a.remainingIterations() < b.remainingIterations()) return -1;
+		else if(a.remainingIterations() > b.remainingIterations()) return +1;
+		return 0;
 	}
 	
 	private static int comparePriorityGeneratedTime(Message a, Message b) {
