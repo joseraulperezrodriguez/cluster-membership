@@ -3,6 +3,7 @@ package org.cluster.membership.protocol.model;
 import java.io.Serializable;
 
 import org.cluster.membership.common.model.Node;
+import org.cluster.membership.common.model.util.MathOp;
 import org.cluster.membership.protocol.core.MessageCategory;
 import org.cluster.membership.protocol.core.MessageType;
 import org.cluster.membership.protocol.time.ServerTime;
@@ -20,7 +21,7 @@ public class Message implements Comparable<Message>, Serializable {
 	
 	private Node node;
 	
-	private int iterations;
+	private int iterations, iteration;
 	
 	private long generatedTime;
 	
@@ -29,6 +30,7 @@ public class Message implements Comparable<Message>, Serializable {
 		this.type = type;
 		this.node = node;
 		this.iterations = iterations;
+		this.iteration = 0;
 		this.generatedTime = ServerTime.getTime();
 	}
 	
@@ -39,15 +41,22 @@ public class Message implements Comparable<Message>, Serializable {
 	
 	public Message() {}
 	
+	public Message adjustIteration(int size) {
+		int cI = MathOp.log2n(size);
+		Message ans = new Message(type, node, Math.max(cI, iterations), data);
+		ans.iteration = iteration;
+		return ans;
+	}
+	
 	public long getGeneratedTime() {
 		return generatedTime;
 	}
 
-	public Message sended() {
-		this.iterations--;
+	public Message sent() {
+		this.iteration++;
 		return this;
 	}
-	
+		
 	public MessageCategory getCategory() {
 		return type.getCategory();
 	}
@@ -59,13 +68,17 @@ public class Message implements Comparable<Message>, Serializable {
 	public void setData(Object data) {
 		this.data = data;
 	}
-
-	public int getIterations() {
-		return iterations;
+	
+	public boolean hasNextIteration() {
+		return iteration < iterations;
 	}
-
-	public void setIterations(int iterations) {
-		this.iterations = iterations;
+	
+	public int remainingIterations() {
+		return iterations - iteration;
+	}
+	
+	public void rollbackPreviousIteration() {
+		this.iteration--;
 	}
 
 	public Node getNode() {
