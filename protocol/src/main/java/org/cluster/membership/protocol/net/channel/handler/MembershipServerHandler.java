@@ -2,7 +2,7 @@ package org.cluster.membership.protocol.net.channel.handler;
 
 import org.cluster.membership.protocol.model.RequestDescription;
 import org.cluster.membership.protocol.model.ResponseDescription;
-import org.cluster.membership.protocol.net.RequestReceiver;
+import org.cluster.membership.protocol.net.core.RequestReceiver;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;

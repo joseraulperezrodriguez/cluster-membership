@@ -1,4 +1,4 @@
-package org.cluster.membership.protocol.net;
+package org.cluster.membership.protocol.net.core;
 
 import java.io.Serializable;
 import java.util.List;

@@ -12,7 +12,7 @@ import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.ClusterData;
 import org.cluster.membership.protocol.model.SynchroObject;
-import org.cluster.membership.protocol.net.core.MembershipServer;
+import org.cluster.membership.protocol.net.MembershipServer;
 import org.cluster.membership.protocol.services.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;

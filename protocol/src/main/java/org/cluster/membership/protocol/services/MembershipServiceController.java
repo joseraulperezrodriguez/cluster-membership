@@ -10,7 +10,7 @@ import org.cluster.membership.protocol.Config;
 import org.cluster.membership.protocol.core.ClusterView;
 import org.cluster.membership.protocol.core.Global;
 import org.cluster.membership.protocol.model.ClusterData;
-import org.cluster.membership.protocol.net.core.MembershipServer;
+import org.cluster.membership.protocol.net.MembershipServer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

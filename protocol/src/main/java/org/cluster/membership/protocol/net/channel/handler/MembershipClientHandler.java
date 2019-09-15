@@ -8,7 +8,7 @@ import org.cluster.membership.protocol.model.FrameMessageCount;
 import org.cluster.membership.protocol.model.Message;
 import org.cluster.membership.protocol.model.RequestDescription;
 import org.cluster.membership.protocol.model.ResponseDescription;
-import org.cluster.membership.protocol.net.ResponseHandler;
+import org.cluster.membership.protocol.net.core.ResponseHandler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;

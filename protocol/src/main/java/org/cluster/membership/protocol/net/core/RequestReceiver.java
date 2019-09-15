@@ -1,4 +1,4 @@
-package org.cluster.membership.protocol.net;
+package org.cluster.membership.protocol.net.core;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,8 @@ import org.cluster.membership.protocol.model.MessageResponse;
 import org.cluster.membership.protocol.model.RequestDescription;
 import org.cluster.membership.protocol.model.ResponseDescription;
 import org.cluster.membership.protocol.model.SynchroObject;
+import org.cluster.membership.protocol.net.MembershipClient;
 import org.cluster.membership.protocol.net.channel.handler.MembershipIndirectClientHandler;
-import org.cluster.membership.protocol.net.core.MembershipClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
