@@ -19,32 +19,28 @@ import org.springframework.stereotype.Component;
 public class Config {
 	
 	private static final Logger logger = Logger.getLogger(Config.class.getName());
-	
+
 	/**The time interval for making requests to other nodes in the cluster*/
 	private long iterationIntervalMs;
-	
+
 	/**The factor to multiply by iteration.interval.ms * (iterations=max.expected.node.log.2 || log2(cluster size)), and consider to send an update request*/
 	private int readIddleIterationsFactor;
 
 	/**The time out for connection to other nodes*/
 	private long connectionTimeOutMs;
-		
+
 	/**The number of cycles the cluster has to wait for a node sends a keep alive signal, to avoid removing from cluster*/
 	private int cyclesForWaitKeepAlive;//one day
-				
-	/**The max  number of iterations to select a random node*/
-	private int maxExpectedNodeLog2Size;
-	
-	
+
 	/**The max length of the set for storing rumors messages, used for recovery other nodes later*/
 	private int maxRumorsLogSize;
-	
+
 	/**The max number of bytes allowed to transfer between client and server*/
 	private int maxObjectSize;
-	
+
 	/**The number of threads ready to send requests*/
 	private int clientThreads;
-	
+
 	/**The number of threads ready to receive requests*/
 	private int serverThreads;
 
@@ -65,8 +61,7 @@ public class Config {
 			iterationIntervalMs = Long.parseLong(properties.getProperty(Literals.ITERATION_INTERVAL_MS));
 			readIddleIterationsFactor = Integer.parseInt(properties.getProperty(Literals.READ_IDDLE_ITERATIONS_FACTOR));
 			connectionTimeOutMs = Long.parseLong(properties.getProperty(Literals.CONNECTION_TIME_OUT_MS));
-			cyclesForWaitKeepAlive = Integer.parseInt(properties.getProperty(Literals.CYCLES_FOR_WAIT_KEEP_ALIVE));//one day
-			maxExpectedNodeLog2Size = Integer.parseInt(properties.getProperty(Literals.MAX_EXPECTED_NODE_LOG_2_SIZE));
+			cyclesForWaitKeepAlive = Integer.parseInt(properties.getProperty(Literals.CYCLES_FOR_WAIT_KEEP_ALIVE));//one day			
 			maxRumorsLogSize = Integer.parseInt(properties.getProperty(Literals.MAX_RUMORS_LOG_SIZE));
 			maxObjectSize = Integer.parseInt(properties.getProperty(Literals.MAX_OBJECT_SIZE));
 			clientThreads = Integer.parseInt(properties.getProperty(Literals.CLIENT_THREADS));
@@ -90,7 +85,6 @@ public class Config {
 		this.connectionTimeOutMs = 1000l;
 		this.readIddleIterationsFactor = 3;
 		this.cyclesForWaitKeepAlive = 3;
-		this.maxExpectedNodeLog2Size = 32;
 		this.maxRumorsLogSize = 1000000;
 		this.maxObjectSize = 2147483647;
 		this.clientThreads = 3;
@@ -105,7 +99,7 @@ public class Config {
 	public int getReadIddleIterationsFactor() { return readIddleIterationsFactor; }
 	public long getConnectionTimeOutMs() { return connectionTimeOutMs; }
 	public int getCyclesForWaitKeepAlive() { return cyclesForWaitKeepAlive; }
-	public int getMaxExpectedNodeLog2Size() { return maxExpectedNodeLog2Size; }
+	public int getMaxExpectedNodeLog2Size() { return 29; }
 	public int getMaxRumorsLogSize() { return maxRumorsLogSize; }
 	public int getMaxObjectSize() { return maxObjectSize; }
 	public int getClientThreads() { return clientThreads; }

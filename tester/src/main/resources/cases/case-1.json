@@ -1,22 +1,20 @@
 {	
 	"config": {
-		"iteration.interval.ms": 1500	
+		"iteration.interval.ms": 1500
 	},
 	"procedure": [
 		{
 			"type": "node",
 			"data": {
 				"id": "A",
-				"address": "localhost",
-				"time.zone": "Europe/Madrid"
+				"address": "localhost"
 			}			
 		},
 		{
 			"type": "node",
 			"data": {
 				"id": "B",
-				"address": "localhost",
-				"time.zone": "Europe/Madrid"
+				"address": "localhost"
 			}
 		}		
 	]

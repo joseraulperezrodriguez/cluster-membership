@@ -16,17 +16,23 @@ connection.timeout.ms=1000
 #the factor to multiply by iteration.interval.ms * (iterations=max.expected.node.log.2 || log2(cluster size)), and consider to send an update request
 read.iddle.iteration.factor=3
 
+#the number of cycles the cluster has to wait for a node sends a keep alive signal, to avoid removing from cluster
+cycles.for.wait.keep.alive=3
+
 #the time to wait for a node sends a keep alive signal, to avoid removing from cluster
 failing.node.expiration.time.ms=86400000
-
-#a constant to generated random numbers
-max.expected.node.log.2=32
 
 #the max number of rumors stored in memory for later use in restoring a node, like a commit log of the cluster state
 max.rumor.log.size=1000000
 
 #the maximal number of byte that is allowed to send over the network, max int value by default
 max.object.size=2147483647
+
+#The number of threads ready to send requests
+client.threads=3
+
+#The number of threads ready to receive requests
+server.threads=3
 
 ```
 #### Node section
@@ -43,5 +49,4 @@ protocol.port=7001
 #the server port for rest service
 server.port=6001
 
-time.zone=Europe/Madrid
 ```

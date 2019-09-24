@@ -16,21 +16,11 @@ It should contains the same properties in [the app config file](../common/src/ma
 	node: {  
 		id: //the node id  
 		address: //the network address to reach the node  
-		time.zone: //the time zone for this node
 	}
 	
 	//an instruction to wait some second
 	wait: 3
-	
-	//an instruction to check status of cluster
-	check: {
-		try.delay: //a delay in second to start checking the nodes in cluster
-		try.interval: //the interval time to check the nodes
-		try.times: //the max times to check the nodes, in case of failure all times, the case fails
-		nodes: //an ordered list of ids of the nodes we expect to be in the cluster at this moment
-		dead.nodes: //a list of ids of the nodes we expect to be in "dead" state at this moment, wait	
-	}
-	
+		
 	//an instruction to pause a server  
 	pause: {
 		node.id: //the id of a node we want to pause
