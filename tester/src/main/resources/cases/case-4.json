@@ -7,40 +7,35 @@
 			"type": "node",
 			"data": {
 				"id": "A",
-				"address": "localhost",
-				"time.zone": "Europe/Madrid"
+				"address": "localhost"
 			}			
 		},
 		{
 			"type": "node",
 			"data": {
 				"id": "B",
-				"address": "localhost",
-				"time.zone": "Europe/Madrid"
+				"address": "localhost"
 			}
 		},
 		{
 			"type": "node",
 			"data": {
 				"id": "C",
-				"address": "localhost",
-				"time.zone": "Europe/Madrid"
+				"address": "localhost"
 			}
 		},
 		{
 			"type": "node",
 			"data": {
 				"id": "D",
-				"address": "localhost",
-				"time.zone": "Europe/Madrid"
+				"address": "localhost"
 			}
 		},
 		{
 			"type": "node",
 			"data": {
 				"id": "E",
-				"address": "localhost",
-				"time.zone": "Europe/Madrid"
+				"address": "localhost"
 			}
 		}		
 	]
