@@ -9,22 +9,21 @@ import org.springframework.boot.system.ApplicationHome;
 
 public class EnvUtils {
 
-	public static boolean isAvailable(String host, int port) {
+	private static boolean checkPort(String host, int port, boolean assertion) {
 		try {
 			(new Socket(host, port)).close();
-			return false;
+			return assertion;
 		}
-		catch(SocketException e) { return true; } 
-		catch(Exception e) { return false; }		  
+		catch(SocketException e) { return !assertion; } 
+		catch(Exception e) { return false; }
+	}
+	
+	public static boolean isAvailable(String host, int port) {
+		return checkPort(host, port, false);
 	}
 	
 	public static boolean isListening(String host, int port) {
-		try {
-			(new Socket(host, port)).close();
-			return true;
-		}
-		catch(SocketException e) { return false; } 
-		catch(Exception e) { return false; }		  
+		return checkPort(host, port, true);		  
 	}
 
 	public static int getLocalAvailablePort(int port) {
