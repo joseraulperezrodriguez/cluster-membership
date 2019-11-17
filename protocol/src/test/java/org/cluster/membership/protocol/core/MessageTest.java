@@ -1,7 +1,5 @@
 package org.cluster.membership.protocol.core;
 
-import java.util.TimeZone;
-
 import org.cluster.membership.common.model.Node;
 import org.cluster.membership.protocol.ClusterNodeEntryTest;
 import org.cluster.membership.protocol.model.Message;
@@ -36,10 +34,10 @@ public class MessageTest extends ClusterNodeEntryTest {
 
     
     public void testEquals() {
-    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3, TimeZone.getDefault());
-    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 3, TimeZone.getDefault());    	
-    	Message m3 = new Message(MessageType.PROBE, a, 3, TimeZone.getDefault());
-    	Message m4 = new Message(MessageType.PROBE, b, 3, TimeZone.getDefault());
+    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3);
+    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 3);    	
+    	Message m3 = new Message(MessageType.PROBE, a, 3);
+    	Message m4 = new Message(MessageType.PROBE, b, 3);
     	    	
     	assert(m1.equals(m2));    	
     	assert(!m1.equals(m3));
@@ -47,10 +45,10 @@ public class MessageTest extends ClusterNodeEntryTest {
     }
     
     public void testCompareTo1() {
-    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3, TimeZone.getDefault());
-    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 3, TimeZone.getDefault());    	
-    	Message m3 = new Message(MessageType.PROBE, a, 3, TimeZone.getDefault());
-    	Message m4 = new Message(MessageType.PROBE, b, 3, TimeZone.getDefault());
+    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3);
+    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 3);    	
+    	Message m3 = new Message(MessageType.PROBE, a, 3);
+    	Message m4 = new Message(MessageType.PROBE, b, 3);
     	    	
     	assert(m1.compareTo(m2) == 0);    	
     	assert(m1.compareTo(m3) == -1);
@@ -58,12 +56,10 @@ public class MessageTest extends ClusterNodeEntryTest {
     }
     
     public void comparator() {
-    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3, TimeZone.getDefault());
-    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 1, TimeZone.getDefault());
+    	Message m1 = new Message(MessageType.KEEP_ALIVE, a, 3);
+    	Message m2 = new Message(MessageType.KEEP_ALIVE, a, 1);
     	
     	assert(MessageComparators.getIterationsAscComparator().compare(m2, m1) < 0);
     	
     }
-    
-           
 }
