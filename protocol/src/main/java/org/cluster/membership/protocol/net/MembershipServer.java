@@ -25,9 +25,9 @@ import io.netty.handler.logging.LoggingHandler;
 @Component
 public class MembershipServer extends Thread {
 	
-	private MembershipServerHandler membershipServerHandler;
+    private MembershipServerHandler membershipServerHandler;
 	
-	private EventLoopGroup bossGroup;
+    private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
     
     private RequestReceiver requestReceiver;
