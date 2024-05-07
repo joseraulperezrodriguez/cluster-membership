@@ -99,7 +99,7 @@ public class Message implements Comparable<Message>, Serializable {
 	
 	@Override
 	public int hashCode() {
-		int result = (int) (node.hashCode() ^ (node.hashCode() >>> 32));
+	    int result = (int) (node.hashCode() ^ (node.hashCode() >>> 32));
 	    result = 31 * result + type.name().hashCode();
 	    return result;
 	}
