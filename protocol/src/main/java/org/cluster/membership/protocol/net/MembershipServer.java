@@ -51,13 +51,9 @@ public class MembershipServer extends Thread {
 	}
 	
 	public void run() {
-        try {
-    		this.membershipServerHandler = (
-    				config.getMode().equals(Literals.APP_TEST_MODE) ? new MembershipServerHandler.Debug(requestReceiver) : 
-    					new MembershipServerHandler(requestReceiver));
-
-        	
-        	bossGroup = new NioEventLoopGroup(config.getServerThreads());
+          try {
+    	    this.membershipServerHandler = (config.getMode().equals(Literals.APP_TEST_MODE) ? new MembershipServerHandler.Debug(requestReceiver) : new MembershipServerHandler(requestReceiver));        	
+            bossGroup = new NioEventLoopGroup(config.getServerThreads());
             workerGroup = new NioEventLoopGroup(config.getServerThreads());
 
             ServerBootstrap b = new ServerBootstrap();
@@ -79,19 +75,19 @@ public class MembershipServer extends Thread {
 
             // Bind and start to accept incoming connections.
             b.bind(config.getThisPeer().getProtocolPort()).sync().channel().closeFuture().sync();
-        }
-        catch (InterruptedException e) {
-        	e.printStackTrace();
+          }
+          catch (InterruptedException e) {
+            e.printStackTrace();
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
             assert(false);
-        }
-        finally {
+          }
+          finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
-        }
+          }
 	}
-	
+
 	public void listen() {
 		this.start();
 	}
